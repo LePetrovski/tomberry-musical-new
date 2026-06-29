@@ -1,0 +1,29 @@
+{
+  "name": "tomberry-musicale",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "front",
+    "back"
+  ],
+  "devDependencies": {
+    "@sanity/client": "^7.23.0",
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.15.3",
+    "slugify": "^1.6.6",
+    "tsx": "^4.21.0"
+  },
+  "scripts": {
+    "migrate:podcasts:inspect": "tsx scripts/migrate-podcasts/index.ts inspect",
+    "migrate:podcasts:dry-run": "tsx scripts/migrate-podcasts/index.ts dry-run",
+    "migrate:podcasts:import": "tsx scripts/migrate-podcasts/index.ts import",
+    "dev": "concurrently \"npm run dev:front\" \"npm run dev:back\"",
+    "dev:front": "npm run dev --workspace=front",
+    "dev:back": "npm run dev --workspace=back",
+    "build": "npm run build --workspace=front",
+    "build:front": "npm run build --workspace=front",
+    "build:back": "npm run build --workspace=back",
+    "lint": "npm run lint --workspace=front"
+  }
+}

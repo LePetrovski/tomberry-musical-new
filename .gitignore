@@ -1,0 +1,15 @@
+node_modules
+scripts/migrate-podcasts/data/*.sql
+scripts/migrate-podcasts/data/podcasts-preview.json
+.env.migration
+.DS_Store
+*.pem
+.env
+.env.*
+!.env.example
+!.env.migration.example
+dist
+.next
+.sanity
+*.tsbuildinfo
+next-env.d.ts
