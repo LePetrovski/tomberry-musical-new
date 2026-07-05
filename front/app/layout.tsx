@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/Footer";
+import { GlobalJsonLd } from "@/components/GlobalJsonLd";
 import { Header } from "@/components/Header";
+import { getSiteUrl, siteConfig } from "@/lib/seo/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,11 +17,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Podcast Studio",
-    template: "%s | Podcast Studio",
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: "Vitrine, podcasts et blog propulsés par Next.js et Sanity.",
+  description: siteConfig.description,
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
@@ -33,6 +45,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white text-zinc-900">
+        <GlobalJsonLd />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

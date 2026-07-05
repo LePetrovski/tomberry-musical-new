@@ -1,9 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BlogCard } from "@/components/BlogCard";
 import { PodcastCard } from "@/components/PodcastCard";
+import { JsonLd } from "@/components/JsonLd";
 import { client } from "@/lib/sanity/client";
 import { latestPodcastsQuery, latestPostsQuery } from "@/lib/sanity/queries";
 import type { PodcastPreview, PostPreview } from "@/lib/sanity/types";
+import { createPageMetadata } from "@/lib/seo/metadata";
+import { siteConfig } from "@/lib/seo/site";
+import { webSiteSchema } from "@/lib/seo/schemas";
+
+export const metadata: Metadata = createPageMetadata({
+  title: siteConfig.name,
+  description: siteConfig.description,
+  path: "/",
+});
 
 export default async function HomePage() {
   const [podcasts, posts] = await Promise.all([
@@ -13,6 +24,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={webSiteSchema()} />
       <section className="border-b border-zinc-200 bg-gradient-to-b from-zinc-50 to-white">
         <div className="mx-auto max-w-6xl px-6 py-24">
           <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
