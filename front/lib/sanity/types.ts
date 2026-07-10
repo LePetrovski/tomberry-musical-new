@@ -42,6 +42,16 @@ export type PodcastPreview = Pick<
 >;
 
 export type PostPreview = Pick<
-  Post,
-  "_id" | "title" | "slug" | "excerpt" | "coverImage" | "author" | "publishedAt"
+    Post,
+    "_id" | "title" | "slug" | "excerpt" | "coverImage" | "author" | "publishedAt"
 >;
+
+export type Page = {
+    _id: string;
+    title: string;
+    slug: string;
+    description: string;
+    coverImage?: SanityImage;
+    body: PortableTextBlock[];
+    _updatedAt: string;
+};

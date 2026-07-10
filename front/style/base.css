@@ -1,0 +1,52 @@
+:root {
+    --container-max-width: 1630px;
+    --container-padding-inline: clamp(1rem, 5vw, 2rem);
+    scrollbar-color: var(--color-primary) var(--color-secondary);
+    position: relative;
+}
+
+html, body {
+}
+
+body {
+    color: var(--color-primary);
+    background-color:  var(--color-primary-500);
+    font-family: var(--font-secondary);
+    overflow-y: scroll;
+}
+
+.font-mono {
+    font-family: var(--font-secondary);
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: var(--font-primary);
+}
+
+h1 {
+    @apply text-6xl font-bold;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    @apply text-5xl font-semibold;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    @apply text-4xl font-semibold;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+p {
+    @apply text-base;
+}
+
+.container {
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--container-padding-inline);
+}

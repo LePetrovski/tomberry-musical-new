@@ -1,4 +1,4 @@
-import type { Podcast, Post } from "@/lib/sanity/types";
+import type { Page, Podcast, Post } from "@/lib/sanity/types";
 import { absoluteUrl, getSiteUrl, siteConfig } from "./site";
 
 export type BreadcrumbItem = {
@@ -123,5 +123,23 @@ export function podcastEpisodeSchema(podcast: Podcast, imageUrl?: string) {
           },
         }
       : {}),
+  };
+}
+
+export function webPageSchema(page: Page, imageUrl?: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: page.title,
+    description: page.description,
+    url: absoluteUrl(`/${page.slug}`),
+    inLanguage: siteConfig.language,
+    dateModified: page._updatedAt,
+    ...(imageUrl ? { image: [imageUrl] } : {}),
+    isPartOf: {
+      "@type": "WebSite",
+      name: siteConfig.name,
+      url: getSiteUrl(),
+    },
   };
 }

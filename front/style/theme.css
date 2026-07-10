@@ -1,0 +1,42 @@
+@theme {
+    --font-primary: var(--font-source-serif), serif;
+    --font-secondary: var(--font-ubuntu-sans), sans-serif;
+    
+    --color-primary-200: #FFFFFF;
+    --color-primary-400: #FAFAFA;
+    --color-primary-500: #F7F5F0;
+    --color-primary-600: #EDEDED;
+    --color-primary-700: #888888;
+    --color-primary-800: #E0E0E0;
+    --color-primary-900: #BEBEBE;
+    --color-primary: var(--color-primary-500);
+    --color-secondary-0: #000000;
+    --color-secondary-100: #424242;
+    --color-secondary-200: #212020;
+    --color-secondary-400: #292929;
+    --color-secondary-500: #191919;
+    --color-secondary-600: #363636;
+    --color-secondary-700: #2F2E2E;
+    --color-secondary-800: #272727;
+    --color-secondary-900: #222222;
+    --color-tertiary-500: #E2C01B;
+    --color-tertiary: var(--color-tertiary-500);
+
+    --text-normal: 1rem;
+    --text-base: clamp(1rem, calc(0.85rem + 0.4vw), 1.25rem); /*16*/
+    --text-2xl: clamp(1.125rem, calc(0.9rem + 0.6vw), 1.5rem); /*24*/
+    --text-2xxl: clamp(1.25rem, calc(1rem + 0.75vw), 1.75rem); /*28*/
+    --text-3xl: clamp(1.5rem, calc(1.2rem + 0.8vw), 2rem); /*32*/
+    --text-4xl: clamp(1.75rem, calc(1.2rem + 1.2vw), 2.5rem); /*40*/
+    --text-5xl: clamp(1.75rem, calc(1rem + 2vw), 3rem); /*48*/
+    --text-6xl: clamp(2rem, calc(0.95rem + 2.8vw), 3.75rem); /*64*/
+    --text-7xl: clamp(1.5rem, calc(0.75rem + 3.75vw), 4.5rem); /*88*/
+    --text-8xl: clamp(3rem, calc(0.95rem + 4vw), 5.75rem); /*92*/
+    --text-9xl: clamp(3.5rem, calc(0.95rem + 4.5vw), 6.75rem); /*108*/
+    --text-10xl: clamp(4rem, calc(0.95rem + 5vw), 7.75rem); /*124*/
+    --text-32xl: clamp(4rem, calc(0.8668rem + 8.3551vw), 8rem); /*128*/
+    --text-40xl: clamp(4.5rem, calc(0.8668rem + 9.3551vw), 9rem); /*144*/
+
+    --text-header: clamp(1.75rem, calc(1rem + 3.75vw), 4.75rem); /*76*/
+
+}
