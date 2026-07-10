@@ -9,9 +9,9 @@ html, body {
 }
 
 body {
-    color: var(--color-primary);
+    color: var(--color-secondary-500);
     background-color:  var(--color-primary-500);
-    font-family: var(--font-secondary);
+    font-family: var(--font-primary);
     overflow-y: scroll;
 }
 

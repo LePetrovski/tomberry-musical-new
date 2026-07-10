@@ -12,27 +12,12 @@
 
 .sceneRoot {
     position: relative;
-    cursor: none;
     isolation: isolate;
+    touch-action: none;
 }
 
 .sceneCanvas {
-    cursor: none;
-}
-
-.customCursor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 30;
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--color-secondary-500);
-    border-radius: 9999px;
-    background: var(--color-primary-200);
-    pointer-events: none;
-    opacity: 0;
-    will-change: transform;
+    cursor: default;
 }
 
 .projectTooltip {

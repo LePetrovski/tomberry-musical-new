@@ -4,7 +4,7 @@ import type { PodcastPreview } from "@/lib/sanity/types";
 import { Environment, Loader, MeshRefractionMaterial, useEnvironment, useGLTF } from "@react-three/drei";
 import { Canvas, type ThreeEvent, useFrame, useLoader } from "@react-three/fiber";
 import { useRouter } from "next/navigation";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   CanvasTexture,
   Color,
@@ -28,9 +28,57 @@ type Props = {
     podcasts: PodcastPreview[];
 }
 
-const TILE_TEXTURE_WIDTH = 360;
-const TILE_TEXTURE_HEIGHT = 500;
-const TILE_EPISODE_BAND_HEIGHT = 52;
+const TILE_TEXTURE_WIDTH = 500;
+const TILE_TEXTURE_HEIGHT = 320;
+const TILE_EPISODE_BAND_HEIGHT = 40;
+const TILE_PLANE_WIDTH = 1.1;
+const TILE_PLANE_HEIGHT = TILE_PLANE_WIDTH * (TILE_TEXTURE_HEIGHT / TILE_TEXTURE_WIDTH);
+const TUBE_Y_SPACING = 2.7;
+const TUBE_REPEAT_COUNT = 3;
+const GRID_LINE_COLOR = new Color("#0c5d66"); // --color-secondary-900
+
+function drawImageCover(
+    ctx: CanvasRenderingContext2D,
+    image: CanvasImageSource,
+    imageWidth: number,
+    imageHeight: number,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+) {
+    if (imageWidth <= 0 || imageHeight <= 0) return;
+
+    const scale = Math.max(width / imageWidth, height / imageHeight);
+    const drawWidth = imageWidth * scale;
+    const drawHeight = imageHeight * scale;
+    const offsetX = x + (width - drawWidth) / 2;
+    const offsetY = y + (height - drawHeight) / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
+    ctx.clip();
+    ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+    ctx.restore();
+}
+
+function getLatestRowScrollOffset(rows: number, ySpacing: number, repeatCount: number): number {
+    const totalRows = rows * repeatCount;
+    const mid = (totalRows - 1) / 2;
+    let bestRowIndex = 0;
+    let bestDistance = Infinity;
+
+    for (let rowIndex = 0; rowIndex < totalRows; rowIndex += rows) {
+        const distance = Math.abs(rowIndex - mid);
+        if (distance < bestDistance) {
+            bestDistance = distance;
+            bestRowIndex = rowIndex;
+        }
+    }
+
+    return (bestRowIndex - mid) * ySpacing;
+}
 
 function buildPodcastTileTexture(
     coverTexture: Texture,
@@ -41,35 +89,36 @@ function buildPodcastTileTexture(
     canvas.height = TILE_TEXTURE_HEIGHT;
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) return coverTexture;
+    if (!ctx) {
+        const fallback = new CanvasTexture(canvas);
+        fallback.colorSpace = SRGBColorSpace;
+        return fallback;
+    }
 
     const bandHeight = episodeNumber != null ? TILE_EPISODE_BAND_HEIGHT : 0;
     const coverHeight = TILE_TEXTURE_HEIGHT - bandHeight;
 
+    ctx.fillStyle = "#f7f5f0";
+    ctx.fillRect(0, 0, TILE_TEXTURE_WIDTH, TILE_TEXTURE_HEIGHT);
+
     if (episodeNumber != null) {
-        ctx.fillStyle = "#f7f5f0";
-        ctx.fillRect(0, 0, TILE_TEXTURE_WIDTH, bandHeight);
         ctx.fillStyle = "#3f3f46";
-        ctx.font = "600 18px system-ui, -apple-system, sans-serif";
+        ctx.font = "600 16px system-ui, -apple-system, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`ÉPISODE ${episodeNumber}`, TILE_TEXTURE_WIDTH / 2, bandHeight / 2);
     }
 
     const image = coverTexture.image as HTMLImageElement | undefined;
-    if (image && image.width > 0 && image.height > 0) {
-        const scale = Math.max(TILE_TEXTURE_WIDTH / image.width, coverHeight / image.height);
-        const sourceWidth = TILE_TEXTURE_WIDTH / scale;
-        const sourceHeight = coverHeight / scale;
-        const sourceX = (image.width - sourceWidth) / 2;
-        const sourceY = (image.height - sourceHeight) / 2;
+    const imageWidth = image?.naturalWidth || image?.width || 0;
+    const imageHeight = image?.naturalHeight || image?.height || 0;
 
-        ctx.drawImage(
+    if (image && imageWidth > 0 && imageHeight > 0) {
+        drawImageCover(
+            ctx,
             image,
-            sourceX,
-            sourceY,
-            sourceWidth,
-            sourceHeight,
+            imageWidth,
+            imageHeight,
             0,
             bandHeight,
             TILE_TEXTURE_WIDTH,
@@ -137,17 +186,15 @@ function PodcastTile({
     onHoverEnd: () => void;
 }) {
     const router = useRouter();
-    const [tileTexture, setTileTexture] = useState<Texture>(() => coverTexture);
+    const [tileTexture, setTileTexture] = useState<Texture>(() =>
+        buildPodcastTileTexture(coverTexture, podcast.episodeNumber),
+    );
 
     useEffect(() => {
         const image = coverTexture.image as HTMLImageElement | undefined;
 
         const rebuild = () => {
-            setTileTexture((current) => {
-                const next = buildPodcastTileTexture(coverTexture, podcast.episodeNumber);
-                if (current !== coverTexture) current.dispose();
-                return next;
-            });
+            setTileTexture(buildPodcastTileTexture(coverTexture, podcast.episodeNumber));
         };
 
         if (!image) {
@@ -164,11 +211,7 @@ function PodcastTile({
         return () => image.removeEventListener("load", rebuild);
     }, [coverTexture, podcast.episodeNumber]);
 
-    useEffect(() => {
-        return () => {
-            if (tileTexture !== coverTexture) tileTexture.dispose();
-        };
-    }, [tileTexture, coverTexture]);
+    useEffect(() => () => tileTexture.dispose(), [tileTexture]);
 
     return (
         <mesh
@@ -189,7 +232,7 @@ function PodcastTile({
                 onHoverEnd();
             }}
         >
-            <planeGeometry args={[0.72, 1]} />
+            <planeGeometry args={[TILE_PLANE_WIDTH, TILE_PLANE_HEIGHT]} />
             <DoubleSidedTileMaterial map={tileTexture} />
         </mesh>
     );
@@ -213,6 +256,7 @@ function GridPlane({
             uTime: { value: 0.0 },
             uScrollSpeed: { value: 0.01 },
             uResolution: { value: new Vector2(1, 1) },
+            uLineColor: { value: GRID_LINE_COLOR.clone() },
         }),
         [],
         );
@@ -268,6 +312,7 @@ function GridPlane({
                     uniform float uTime;
                     uniform float uScrollSpeed;
                     uniform vec2 uResolution;
+                    uniform vec3 uLineColor;
     
                     float gridLine(float coord, float width) {
                         float fw = fwidth(coord);
@@ -298,8 +343,10 @@ function GridPlane({
 
 const CRYSTAL_COLOR = new Color(0x43e0e0);
 const CRYSTAL_EMISSIVE = new Color(0xc1ffff);
-const MAIN_CRYSTAL_ROUGHNESS = 0.40;
-const MAIN_CRYSTAL_METALNESS = 0.45;
+const MAIN_CRYSTAL_ROUGHNESS = 0.20;
+const MAIN_CRYSTAL_METALNESS = 0.35;
+const MINI_CRYSTAL_ROUGHNESS = 0.20;
+const MINI_CRYSTAL_METALNESS = 0.45;
 
 function configureCrystalMesh(
     root: Object3D,
@@ -351,7 +398,7 @@ function CrystalScene({ tubeAngleRef }: { tubeAngleRef: React.MutableRefObject<n
             MAIN_CRYSTAL_ROUGHNESS,
             MAIN_CRYSTAL_METALNESS,
         );
-        configureCrystalMesh(miniCrystal, "MiniCrystal", envMap, 0.16, 0);
+        configureCrystalMesh(miniCrystal, "MiniCrystal", envMap, MINI_CRYSTAL_ROUGHNESS, MINI_CRYSTAL_METALNESS);
     }, [mainCrystal, miniCrystal, envMap]);
 
     useFrame((_, delta) => {
@@ -371,7 +418,7 @@ function CrystalScene({ tubeAngleRef }: { tubeAngleRef: React.MutableRefObject<n
     });
 
     return (
-        <group ref={crystalsRef} position={[0, 1, 0]}>
+        <group ref={crystalsRef} position={[0, 1, 0]} scale={0.8}>
             <primitive ref={mainCrystalRef} object={mainCrystal} scale={0.7}>
                 <MeshRefractionMaterial envMap={envMap} toneMapped={false} />
             </primitive>
@@ -380,7 +427,7 @@ function CrystalScene({ tubeAngleRef }: { tubeAngleRef: React.MutableRefObject<n
                 ref={secondCrystalRef}
                 object={miniCrystal}
                 scale={0.14}
-                position={[1, 0.8, -0.8]}
+                position={[1, 0.3, -0.8]}
                 rotation={[Math.PI, 0, 0]}
             >
                 <MeshRefractionMaterial envMap={envMap} toneMapped={false} />
@@ -422,6 +469,10 @@ function ImageTube({
     const groupRef = useRef<Object3D>(null);
     const rowGroupRefs = useRef<Array<Object3D | null>>([]);
     const scrollCurrent = useRef(0);
+
+    useLayoutEffect(() => {
+        scrollCurrent.current = scrollTargetRef.current;
+    }, [scrollTargetRef]);
     const angle = useRef(0);
     const rotationSpeedScale = useRef(1);
 
@@ -442,9 +493,9 @@ function ImageTube({
     const textures = Array.isArray(loadedTextures) ? loadedTextures : [loadedTextures];
 
     const radius = 4;
-    const ySpacing = 2.7;
+    const ySpacing = TUBE_Y_SPACING;
     const loopHeight = rows * ySpacing;
-    const repeatCount = 3;
+    const repeatCount = TUBE_REPEAT_COUNT;
     const totalRows = rows * repeatCount;
 
     const rowSpeed = useMemo(() => {
@@ -552,13 +603,16 @@ function ImageTube({
 export function PodcastSlider({ podcasts }: Props) {
     const containerRef = useRef<HTMLDivElement>(null);
     const targetCenterUv = useRef(new Vector2(0.5, 0.5));
-    const tubeScrollTarget = useRef(0);
+    const tubeRows = 5;
+    const tubeCols = 12;
+    const initialTubeScroll = useMemo(
+        () => getLatestRowScrollOffset(tubeRows, TUBE_Y_SPACING, TUBE_REPEAT_COUNT),
+        [],
+    );
+    const tubeScrollTarget = useRef(initialTubeScroll);
     const tubeSpinVelocity = useRef(0);
     const tubeNaturalDir = useRef(1);
     const tubeAngle = useRef(0);
-  
-    const tubeRows = 5;
-    const tubeCols = 12;
   
     const baseSpeedRef = useRef(0.16);
     const hoverSlowdownEnabledRef = useRef(true);
@@ -573,16 +627,17 @@ export function PodcastSlider({ podcasts }: Props) {
       const tooltipCurrent = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
       const tooltipRaf = useRef<number | null>(null);
   
-      const cursorElRef = useRef<HTMLDivElement | null>(null);
-      const cursorTarget = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-      const cursorCurrent = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-      const cursorActive = useRef(false);
-      const cursorRaf = useRef<number | null>(null);
-  
     const setTooltipFromClientPoint = useCallback((clientX: number, clientY: number) => {
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
       tooltipTarget.current = { x: clientX - rect.left, y: clientY - rect.top };
+    }, []);
+
+    const setSceneCursor = useCallback((cursor: string) => {
+      const canvas = containerRef.current?.querySelector("canvas");
+      if (canvas instanceof HTMLCanvasElement) {
+        canvas.style.cursor = cursor;
+      }
     }, []);
   
       useEffect(() => {
@@ -607,41 +662,19 @@ export function PodcastSlider({ podcasts }: Props) {
         };
       }, []);
   
-      useEffect(() => {
-        const tick = () => {
-          const el = cursorElRef.current;
-          if (el) {
-            const lerp = 0.14;
-            cursorCurrent.current.x += (cursorTarget.current.x - cursorCurrent.current.x) * lerp;
-            cursorCurrent.current.y += (cursorTarget.current.y - cursorCurrent.current.y) * lerp;
-  
-            const x = cursorCurrent.current.x + 8;
-            const y = cursorCurrent.current.y + 8;
-            el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) translate(-50%, -50%)`;
-            el.style.opacity = cursorActive.current ? "1" : "0";
-          }
-  
-          cursorRaf.current = requestAnimationFrame(tick);
-        };
-  
-        cursorRaf.current = requestAnimationFrame(tick);
-        return () => {
-          if (cursorRaf.current != null) cancelAnimationFrame(cursorRaf.current);
-        };
-      }, []);
-  
       const onImageHoverStart = useCallback(
         (projectName: string, event: ThreeEvent<PointerEvent>) => {
+          setSceneCursor("pointer");
           setHoveredProject(projectName);
           setTooltipFromClientPoint(event.nativeEvent.clientX, event.nativeEvent.clientY);
-  
+
           if (hoverSlowdownEnabledRef.current) {
             rotationSpeedScaleTargetRef.current = hoverSlowdownScaleRef.current;
           }
-  
+
           tooltipCurrent.current = { ...tooltipTarget.current };
         },
-        [setTooltipFromClientPoint],
+        [setSceneCursor, setTooltipFromClientPoint],
       );
   
       const onImageHoverMove = useCallback(
@@ -652,9 +685,10 @@ export function PodcastSlider({ podcasts }: Props) {
       );
   
       const onImageHoverEnd = useCallback(() => {
+        setSceneCursor("default");
         setHoveredProject(null);
         rotationSpeedScaleTargetRef.current = 1;
-      }, []);
+      }, [setSceneCursor]);
   
       useEffect(() => {
         const root = containerRef.current;
@@ -662,20 +696,6 @@ export function PodcastSlider({ podcasts }: Props) {
 
         const updateFromPointer = (clientX: number, clientY: number) => {
             const rect = root.getBoundingClientRect();
-            const inside =
-                clientX >= rect.left &&
-                clientX <= rect.right &&
-                clientY >= rect.top &&
-                clientY <= rect.bottom;
-
-            if (!inside) {
-                cursorActive.current = false;
-                return;
-            }
-
-            cursorTarget.current = { x: clientX - rect.left, y: clientY - rect.top };
-            cursorActive.current = true;
-
             if (rect.width <= 0 || rect.height <= 0) return;
 
             const nx = (clientX - rect.left) / rect.width;
@@ -693,7 +713,6 @@ export function PodcastSlider({ podcasts }: Props) {
         };
 
         const onPointerLeave = () => {
-            cursorActive.current = false;
             targetCenterUv.current.set(0.5, 0.5);
             onImageHoverEnd();
         };
@@ -705,15 +724,73 @@ export function PodcastSlider({ podcasts }: Props) {
             window.removeEventListener("pointermove", onPointerMove);
             root.removeEventListener("pointerleave", onPointerLeave);
         };
-      }, [onImageHoverEnd]);
+      }, [onImageHoverEnd, setSceneCursor]);
   
-      const onWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
-        tubeScrollTarget.current += event.deltaY * 0.0016;
-        tubeSpinVelocity.current += event.deltaY * 0.0025;
-  
-        if (event.deltaY < 0) tubeNaturalDir.current = -1;
-        else if (event.deltaY > 0) tubeNaturalDir.current = 1;
+      const applyScrollDelta = useCallback((deltaY: number) => {
+        tubeScrollTarget.current += deltaY * 0.0016;
+        tubeSpinVelocity.current += deltaY * 0.0025;
+
+        if (deltaY < 0) tubeNaturalDir.current = -1;
+        else if (deltaY > 0) tubeNaturalDir.current = 1;
       }, []);
+
+      const onWheel = useCallback(
+        (event: React.WheelEvent<HTMLDivElement>) => {
+          event.preventDefault();
+          applyScrollDelta(event.deltaY);
+        },
+        [applyScrollDelta],
+      );
+
+      useEffect(() => {
+        const root = containerRef.current;
+        if (!root) return;
+
+        let activePointer: number | null = null;
+        let lastY: number | null = null;
+
+        const onPointerDown = (event: PointerEvent) => {
+          if (event.pointerType !== "touch") return;
+
+          activePointer = event.pointerId;
+          lastY = event.clientY;
+          root.setPointerCapture(event.pointerId);
+        };
+
+        const onPointerMove = (event: PointerEvent) => {
+          if (activePointer !== event.pointerId || lastY == null) return;
+
+          const deltaY = lastY - event.clientY;
+          lastY = event.clientY;
+
+          if (deltaY === 0) return;
+
+          event.preventDefault();
+          applyScrollDelta(deltaY * 3.5);
+        };
+
+        const endPointer = (event: PointerEvent) => {
+          if (activePointer !== event.pointerId) return;
+
+          activePointer = null;
+          lastY = null;
+          if (root.hasPointerCapture(event.pointerId)) {
+            root.releasePointerCapture(event.pointerId);
+          }
+        };
+
+        root.addEventListener("pointerdown", onPointerDown);
+        root.addEventListener("pointermove", onPointerMove, { passive: false });
+        root.addEventListener("pointerup", endPointer);
+        root.addEventListener("pointercancel", endPointer);
+
+        return () => {
+          root.removeEventListener("pointerdown", onPointerDown);
+          root.removeEventListener("pointermove", onPointerMove);
+          root.removeEventListener("pointerup", endPointer);
+          root.removeEventListener("pointercancel", endPointer);
+        };
+      }, [applyScrollDelta]);
   
       return (
         <div
@@ -768,7 +845,6 @@ export function PodcastSlider({ podcasts }: Props) {
             </div>
           )}
   
-          <div className="customCursor" ref={cursorElRef} aria-hidden="true" />
           <Loader />
         </div>
     );
