@@ -1,10 +1,16 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import type { NextConfig } from "next";
 
+const monorepoRoot = path.resolve(__dirname, "..");
+const useMonorepoTurbopackRoot = existsSync(
+  path.join(monorepoRoot, "node_modules"),
+);
+
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: path.resolve(__dirname, ".."),
-  },
+  ...(useMonorepoTurbopackRoot
+    ? { turbopack: { root: monorepoRoot } }
+    : {}),
   images: {
     remotePatterns: [
       {
