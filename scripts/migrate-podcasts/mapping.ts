@@ -16,6 +16,14 @@ export type PodcastMappingConfig = {
     episodeNumber: string[];
     duration: string[];
     audioUrl: string[];
+    youtube: string[];
+    embedYoutube: string[];
+    soundcloud: string[];
+    embedSoundcloud: string[];
+    first: string[];
+    second: string[];
+    third: string[];
+    fourth: string[];
     publishedAt: string[];
   };
 };
@@ -65,8 +73,6 @@ export const defaultMapping: PodcastMappingConfig = {
     ],
     duration: ["duration", "duree", "length", "duree_minutes"],
     audioUrl: [
-      "soundcloud",
-      "youtube",
       "mega",
       "gamingway",
       "audio_url",
@@ -77,6 +83,14 @@ export const defaultMapping: PodcastMappingConfig = {
       "file_url",
       "media_url",
     ],
+    youtube: ["youtube"],
+    embedYoutube: ["embedYoutube", "embed_youtube"],
+    soundcloud: ["soundcloud", "soundCloud"],
+    embedSoundcloud: ["embedSoundcloud", "embed_soundcloud"],
+    first: ["first"],
+    second: ["second"],
+    third: ["third"],
+    fourth: ["fourth"],
     publishedAt: [
       "updated_at",
       "published_at",

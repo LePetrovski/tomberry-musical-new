@@ -14,6 +14,14 @@ export type Podcast = {
   episodeNumber?: number;
   duration?: string;
   audioUrl?: string;
+  youtube?: string;
+  embedYoutube?: string;
+  soundcloud?: string;
+  embedSoundcloud?: string;
+  first?: SanityImage;
+  second?: SanityImage;
+  third?: SanityImage;
+  fourth?: SanityImage;
   publishedAt: string;
   body?: PortableTextBlock[];
 };
@@ -39,9 +47,21 @@ export type PodcastPreview = Pick<
   | "episodeNumber"
   | "duration"
   | "publishedAt"
+  | "soundcloud"
+  | "embedSoundcloud"
 >;
 
 export type PostPreview = Pick<
-  Post,
-  "_id" | "title" | "slug" | "excerpt" | "coverImage" | "author" | "publishedAt"
+    Post,
+    "_id" | "title" | "slug" | "excerpt" | "coverImage" | "author" | "publishedAt"
 >;
+
+export type Page = {
+    _id: string;
+    title: string;
+    slug: string;
+    description: string;
+    coverImage?: SanityImage;
+    body: PortableTextBlock[];
+    _updatedAt: string;
+};

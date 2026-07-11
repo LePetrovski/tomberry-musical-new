@@ -1,11 +1,16 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { JsonLd } from "@/components/JsonLd";
 import { RichText } from "@/components/RichText";
+import { getPodcastBySlug } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
 import { urlFor } from "@/lib/sanity/image";
-import { podcastBySlugQuery, podcastSlugsQuery } from "@/lib/sanity/queries";
-import type { Podcast } from "@/lib/sanity/types";
+import { podcastSlugsQuery } from "@/lib/sanity/queries";
+import { getOgImageUrl } from "@/lib/seo/images";
+import { createPageMetadata } from "@/lib/seo/metadata";
+import { podcastEpisodeSchema } from "@/lib/seo/schemas";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -26,28 +31,44 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const podcast = await client.fetch<Podcast | null>(podcastBySlugQuery, { slug }).catch(() => null);
+  const podcast = await getPodcastBySlug(slug);
 
   if (!podcast) {
     return { title: "Podcast introuvable" };
   }
 
-  return {
+  return createPageMetadata({
     title: podcast.title,
     description: podcast.description,
-  };
+    path: `/podcasts/${slug}`,
+    image: getOgImageUrl(podcast.coverImage),
+    type: "article",
+    publishedTime: podcast.publishedAt,
+    modifiedTime: podcast.publishedAt,
+  });
 }
 
 export default async function PodcastDetailPage({ params }: Props) {
   const { slug } = await params;
-  const podcast = await client.fetch<Podcast | null>(podcastBySlugQuery, { slug }).catch(() => null);
+  const podcast = await getPodcastBySlug(slug);
 
   if (!podcast) {
     notFound();
   }
 
+  const ogImage = getOgImageUrl(podcast.coverImage);
+
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
+      <JsonLd data={podcastEpisodeSchema(podcast, ogImage)} />
+      <Breadcrumbs
+        className="mb-8"
+        items={[
+          { label: "Accueil", href: "/" },
+          { label: "Podcasts", href: "/podcasts" },
+          { label: podcast.title },
+        ]}
+      />
       <header className="mb-10">
         <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
           {podcast.episodeNumber && <span>Épisode {podcast.episodeNumber}</span>}

@@ -24,7 +24,7 @@ const postFields = `
   body
 `;
 
-export const podcastsQuery = `*[_type == "podcast"] | order(publishedAt desc) {
+export const podcastsQuery = `*[_type == "podcast"] | order(episodeNumber desc) {
   _id,
   title,
   "slug": slug.current,
@@ -32,7 +32,9 @@ export const podcastsQuery = `*[_type == "podcast"] | order(publishedAt desc) {
   coverImage,
   episodeNumber,
   duration,
-  publishedAt
+  publishedAt,
+  soundcloud,
+  embedSoundcloud
 }`;
 
 export const podcastBySlugQuery = `*[_type == "podcast" && slug.current == $slug][0] {
@@ -56,6 +58,22 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0] {
 }`;
 
 export const postSlugsQuery = `*[_type == "post" && defined(slug.current)][].slug.current`;
+
+const pageFields = `
+  _id,
+  title,
+  "slug": slug.current,
+  description,
+  coverImage,
+  body,
+  _updatedAt
+`;
+
+export const pageBySlugQuery = `*[_type == "page" && slug.current == $slug][0] {
+  ${pageFields}
+}`;
+
+export const pageSlugsQuery = `*[_type == "page" && defined(slug.current)][].slug.current`;
 
 export const latestPodcastsQuery = `*[_type == "podcast"] | order(publishedAt desc)[0...3] {
   _id,
