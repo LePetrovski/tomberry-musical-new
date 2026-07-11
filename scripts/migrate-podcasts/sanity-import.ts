@@ -6,6 +6,26 @@ type UploadContext = {
   assetsBaseUrl?: string;
 };
 
+type SanityImageField = {
+  _type: "image";
+  asset: { _type: "reference"; _ref: string };
+  alt?: string;
+};
+
+type ExistingPodcast = Record<string, unknown>;
+
+export type ImportResult = {
+  status: "created" | "updated" | "skipped";
+  fields?: string[];
+};
+
+const EXTRA_IMAGE_FIELDS = [
+  { draftKey: "firstImageUrl", sanityKey: "first" },
+  { draftKey: "secondImageUrl", sanityKey: "second" },
+  { draftKey: "thirdImageUrl", sanityKey: "third" },
+  { draftKey: "fourthImageUrl", sanityKey: "fourth" },
+] as const;
+
 export function createMigrationClient() {
   const projectId =
     process.env.SANITY_PROJECT_ID ??
@@ -39,17 +59,52 @@ export function createMigrationClient() {
   });
 }
 
+function isEmpty(value: unknown): boolean {
+  if (value === undefined || value === null) return true;
+  if (typeof value === "string" && value.trim() === "") return true;
+  if (Array.isArray(value) && value.length === 0) return true;
+
+  if (typeof value === "object") {
+    if ("asset" in value) {
+      const asset = (value as { asset?: { _ref?: string } }).asset;
+      return !asset?._ref;
+    }
+    if ("current" in value) {
+      const current = (value as { current?: string }).current;
+      return !current || current.trim() === "";
+    }
+  }
+
+  return false;
+}
+
+function pickMissingFields(
+  existing: ExistingPodcast | null,
+  candidate: Record<string, unknown>,
+): Record<string, unknown> {
+  const patch: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(candidate)) {
+    if (value === undefined) continue;
+    if (isEmpty(existing?.[key])) {
+      patch[key] = value;
+    }
+  }
+
+  return patch;
+}
+
 async function resolveImageUrl(
-  coverImageUrl: string,
+  imagePath: string,
   assetsBaseUrl?: string,
 ): Promise<string> {
-  if (/^https?:\/\//i.test(coverImageUrl)) {
-    return coverImageUrl;
+  if (/^https?:\/\//i.test(imagePath)) {
+    return imagePath;
   }
 
   if (!assetsBaseUrl) {
     throw new Error(
-      `Image relative "${coverImageUrl}" : définis MYSQL_ASSETS_BASE_URL dans .env.migration`,
+      `Image relative "${imagePath}" : définis MYSQL_ASSETS_BASE_URL dans .env.migration`,
     );
   }
 
@@ -60,18 +115,18 @@ async function resolveImageUrl(
   const normalizedPath = coverPath.startsWith("/") ? coverPath.slice(1) : coverPath;
 
   return new URL(
-    `${normalizedPath}${coverImageUrl}`.replace(/\/{2,}/g, "/"),
+    `${normalizedPath}${imagePath}`.replace(/\/{2,}/g, "/"),
     normalizedBase,
   ).toString();
 }
 
-async function uploadCoverImage(
+async function uploadImage(
   { client, assetsBaseUrl }: UploadContext,
-  draft: SanityPodcastDraft,
-) {
-  if (!draft.coverImageUrl) return undefined;
-
-  const imageUrl = await resolveImageUrl(draft.coverImageUrl, assetsBaseUrl);
+  imagePath: string,
+  filename: string,
+  alt?: string,
+): Promise<SanityImageField | undefined> {
+  const imageUrl = await resolveImageUrl(imagePath, assetsBaseUrl);
   const response = await fetch(imageUrl);
 
   if (!response.ok) {
@@ -87,29 +142,59 @@ async function uploadCoverImage(
       : "jpg";
 
   const asset = await client.assets.upload("image", buffer, {
-    filename: `${draft.slug.current}.${extension}`,
+    filename: `${filename}.${extension}`,
     contentType,
   });
 
   return {
-    _type: "image" as const,
-    asset: { _type: "reference" as const, _ref: asset._id },
-    alt: draft.coverImageAlt ?? draft.title,
+    _type: "image",
+    asset: { _type: "reference", _ref: asset._id },
+    alt,
   };
 }
 
-export async function importPodcastDraft(
+async function uploadDraftImages(
   context: UploadContext,
   draft: SanityPodcastDraft,
-) {
-  const coverImage = await uploadCoverImage(context, draft).catch((error) => {
-    console.warn(`⚠ Image ignorée pour "${draft.title}" : ${(error as Error).message}`);
-    return undefined;
-  });
+  existing: ExistingPodcast | null,
+): Promise<Partial<Record<"coverImage" | "first" | "second" | "third" | "fourth", SanityImageField>>> {
+  const images: Partial<Record<"coverImage" | "first" | "second" | "third" | "fourth", SanityImageField>> = {};
 
-  const document = {
-    _id: draft._id,
-    _type: draft._type,
+  if (draft.coverImageUrl && isEmpty(existing?.coverImage)) {
+    images.coverImage = await uploadImage(
+      context,
+      draft.coverImageUrl,
+      `${draft.slug.current}-cover`,
+      draft.coverImageAlt ?? draft.title,
+    ).catch((error) => {
+      console.warn(`⚠ coverImage ignorée pour "${draft.title}" : ${(error as Error).message}`);
+      return undefined;
+    });
+  }
+
+  for (const { draftKey, sanityKey } of EXTRA_IMAGE_FIELDS) {
+    const imagePath = draft[draftKey];
+    if (!imagePath || !isEmpty(existing?.[sanityKey])) continue;
+
+    images[sanityKey] = await uploadImage(
+      context,
+      imagePath,
+      `${draft.slug.current}-${sanityKey}`,
+      draft.title,
+    ).catch((error) => {
+      console.warn(`⚠ ${sanityKey} ignorée pour "${draft.title}" : ${(error as Error).message}`);
+      return undefined;
+    });
+  }
+
+  return images;
+}
+
+function buildCandidateDocument(
+  draft: SanityPodcastDraft,
+  images: Partial<Record<"coverImage" | "first" | "second" | "third" | "fourth", SanityImageField>>,
+): Record<string, unknown> {
+  return {
     title: draft.title,
     slug: draft.slug,
     description: draft.description,
@@ -117,10 +202,44 @@ export async function importPodcastDraft(
     episodeNumber: draft.episodeNumber,
     duration: draft.duration,
     audioUrl: draft.audioUrl,
+    youtube: draft.youtube,
+    embedYoutube: draft.embedYoutube,
+    soundcloud: draft.soundcloud,
+    embedSoundcloud: draft.embedSoundcloud,
     body: draft.body,
-    ...(coverImage ? { coverImage } : {}),
+    ...(images.coverImage ? { coverImage: images.coverImage } : {}),
+    ...(images.first ? { first: images.first } : {}),
+    ...(images.second ? { second: images.second } : {}),
+    ...(images.third ? { third: images.third } : {}),
+    ...(images.fourth ? { fourth: images.fourth } : {}),
   };
+}
 
-  await context.client.createOrReplace(document);
-  return document;
+export async function importPodcastDraft(
+  context: UploadContext,
+  draft: SanityPodcastDraft,
+): Promise<ImportResult> {
+  const existing = await context.client
+    .getDocument(draft._id)
+    .catch(() => null) as ExistingPodcast | null;
+
+  const images = await uploadDraftImages(context, draft, existing);
+  const candidate = buildCandidateDocument(draft, images);
+
+  if (!existing) {
+    await context.client.create({
+      _id: draft._id,
+      _type: draft._type,
+      ...candidate,
+    });
+    return { status: "created", fields: Object.keys(candidate) };
+  }
+
+  const patch = pickMissingFields(existing, candidate);
+  if (Object.keys(patch).length === 0) {
+    return { status: "skipped" };
+  }
+
+  await context.client.patch(draft._id).set(patch).commit();
+  return { status: "updated", fields: Object.keys(patch) };
 }

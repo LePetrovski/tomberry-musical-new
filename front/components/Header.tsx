@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function Header() {
 	return (
-		<header className="fixed mx-auto top-2 left-0 right-0 z-50 rounded-full bg-primary-500/60 backdrop-blur-sm w-fit">
+		<header className="fixed mx-auto top-2 left-0 right-0 z-50 rounded-3xl bg-primary-500 w-fit">
 			<nav className="mx-auto flex gap-12 max-w-6xl items-center justify-between px-6 py-5 text-secondary-500">
 				<Link
 				href="/podcasts"
@@ -19,7 +19,7 @@ export function Header() {
 				<Link href="/" className="text-3xl font-black tracking-tight uppercase">
 					Le Tomberry Musical
 				</Link>
-		
+
 				<Link
 				href="/blog"
 				className="text-xl"

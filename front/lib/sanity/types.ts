@@ -14,6 +14,14 @@ export type Podcast = {
   episodeNumber?: number;
   duration?: string;
   audioUrl?: string;
+  youtube?: string;
+  embedYoutube?: string;
+  soundcloud?: string;
+  embedSoundcloud?: string;
+  first?: SanityImage;
+  second?: SanityImage;
+  third?: SanityImage;
+  fourth?: SanityImage;
   publishedAt: string;
   body?: PortableTextBlock[];
 };
@@ -39,6 +47,8 @@ export type PodcastPreview = Pick<
   | "episodeNumber"
   | "duration"
   | "publishedAt"
+  | "soundcloud"
+  | "embedSoundcloud"
 >;
 
 export type PostPreview = Pick<

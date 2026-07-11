@@ -32,7 +32,9 @@ export const podcastsQuery = `*[_type == "podcast"] | order(episodeNumber desc) 
   coverImage,
   episodeNumber,
   duration,
-  publishedAt
+  publishedAt,
+  soundcloud,
+  embedSoundcloud
 }`;
 
 export const podcastBySlugQuery = `*[_type == "podcast" && slug.current == $slug][0] {

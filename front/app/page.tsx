@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
 import { client } from "@/lib/sanity/client";
 import { podcastsQuery } from "@/lib/sanity/queries";
-import type { PodcastPreview, PostPreview } from "@/lib/sanity/types";
+import type { PodcastPreview } from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/seo/site";
 import { webSiteSchema } from "@/lib/seo/schemas";

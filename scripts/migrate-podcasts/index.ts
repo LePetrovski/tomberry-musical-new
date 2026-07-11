@@ -107,9 +107,9 @@ async function migrate(dryRun: boolean) {
     .map((row) => mysqlRowToSanityPodcast(row, mapping))
     .filter((draft): draft is NonNullable<typeof draft> => draft !== null);
 
-  const skipped = rows.length - drafts.length;
-  if (skipped > 0) {
-    console.log(`${skipped} ligne(s) ignorée(s) (titre ou date manquants).`);
+  const skippedRows = rows.length - drafts.length;
+  if (skippedRows > 0) {
+    console.log(`${skippedRows} ligne(s) ignorée(s) (titre ou date manquants).`);
   }
 
   if (drafts.length === 0) {
@@ -137,14 +137,27 @@ async function migrate(dryRun: boolean) {
     assetsBaseUrl: process.env.MYSQL_ASSETS_BASE_URL,
   };
 
-  let imported = 0;
+  let created = 0;
+  let updated = 0;
+  let unchanged = 0;
+
   for (const draft of drafts) {
-    await importPodcastDraft(context, draft);
-    imported += 1;
-    console.log(`✓ ${imported}/${drafts.length} — ${draft.title}`);
+    const result = await importPodcastDraft(context, draft);
+    if (result.status === "created") {
+      created += 1;
+      console.log(`+ créé — ${draft.title}`);
+    } else if (result.status === "updated") {
+      updated += 1;
+      console.log(`↻ complété (${result.fields?.join(", ")}) — ${draft.title}`);
+    } else {
+      unchanged += 1;
+      console.log(`= inchangé — ${draft.title}`);
+    }
   }
 
-  console.log(`\nImport terminé : ${imported} podcast(s) dans Sanity.`);
+  console.log(
+    `\nImport terminé : ${created} créé(s), ${updated} complété(s), ${unchanged} inchangé(s).`,
+  );
 }
 
 async function main() {
