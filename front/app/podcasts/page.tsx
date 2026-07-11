@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
-import { PodcastCard } from "@/components/PodcastCard";
+import { PodcastArchive } from "@/components/PodcastArchive";
 import { client } from "@/lib/sanity/client";
-import { podcastsQuery } from "@/lib/sanity/queries";
-import type { PodcastPreview } from "@/lib/sanity/types";
+import { podcastCategoriesQuery, podcastsQuery } from "@/lib/sanity/queries";
+import type { PodcastCategory, PodcastPreview } from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { collectionPageSchema } from "@/lib/seo/schemas";
 
@@ -18,10 +19,13 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function PodcastsPage() {
-  const podcasts = await client.fetch<PodcastPreview[]>(podcastsQuery).catch(() => []);
+  const [podcasts, categories] = await Promise.all([
+    client.fetch<PodcastPreview[]>(podcastsQuery).catch(() => []),
+    client.fetch<PodcastCategory[]>(podcastCategoriesQuery).catch(() => []),
+  ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-[1500px] lg:px-10 px-6 pt-30 pb-16">
       <JsonLd data={collectionPageSchema({ name: title, description, path: "/podcasts" })} />
       <Breadcrumbs
         className="mb-8"
@@ -32,17 +36,9 @@ export default async function PodcastsPage() {
         <p className="mt-4 text-lg leading-8 text-zinc-600">{description}</p>
       </div>
 
-      {podcasts.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {podcasts.map((podcast) => (
-            <PodcastCard key={podcast._id} podcast={podcast} />
-          ))}
-        </div>
-      ) : (
-        <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-zinc-600">
-          Aucun podcast publié pour le moment.
-        </p>
-      )}
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-zinc-100" />}>
+        <PodcastArchive podcasts={podcasts} categories={categories} />
+      </Suspense>
     </div>
   );
 }
