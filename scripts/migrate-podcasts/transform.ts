@@ -24,9 +24,17 @@ export type SanityPodcastDraft = {
   episodeNumber?: number;
   duration?: string;
   audioUrl?: string;
+  youtube?: string;
+  embedYoutube?: string;
+  soundcloud?: string;
+  embedSoundcloud?: string;
   body?: PortableTextBlock[];
   coverImageUrl?: string;
   coverImageAlt?: string;
+  firstImageUrl?: string;
+  secondImageUrl?: string;
+  thirdImageUrl?: string;
+  fourthImageUrl?: string;
 };
 
 function toStringValue(value: unknown): string | undefined {
@@ -137,6 +145,39 @@ function pickCoverImage(row: MysqlPodcastRow, config: PodcastMappingConfig): str
   return undefined;
 }
 
+function pickUrlColumn(
+  row: MysqlPodcastRow,
+  aliases: string[],
+): string | undefined {
+  for (const alias of aliases) {
+    const url = extractUrl(row[alias]);
+    if (url) return url;
+  }
+  return undefined;
+}
+
+function pickEmbedColumn(
+  row: MysqlPodcastRow,
+  aliases: string[],
+): string | undefined {
+  for (const alias of aliases) {
+    const value = toStringValue(row[alias]);
+    if (value && value.includes("<iframe")) return value;
+  }
+  return undefined;
+}
+
+function pickImageColumn(
+  row: MysqlPodcastRow,
+  aliases: string[],
+): string | undefined {
+  for (const alias of aliases) {
+    const value = toStringValue(row[alias]);
+    if (value) return value;
+  }
+  return undefined;
+}
+
 function textToPortableText(text: string): PortableTextBlock[] {
   const paragraphs = text
     .split(/\n{2,}/)
@@ -219,6 +260,14 @@ export function mysqlRowToSanityPodcast(
 
   const audioUrl = pickAudioUrl(row, config);
   const coverImageUrl = pickCoverImage(row, config);
+  const youtube = pickUrlColumn(row, config.columns.youtube);
+  const soundcloud = pickUrlColumn(row, config.columns.soundcloud);
+  const embedYoutube = pickEmbedColumn(row, config.columns.embedYoutube);
+  const embedSoundcloud = pickEmbedColumn(row, config.columns.embedSoundcloud);
+  const firstImageUrl = pickImageColumn(row, config.columns.first);
+  const secondImageUrl = pickImageColumn(row, config.columns.second);
+  const thirdImageUrl = pickImageColumn(row, config.columns.third);
+  const fourthImageUrl = pickImageColumn(row, config.columns.fourth);
 
   return {
     _id: buildDocumentId(row),
@@ -230,8 +279,16 @@ export function mysqlRowToSanityPodcast(
     episodeNumber,
     duration,
     audioUrl,
+    youtube,
+    embedYoutube,
+    soundcloud,
+    embedSoundcloud,
     body,
     coverImageUrl,
     coverImageAlt: title,
+    firstImageUrl,
+    secondImageUrl,
+    thirdImageUrl,
+    fourthImageUrl,
   };
 }

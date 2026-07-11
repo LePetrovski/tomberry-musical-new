@@ -1,24 +1,35 @@
 import type { Metadata } from "next";
 import { BlogCard } from "@/components/BlogCard";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { JsonLd } from "@/components/JsonLd";
 import { client } from "@/lib/sanity/client";
 import { postsQuery } from "@/lib/sanity/queries";
 import type { PostPreview } from "@/lib/sanity/types";
+import { createPageMetadata } from "@/lib/seo/metadata";
+import { collectionPageSchema } from "@/lib/seo/schemas";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Articles, analyses et coulisses.",
-};
+const title = "Blog";
+const description = "Articles, analyses et coulisses.";
+
+export const metadata: Metadata = createPageMetadata({
+  title,
+  description,
+  path: "/blog",
+});
 
 export default async function BlogPage() {
   const posts = await client.fetch<PostPreview[]>(postsQuery).catch(() => []);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
+      <JsonLd data={collectionPageSchema({ name: title, description, path: "/blog" })} />
+      <Breadcrumbs
+        className="mb-8"
+        items={[{ label: "Accueil", href: "/" }, { label: title }]}
+      />
       <div className="mb-12 max-w-2xl">
-        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">Blog</h1>
-        <p className="mt-4 text-lg leading-8 text-zinc-600">
-          Explorez nos articles pour approfondir les sujets abordés dans le podcast.
-        </p>
+        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{title}</h1>
+        <p className="mt-4 text-lg leading-8 text-zinc-600">{description}</p>
       </div>
 
       {posts.length > 0 ? (
