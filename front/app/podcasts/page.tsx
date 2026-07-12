@@ -26,7 +26,7 @@ export default async function PodcastsPage() {
   ]);
 
   return (
-    <PageWrapper background="cross" width="wide">
+    <PageWrapper background="polka" width="wide">
         <JsonLd data={collectionPageSchema({ name: title, description, path: "/podcasts" })} />
         <Breadcrumbs
             className="mb-8"

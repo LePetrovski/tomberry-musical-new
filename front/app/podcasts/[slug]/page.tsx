@@ -60,7 +60,7 @@ export default async function PodcastDetailPage({ params }: Props) {
     const ogImage = getOgImageUrl(podcast.coverImage);
 
     return (
-        <PageWrapper background="grid-thin" width="wide">
+        <PageWrapper background="cross" width="wide">
             <article>
                 <JsonLd data={podcastEpisodeSchema(podcast, ogImage)} />
                 <Breadcrumbs

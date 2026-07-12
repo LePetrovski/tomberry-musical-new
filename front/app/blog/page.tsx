@@ -22,13 +22,13 @@ export default async function BlogPage() {
   const posts = await client.fetch<PostPreview[]>(postsQuery).catch(() => []);
 
   return (
-    <PageWrapper background="grid-thin" width="default">
+    <PageWrapper background="polka" width="wide">
       <JsonLd data={collectionPageSchema({ name: title, description, path: "/blog" })} />
       <Breadcrumbs
         className="mb-8"
         items={[{ label: "Accueil", href: "/" }, { label: title }]}
       />
-      <div className="mb-12 max-w-2xl">
+      <div className="mb-12 max-w-2xl bg-primary-500 p-6 rounded-2xl">
         <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{title}</h1>
         <p className="mt-4 text-lg leading-8 text-secondary-600">{description}</p>
       </div>
