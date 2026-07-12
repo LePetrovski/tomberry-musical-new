@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { CurtainLink } from "@/components/navigation/CurtainLink";
 import { breadcrumbListSchema, type BreadcrumbItem } from "@/lib/seo/schemas";
 import { JsonLd } from "./JsonLd";
 
@@ -28,12 +28,12 @@ export function Breadcrumbs({ items, className }: Props) {
                     </span>
                     )}
                     {item.href && !isLast ? (
-                    <Link
+                    <CurtainLink
                         href={item.href}
                         className="transition-colors hover:text-secondary-900"
                     >
                         {item.label}
-                    </Link>
+                    </CurtainLink>
                     ) : (
                     <span aria-current="page" className="font-medium text-secondary-700">
                         {item.label}

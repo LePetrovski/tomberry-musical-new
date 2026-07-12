@@ -1,9 +1,9 @@
 import type { SoundCloudPlayerState } from "@/components/audio/SoundCloudPlayerContext";
+import { usePageCurtains } from "@/components/navigation/PageCurtainsProvider";
 import { textureProxyUrlFor } from "@/lib/sanity/image";
 import { getSoundCloudEmbedUrl } from "@/lib/soundcloud";
 import { useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Object3D, Texture } from "three";
 import {
@@ -34,7 +34,7 @@ export function ImageTube({
     onHoverEnd,
     onPlayPodcast,
 }: ImageTubeProps) {
-    const router = useRouter();
+    const { navigate } = usePageCurtains();
     const groupRef = useRef<Object3D>(null);
     const rowGroupRefs = useRef<Array<Object3D | null>>([]);
     const scrollCurrent = useRef(0);
@@ -86,10 +86,10 @@ export function ImageTube({
                     onPlayPodcast(player);
                 },
                 onOpenDetail: () => {
-                    router.push(`/podcasts/${podcast.slug}`);
+                    void navigate(`/podcasts/${podcast.slug}`);
                 },
             })),
-        [onPlayPodcast, playAvailability, podcasts, router],
+        [navigate, onPlayPodcast, playAvailability, podcasts],
     );
 
     useEffect(() => {

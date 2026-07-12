@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
+import { PostContent } from "@/components/PostContent";
 import { RichText } from "@/components/RichText";
 import { getPostBySlug } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
@@ -79,6 +80,18 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
         <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{post.title}</h1>
         <p className="mt-4 text-lg leading-8 text-secondary-600">{post.excerpt}</p>
+        {post.categories && post.categories.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {post.categories.map((category) => (
+              <span
+                key={category._id}
+                className="rounded-full bg-secondary-500/10 px-3 py-1 text-xs font-medium text-secondary-900"
+              >
+                {category.title}
+              </span>
+            ))}
+          </div>
+        )}
       </header>
 
       {post.coverImage && (
@@ -94,9 +107,13 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       )}
 
-      <div className="prose prose-zinc max-w-none">
-        <RichText value={post.body} />
-      </div>
+      {post.content && post.content.length > 0 ? (
+        <PostContent blocks={post.content} />
+      ) : post.body ? (
+        <div className="prose prose-zinc max-w-none">
+          <RichText value={post.body} />
+        </div>
+      ) : null}
       </article>
     </PageWrapper>
   );

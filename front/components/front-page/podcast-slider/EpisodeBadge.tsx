@@ -5,6 +5,7 @@ import {
     EPISODE_BADGE_PADDING_X,
     EPISODE_BADGE_PADDING_Y,
     EPISODE_BADGE_Z,
+    TILE_OVERLAY_ROTATION,
     TILE_PLANE_HEIGHT,
     TILE_PLANE_WIDTH,
 } from "./constants";
@@ -41,7 +42,7 @@ function EpisodeBadgeComponent({ episodeNumber, tileScale }: Props) {
     return (
         <mesh
             position={[x, y, EPISODE_BADGE_Z]}
-            rotation={[0, Math.PI, 0]}
+            rotation={TILE_OVERLAY_ROTATION}
             scale={[badgeWorldWidth, EPISODE_BADGE_HEIGHT * safeTileScale, 1]}
             renderOrder={2}
             raycast={() => null}

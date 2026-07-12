@@ -19,6 +19,7 @@ import { GridPlane } from "./GridPlane";
 import { useSliderInteractions } from "./hooks/useSliderInteractions";
 import { useSliderResponsive } from "./hooks/useSliderResponsive";
 import { ImageTube } from "./ImageTube";
+import { TileSoundProvider } from "./TileSoundProvider";
 import type { PodcastSliderProps } from "./types";
 import { getLatestRowScrollOffset } from "./utils/tube-scroll";
 
@@ -101,6 +102,7 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
   });
 
   return (
+    <TileSoundProvider>
     <div className="sceneRoot h-full w-full" ref={containerRef} onWheel={onWheel}>
       <Canvas
         className="sceneCanvas"
@@ -157,5 +159,6 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
 
       <Loader />
     </div>
+    </TileSoundProvider>
   );
 }
