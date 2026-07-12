@@ -28,25 +28,25 @@ const components: PortableTextComponents = {
       <h3 className="mt-8 mb-3 text-xl font-semibold tracking-tight">{children}</h3>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-zinc-300 pl-4 text-zinc-600 italic">
+      <blockquote className="my-6 border-l-4 border-zinc-300 pl-4 text-secondary-600 italic">
         {children}
       </blockquote>
     ),
-    normal: ({ children }) => <p className="mb-4 leading-7 text-zinc-700">{children}</p>,
+    normal: ({ children }) => <p className="mb-4 leading-7 text-secondary-700">{children}</p>,
   },
   list: {
     bullet: ({ children }) => (
-      <ul className="mb-4 list-disc space-y-2 pl-6 text-zinc-700">{children}</ul>
+      <ul className="mb-4 list-disc space-y-2 pl-6 text-secondary-700">{children}</ul>
     ),
     number: ({ children }) => (
-      <ol className="mb-4 list-decimal space-y-2 pl-6 text-zinc-700">{children}</ol>
+      <ol className="mb-4 list-decimal space-y-2 pl-6 text-secondary-700">{children}</ol>
     ),
   },
   marks: {
     link: ({ children, value }) => (
       <a
         href={value?.href}
-        className="font-medium text-zinc-900 underline underline-offset-4 hover:text-zinc-600"
+        className="font-medium text-secondary-900 underline underline-offset-4 hover:text-secondary-600"
         target="_blank"
         rel="noopener noreferrer"
       >

@@ -12,9 +12,11 @@ import { buildEpisodeBadgeTexture } from "./utils/episode-badge-texture";
 
 type Props = {
     episodeNumber: number;
+    tileScale: number;
 };
 
-function EpisodeBadgeComponent({ episodeNumber }: Props) {
+function EpisodeBadgeComponent({ episodeNumber, tileScale }: Props) {
+    const safeTileScale = Number.isFinite(tileScale) && tileScale > 0 ? tileScale : 1;
     const texture = useMemo(
         () => buildEpisodeBadgeTexture(episodeNumber),
         [episodeNumber],
@@ -24,20 +26,23 @@ function EpisodeBadgeComponent({ episodeNumber }: Props) {
         const pixelWidth = texture.userData.pixelWidth as number | undefined;
         const pixelHeight = texture.userData.pixelHeight as number | undefined;
         const aspect = pixelWidth && pixelHeight ? pixelWidth / pixelHeight : 1.4;
-        const width = EPISODE_BADGE_HEIGHT * aspect;
+        const badgeHeight = EPISODE_BADGE_HEIGHT * safeTileScale;
+        const width = badgeHeight * aspect;
+        const planeWidth = TILE_PLANE_WIDTH * safeTileScale;
+        const planeHeight = TILE_PLANE_HEIGHT * safeTileScale;
 
         return {
             badgeWorldWidth: width,
-            x: TILE_PLANE_WIDTH * -0.2 - EPISODE_BADGE_PADDING_X - width * 0.5,
-            y: TILE_PLANE_HEIGHT * 0.5 - EPISODE_BADGE_PADDING_Y - EPISODE_BADGE_HEIGHT * 0.5,
+            x: planeWidth * -0.2 - EPISODE_BADGE_PADDING_X * safeTileScale - width * 0.5,
+            y: planeHeight * 0.5 - EPISODE_BADGE_PADDING_Y * safeTileScale - badgeHeight * 0.5,
         };
-    }, [texture]);
+    }, [texture, safeTileScale]);
 
     return (
         <mesh
             position={[x, y, EPISODE_BADGE_Z]}
             rotation={[0, Math.PI, 0]}
-            scale={[badgeWorldWidth, EPISODE_BADGE_HEIGHT, 1]}
+            scale={[badgeWorldWidth, EPISODE_BADGE_HEIGHT * safeTileScale, 1]}
             renderOrder={2}
             raycast={() => null}
         >

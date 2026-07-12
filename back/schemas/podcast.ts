@@ -26,6 +26,12 @@ export const podcast = defineType({
       validation: (rule) => rule.required().max(900),
     }),
     defineField({
+      name: "categories",
+      title: "Catégories",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "podcastCategory" }] }],
+    }),
+    defineField({
       name: "coverImage",
       title: "Image de couverture",
       type: "image",

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { PageWrapper } from "@/components/PageWrapper";
 import { RichText } from "@/components/RichText";
 import { getPostBySlug } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
@@ -60,7 +61,8 @@ export default async function BlogPostPage({ params }: Props) {
   const ogImage = getOgImageUrl(post.coverImage);
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16">
+    <PageWrapper background="grid-thin" width="narrow">
+      <article>
       <JsonLd data={articleSchema(post, ogImage)} />
       <Breadcrumbs
         className="mb-8"
@@ -71,12 +73,12 @@ export default async function BlogPostPage({ params }: Props) {
         ]}
       />
       <header className="mb-10">
-        <div className="mb-4 text-sm text-zinc-500">
+        <div className="mb-4 text-sm text-secondary-500">
           {post.author && <span>Par {post.author} · </span>}
           <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
         </div>
-        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{post.title}</h1>
-        <p className="mt-4 text-lg leading-8 text-zinc-600">{post.excerpt}</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{post.title}</h1>
+        <p className="mt-4 text-lg leading-8 text-secondary-600">{post.excerpt}</p>
       </header>
 
       {post.coverImage && (
@@ -95,6 +97,7 @@ export default async function BlogPostPage({ params }: Props) {
       <div className="prose prose-zinc max-w-none">
         <RichText value={post.body} />
       </div>
-    </article>
+      </article>
+    </PageWrapper>
   );
 }

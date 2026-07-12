@@ -8,9 +8,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Object3D, Texture } from "three";
 import {
     PLACEHOLDER_TEXTURE,
-    TUBE_RADIUS,
     TUBE_REPEAT_COUNT,
-    TUBE_Y_SPACING,
 } from "./constants";
 import { PodcastTile } from "./PodcastTile";
 import type { ImageTubeProps } from "./types";
@@ -28,6 +26,9 @@ export function ImageTube({
     podcasts,
     rows,
     cols,
+    tileScale,
+    ySpacing,
+    tubeRadius,
     onHoverStart,
     onHoverMove,
     onHoverEnd,
@@ -113,7 +114,6 @@ export function ImageTube({
         };
     }, [loadedTextures, playAvailability, podcasts]);
 
-    const ySpacing = TUBE_Y_SPACING;
     const loopHeight = rows * ySpacing;
     const repeatCount = TUBE_REPEAT_COUNT;
     const totalRows = rows * repeatCount;
@@ -189,8 +189,8 @@ export function ImageTube({
                 >
                     {Array.from({ length: cols }).map((_, col) => {
                         const theta = ((col + rowOffset) / cols) * Math.PI * 2;
-                        const x = Math.cos(theta) * TUBE_RADIUS;
-                        const z = Math.sin(theta) * TUBE_RADIUS;
+                        const x = Math.cos(theta) * tubeRadius;
+                        const z = Math.sin(theta) * tubeRadius;
                         const ry = -(theta + Math.PI / 2);
                         const podcastIndex = (baseRow * cols + col) % podcasts.length;
                         const podcast = podcasts[podcastIndex];
@@ -200,6 +200,7 @@ export function ImageTube({
                             <group key={col} position={[x, 0, z]} rotation={[0, ry, 0]}>
                                 <PodcastTile
                                     tileTexture={tileTextures[podcastIndex]}
+                                    tileScale={tileScale}
                                     title={podcast.title}
                                     episodeNumber={podcast.episodeNumber}
                                     canPlay={handlers.canPlay}
