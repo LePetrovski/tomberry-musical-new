@@ -2,8 +2,14 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useState } from "react";
+import { SocialLinks } from "@/components/SocialLinks";
+import type { SocialLink } from "@/lib/sanity/types";
 
-export function Footer() {
+type FooterProps = {
+	socialLinks?: SocialLink[];
+};
+
+export function Footer({ socialLinks = [] }: FooterProps) {
 	const [open, setOpen] = useState(false);
 	const year = new Date().getFullYear();
 
@@ -18,8 +24,10 @@ export function Footer() {
 	return (
 		<>
 			<footer className="fixed bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block">
-				<div className="mx-auto flex max-w-6xl flex-col gap-2 px-8 py-5 text-sm text-secondary-500 sm:flex-row sm:items-center sm:justify-between">
-					<p>© {year} Le Tomberry Musical. Tous droits réservés.</p>
+				<div className="mx-auto flex max-w-6xl flex-col flex-wrap gap-2 px-8 py-5 text-sm text-secondary-500 sm:flex-row items-center justify-center">
+                    <SocialLinks links={socialLinks} />
+
+					<p className="text-center max-md:text-sm!">© {year} Le Tomberry Musical. Tous droits réservés.</p>
 				</div>
 			</footer>
 
@@ -49,9 +57,12 @@ export function Footer() {
 							mass: 0.8,
 						}}
 					>
+                        <SocialLinks links={socialLinks} className="mt-3 flex items-center gap-3" />
+
 						<p className="text-sm text-secondary-500">
 							© {year} Le Tomberry Musical. Tous droits réservés.
 						</p>
+
 						<button
 							type="button"
 							className="mt-3 text-xs font-medium text-secondary-500 transition-colors hover:text-secondary-900"

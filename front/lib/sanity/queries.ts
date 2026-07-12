@@ -1,4 +1,11 @@
-import type { Podcast, PodcastCategory, PodcastPreview, Post, PostPreview } from "./types";
+import type {
+  Podcast,
+  PodcastCategory,
+  PodcastPreview,
+  Post,
+  PostCategory,
+  PostPreview,
+} from "./types";
 
 const podcastPreviewFields = `
   _id,
@@ -32,6 +39,26 @@ const podcastFields = `
   "categories": categories[]->{ _id, title, "slug": slug.current }
 `;
 
+const postContentFields = `
+  content[] {
+    _type,
+    _key,
+    _type == "postTextBlock" => {
+      content
+    },
+    _type == "postImageBlock" => {
+      image,
+      fullWidth,
+      caption
+    },
+    _type == "postTextImageBlock" => {
+      content,
+      image,
+      imagePosition
+    }
+  }
+`;
+
 const postFields = `
   _id,
   title,
@@ -40,6 +67,8 @@ const postFields = `
   coverImage,
   author,
   publishedAt,
+  "categories": categories[]->{ _id, title, "slug": slug.current },
+  ${postContentFields},
   body
 `;
 
@@ -59,6 +88,12 @@ export const podcastBySlugQuery = `*[_type == "podcast" && slug.current == $slug
 
 export const podcastSlugsQuery = `*[_type == "podcast" && defined(slug.current)][].slug.current`;
 
+export const postCategoriesQuery = `*[_type == "postCategory"] | order(title asc) {
+  _id,
+  title,
+  "slug": slug.current
+}`;
+
 export const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
   _id,
   title,
@@ -66,7 +101,8 @@ export const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
   excerpt,
   coverImage,
   author,
-  publishedAt
+  publishedAt,
+  "categories": categories[]->{ _id, title, "slug": slug.current }
 }`;
 
 export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0] {
@@ -112,4 +148,12 @@ export const latestPostsQuery = `*[_type == "post"] | order(publishedAt desc)[0.
   publishedAt
 }`;
 
-export type { Podcast, PodcastCategory, PodcastPreview, Post, PostPreview };
+export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
+  socialLinks[] {
+    name,
+    icon,
+    url
+  }
+}`;
+
+export type { Podcast, PodcastCategory, PodcastPreview, Post, PostCategory, PostPreview };

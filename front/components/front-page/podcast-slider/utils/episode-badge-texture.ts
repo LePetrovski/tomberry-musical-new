@@ -7,7 +7,6 @@ type EpisodeBadgeTextureData = {
 
 const BADGE_HEIGHT_PX = 65;
 const BADGE_PAD_X = 10;
-const BADGE_PADDING = 12;
 const BADGE_RADIUS = 12;
 
 const badgeTextureCache = new Map<number, Texture>();

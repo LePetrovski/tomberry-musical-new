@@ -50,10 +50,16 @@ export const post = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "body",
+      name: "categories",
+      title: "Catégories",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "postCategory" }] }],
+    }),
+    defineField({
+      name: "content",
       title: "Contenu",
-      type: "blockContent",
-      validation: (rule) => rule.required(),
+      type: "postContent",
+      validation: (rule) => rule.required().min(1),
     }),
   ],
   preview: {
