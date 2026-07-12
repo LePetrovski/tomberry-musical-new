@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { CurtainLink } from "@/components/navigation/CurtainLink";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useState } from "react";
 import { useSoundCloudPlayerOptional } from "@/components/audio/SoundCloudPlayerContext";
@@ -62,23 +62,23 @@ export function Header() {
 						>
 							<BurgerIcon open={menuOpen} />
 						</button>
-						<Link href="/podcasts" className="text-podcast-slider-menu-item hidden lg:inline">
+						<CurtainLink href="/podcasts" className="text-podcast-slider-menu-item hidden lg:inline">
 							podcasts
-						</Link>
+						</CurtainLink>
 					</div>
 
-					<Link
+					<CurtainLink
 						href="/"
 						className="text-podcast-slider-title font-black tracking-tight uppercase"
 						onClick={closeMenu}
 					>
 						Le Tomberry Musical
-					</Link>
+					</CurtainLink>
 
 					<div className="lg:flex hidden w-8 items-center justify-center lg:w-auto lg:justify-end">
-						<Link href="/blog" className="text-podcast-slider-menu-item hidden lg:inline">
+						<CurtainLink href="/blog" className="text-podcast-slider-menu-item hidden lg:inline">
 							blog
-						</Link>
+						</CurtainLink>
 					</div>
 				</nav>
 
@@ -98,14 +98,14 @@ export function Header() {
 							}}
 						>
 							{menuLinks.map((link) => (
-								<Link
+								<CurtainLink
 									key={link.href}
 									href={link.href}
 									className="text-podcast-slider-menu-item rounded-full border border-secondary-500/25 bg-primary-500 px-6 py-2.5 text-center transition-colors hover:border-secondary-500 hover:bg-secondary-500 hover:text-primary-500"
 									onClick={closeMenu}
 								>
 									{link.label}
-								</Link>
+								</CurtainLink>
 							))}
 						</motion.nav>
 					)}

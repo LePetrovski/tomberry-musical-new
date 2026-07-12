@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { CurtainLink } from "@/components/navigation/CurtainLink";
 import type { PodcastPreview } from "@/lib/sanity/types";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -10,7 +10,7 @@ type Props = {
 export function PodcastCard({ podcast }: Props) {
     return (
         <article className="group relative flex flex-col overflow-hidden transition ">
-        <Link href={`/podcasts/${podcast.slug}`} className="flex flex-1 md:flex-col flex-row flex-nowrap max-md:gap-4 space-y-2">
+        <CurtainLink href={`/podcasts/${podcast.slug}`} className="flex flex-1 md:flex-col flex-row flex-nowrap max-md:gap-4 space-y-2">
 
             <div className="flex flex-1 flex-col gap-3 p-5 rounded-2xl border bg-primary-500 shadow-sm max-md:h-full group-hover:border-secondary-500 border-transparent transition-all duration-300">
 
@@ -57,7 +57,7 @@ export function PodcastCard({ podcast }: Props) {
                 </div>
             )}
             </div>
-        </Link>
+        </CurtainLink>
         </article>
     );
     }

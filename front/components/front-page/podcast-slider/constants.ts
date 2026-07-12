@@ -15,7 +15,11 @@ export const TILE_PLANE_HEIGHT = TILE_PLANE_WIDTH * (TILE_TEXTURE_HEIGHT / TILE_
 export const EPISODE_BADGE_PADDING_X = 0.055;
 export const EPISODE_BADGE_PADDING_Y = 0.055;
 export const EPISODE_BADGE_HEIGHT = 0.13;
-export const EPISODE_BADGE_Z = -0.1;
+export const EPISODE_BADGE_Z = -0.08;
+/** Rotation commune des overlays (badge, boutons) pour affichage face caméra. */
+export const TILE_OVERLAY_ROTATION: [number, number, number] = [0, Math.PI, 0];
+/** Légèrement devant la cover pour le raycast et l’effet de relief. */
+export const TILE_BUTTON_Z = -0.06;
 
 export const TUBE_RADIUS = 4;
 export const TUBE_Y_SPACING = 2.7;

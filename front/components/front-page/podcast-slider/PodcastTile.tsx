@@ -1,14 +1,13 @@
 import type { ThreeEvent } from "@react-three/fiber";
-import { useFrame, useThree } from "@react-three/fiber";
-import { memo, useCallback, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useCallback } from "react";
+import { memo } from "react";
 import type { Mesh, Texture } from "three";
 import { TILE_BUTTON_BAR_UV, TILE_PLANE_HEIGHT, TILE_PLANE_WIDTH } from "./constants";
 import type { TileButtonHover, TileHoverHandlers } from "./types";
 import { getTileImageMaterial } from "./utils/tile-image-material";
-import { getTileButtonFromUv, updateTileButtonHover } from "./utils/tile-texture";
 import { EpisodeBadge } from "./EpisodeBadge";
-
-const BUTTON_HOVER_LERP_SPEED = 10;
+import { TileButton, getTileButtonLayout } from "./TileButton";
+import { useThree } from "@react-three/fiber";
 
 type Props = TileHoverHandlers & {
     tileTexture: Texture;
@@ -33,13 +32,15 @@ function PodcastTileComponent({
     onHoverEnd,
 }: Props) {
     const meshRef = useRef<Mesh>(null);
-    const hoverMixTarget = useRef({ play: 0, detail: 0 });
-    const hoverMixCurrent = useRef({ play: 0, detail: 0 });
     const size = useThree((state) => state.size);
     const resolution = Math.max(size.width, size.height);
     const safeTileScale = Number.isFinite(tileScale) && tileScale > 0 ? tileScale : 1;
     const planeWidth = TILE_PLANE_WIDTH * safeTileScale;
     const planeHeight = TILE_PLANE_HEIGHT * safeTileScale;
+    const buttonLayout = useMemo(
+        () => getTileButtonLayout(planeWidth, planeHeight),
+        [planeHeight, planeWidth],
+    );
 
     useLayoutEffect(() => {
         const mesh = meshRef.current;
@@ -49,94 +50,78 @@ function PodcastTileComponent({
         mesh.material = material;
     }, [planeHeight, planeWidth, resolution, tileTexture]);
 
-    const setButtonHoverTarget = useCallback((hover: TileButtonHover) => {
-        hoverMixTarget.current = {
-            play: hover === "play" ? 1 : 0,
-            detail: hover === "detail" ? 1 : 0,
-        };
-    }, []);
-
-    useFrame((_, delta) => {
-        const target = hoverMixTarget.current;
-        const current = hoverMixCurrent.current;
-        const step = Math.min(1, BUTTON_HOVER_LERP_SPEED * delta);
-        let dirty = false;
-
-        for (const key of ["play", "detail"] as const) {
-            const next = current[key] + (target[key] - current[key]) * step;
-            if (Math.abs(next - current[key]) > 0.002) {
-                current[key] = next;
-                dirty = true;
-            } else if (current[key] !== target[key]) {
-                current[key] = target[key];
-                dirty = true;
-            }
-        }
-
-        if (dirty) {
-            updateTileButtonHover(tileTexture, current.play, current.detail);
-        }
-    });
-
-    const handleClick = useCallback(
-        (event: ThreeEvent<MouseEvent>) => {
-            event.stopPropagation();
-            const uv = event.uv;
-            if (!uv) return;
-
-            if (uv.y <= TILE_BUTTON_BAR_UV) {
-                if (uv.x >= 0.5) {
-                    if (canPlay) onPlay();
-                } else {
-                    onOpenDetail();
-                }
-            }
-        },
-        [canPlay, onOpenDetail, onPlay],
-    );
-
-    const handlePointerOver = useCallback(
+    const handleCoverPointerOver = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
+            if (event.uv && event.uv.y <= TILE_BUTTON_BAR_UV) return;
             onHoverStart(title, event);
-            const buttonHover = event.uv ? getTileButtonFromUv(event.uv, canPlay) : null;
-            setButtonHoverTarget(buttonHover);
-            onHoverMove(event, buttonHover);
+            onHoverMove(event, null);
         },
-        [canPlay, onHoverMove, onHoverStart, setButtonHoverTarget, title],
+        [onHoverMove, onHoverStart, title],
     );
 
-    const handlePointerMove = useCallback(
+    const handleCoverPointerMove = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
-            const buttonHover = event.uv ? getTileButtonFromUv(event.uv, canPlay) : null;
-            setButtonHoverTarget(buttonHover);
-            onHoverMove(event, buttonHover);
+            if (event.uv && event.uv.y <= TILE_BUTTON_BAR_UV) return;
+            onHoverMove(event, null);
         },
-        [canPlay, onHoverMove, setButtonHoverTarget],
+        [onHoverMove],
     );
 
-    const handlePointerOut = useCallback(
+    const handleCoverPointerOut = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
-            setButtonHoverTarget(null);
             onHoverEnd();
         },
-        [onHoverEnd, setButtonHoverTarget],
+        [onHoverEnd],
     );
+
+    const handleButtonHover = useCallback(
+        (hover: TileButtonHover, event: ThreeEvent<PointerEvent>) => {
+            onHoverStart(title, event);
+            onHoverMove(event, hover);
+        },
+        [onHoverMove, onHoverStart, title],
+    );
+
+    const handleButtonHoverEnd = useCallback(() => {
+        onHoverEnd();
+    }, [onHoverEnd]);
 
     return (
         <group>
             <mesh
                 ref={meshRef}
                 scale={[planeWidth, planeHeight, 1]}
-                onClick={handleClick}
-                onPointerOver={handlePointerOver}
-                onPointerMove={handlePointerMove}
-                onPointerOut={handlePointerOut}
+                onPointerOver={handleCoverPointerOver}
+                onPointerMove={handleCoverPointerMove}
+                onPointerOut={handleCoverPointerOut}
             >
                 <planeGeometry args={[1, 1]} />
             </mesh>
+            <TileButton
+                kind="detail"
+                enabled
+                position={buttonLayout.detail.position}
+                size={buttonLayout.detail.size}
+                onClick={onOpenDetail}
+                onHover={(hover, event) => {
+                    if (hover) handleButtonHover(hover, event);
+                    else handleButtonHoverEnd();
+                }}
+            />
+            <TileButton
+                kind="play"
+                enabled={canPlay}
+                position={buttonLayout.play.position}
+                size={buttonLayout.play.size}
+                onClick={onPlay}
+                onHover={(hover, event) => {
+                    if (hover) handleButtonHover(hover, event);
+                    else handleButtonHoverEnd();
+                }}
+            />
             {episodeNumber != null && (
                 <EpisodeBadge episodeNumber={episodeNumber} tileScale={safeTileScale} />
             )}

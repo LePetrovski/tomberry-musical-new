@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lexend, Ubuntu_Sans } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { GlobalJsonLd } from "@/components/GlobalJsonLd";
+import { getSiteSettings } from "@/lib/sanity/cached";
 import { getSiteUrl, siteConfig } from "@/lib/seo/site";
 import "./globals.css";
 import App from "./app";
@@ -34,11 +35,14 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+	const siteSettings = await getSiteSettings();
+	const socialLinks = siteSettings?.socialLinks ?? [];
+
 	return (
 		<html
 		lang="fr"
@@ -50,7 +54,7 @@ export default function RootLayout({
 				<App>
 					<main className="flex-1 h-full">{children}</main>
 				</App>
-				<Footer />
+				<Footer socialLinks={socialLinks} />
 			</body>
 		</html>
 	);
