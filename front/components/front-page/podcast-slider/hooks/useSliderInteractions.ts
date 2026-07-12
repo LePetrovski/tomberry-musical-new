@@ -12,6 +12,8 @@ type Options = {
   rotationSpeedScaleTargetRef: React.MutableRefObject<number>;
   hoverSlowdownEnabledRef: React.MutableRefObject<boolean>;
   hoverSlowdownScaleRef: React.MutableRefObject<number>;
+  scrollWheelMultiplierRef: React.MutableRefObject<number>;
+  scrollTouchMultiplierRef: React.MutableRefObject<number>;
 };
 
 const HOVER_END_DELAY_MS = 80;
@@ -25,6 +27,8 @@ export function useSliderInteractions({
   rotationSpeedScaleTargetRef,
   hoverSlowdownEnabledRef,
   hoverSlowdownScaleRef,
+  scrollWheelMultiplierRef,
+  scrollTouchMultiplierRef,
 }: Options) {
   const tooltipElRef = useRef<HTMLDivElement | null>(null);
   const hoverEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -203,9 +207,10 @@ export function useSliderInteractions({
   }, [containerRef, hideTooltip, syncTooltipPosition, targetCenterUv]);
 
   const applyScrollDelta = useCallback(
-    (deltaY: number) => {
-      tubeScrollTarget.current += deltaY * 0.0016;
-      tubeSpinVelocity.current += deltaY * 0.0025;
+    (deltaY: number, touchMultiplier = 1) => {
+      const amount = deltaY * scrollWheelMultiplierRef.current * touchMultiplier;
+      tubeScrollTarget.current += amount;
+      tubeSpinVelocity.current += amount * 1.56;
 
       if (deltaY < 0) tubeNaturalDir.current = -1;
       else if (deltaY > 0) tubeNaturalDir.current = 1;
@@ -213,7 +218,7 @@ export function useSliderInteractions({
       rotationSpeedScaleTargetRef.current = 1;
       hideTooltip();
     },
-    [hideTooltip, rotationSpeedScaleTargetRef, tubeNaturalDir, tubeScrollTarget, tubeSpinVelocity],
+    [hideTooltip, rotationSpeedScaleTargetRef, scrollWheelMultiplierRef, tubeNaturalDir, tubeScrollTarget, tubeSpinVelocity],
   );
 
   const onWheel = useCallback(
@@ -248,7 +253,7 @@ export function useSliderInteractions({
       if (deltaY === 0) return;
 
       event.preventDefault();
-      applyScrollDelta(deltaY * 3.5);
+      applyScrollDelta(deltaY, scrollTouchMultiplierRef.current);
     };
 
     const endPointer = (event: PointerEvent) => {
@@ -272,7 +277,7 @@ export function useSliderInteractions({
       root.removeEventListener("pointerup", endPointer);
       root.removeEventListener("pointercancel", endPointer);
     };
-  }, [applyScrollDelta, containerRef]);
+  }, [applyScrollDelta, containerRef, scrollTouchMultiplierRef]);
 
   return {
     tooltipElRef,

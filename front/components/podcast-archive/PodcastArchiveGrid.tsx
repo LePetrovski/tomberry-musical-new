@@ -18,7 +18,7 @@ export function PodcastArchiveGrid({ podcasts, hasActiveFilters }: Props) {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-y-8 gap-x-6 md:grid-cols-2">
       {podcasts.map((podcast) => (
         <PodcastCard key={podcast._id} podcast={podcast} />
       ))}

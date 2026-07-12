@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Lexend, Ubuntu_Sans } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { GlobalJsonLd } from "@/components/GlobalJsonLd";
-import { Header } from "@/components/Header";
 import { getSiteUrl, siteConfig } from "@/lib/seo/site";
 import "./globals.css";
 import App from "./app";
@@ -48,12 +47,9 @@ export default function RootLayout({
 		>
 			<body className="min-h-full flex flex-col" suppressHydrationWarning>
 				<GlobalJsonLd />
-				<Header />
-				<main className="flex-1">
-					<App>
-						{children}
-					</App>
-				</main>
+				<App>
+					<main className="flex-1">{children}</main>
+				</App>
 				<Footer />
 			</body>
 		</html>

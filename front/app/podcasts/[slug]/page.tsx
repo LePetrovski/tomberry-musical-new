@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { PageWrapper } from "@/components/PageWrapper";
 import { RichText } from "@/components/RichText";
 import { getPodcastBySlug } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
@@ -59,7 +60,8 @@ export default async function PodcastDetailPage({ params }: Props) {
   const ogImage = getOgImageUrl(podcast.coverImage);
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16">
+    <PageWrapper background="grid-thin" width="wide">
+      <article>
       <JsonLd data={podcastEpisodeSchema(podcast, ogImage)} />
       <Breadcrumbs
         className="mb-8"
@@ -106,6 +108,7 @@ export default async function PodcastDetailPage({ params }: Props) {
           <RichText value={podcast.body} />
         </div>
       )}
-    </article>
+      </article>
+    </PageWrapper>
   );
 }

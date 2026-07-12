@@ -25,5 +25,8 @@ export type ImageTubeProps = TileHoverHandlers & {
   podcasts: PodcastPreview[];
   rows: number;
   cols: number;
+  tileScale: number;
+  ySpacing: number;
+  tubeRadius: number;
   onPlayPodcast: (player: SoundCloudPlayerState) => void;
 };

@@ -1,7 +1,7 @@
 @theme {
     --font-primary: var(--font-lexend), serif;
     --font-secondary: var(--font-ubuntu-sans), sans-serif;
-    
+
     --color-primary-200: #FFFFFF;
     --color-primary-400: #FAFAFA;
     --color-primary-500: #F7F5F0;
@@ -38,5 +38,8 @@
     --text-40xl: clamp(4.5rem, calc(0.8668rem + 9.3551vw), 9rem); /*144*/
 
     --text-header: clamp(1.75rem, calc(1rem + 3.75vw), 4.75rem); /*76*/
+
+    --text-podcast-slider-title: clamp(1rem, calc(0.1797rem + 2.1875vw), 1.875rem);
+    --text-podcast-slider-menu-item: clamp(0.875rem, calc(0.5234rem + 0.9375vw), 1.25rem);
 
 }

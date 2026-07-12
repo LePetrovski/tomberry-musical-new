@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { PageWrapper } from "@/components/PageWrapper";
 import { RichText } from "@/components/RichText";
 import { getPostBySlug } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
@@ -60,7 +61,8 @@ export default async function BlogPostPage({ params }: Props) {
   const ogImage = getOgImageUrl(post.coverImage);
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16">
+    <PageWrapper background="grid-thin" width="narrow">
+      <article>
       <JsonLd data={articleSchema(post, ogImage)} />
       <Breadcrumbs
         className="mb-8"
@@ -95,6 +97,7 @@ export default async function BlogPostPage({ params }: Props) {
       <div className="prose prose-zinc max-w-none">
         <RichText value={post.body} />
       </div>
-    </article>
+      </article>
+    </PageWrapper>
   );
 }

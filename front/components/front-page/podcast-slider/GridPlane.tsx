@@ -7,14 +7,22 @@ import { gridPlaneGeometry } from "./utils/shared-geometries";
 
 type Props = {
   targetCenterUv: React.MutableRefObject<Vector2>;
+  gridScale: number;
+  gridScrollSpeed: number;
 };
 
-export function GridPlane({ targetCenterUv }: Props) {
+export function GridPlane({ targetCenterUv, gridScale, gridScrollSpeed }: Props) {
   const meshRef = useRef<Mesh>(null);
   const elapsedRef = useRef(0);
+  const gridScaleTarget = useRef(gridScale);
+  const gridScrollSpeedTarget = useRef(gridScrollSpeed);
+
+  gridScaleTarget.current = gridScale;
+  gridScrollSpeedTarget.current = gridScrollSpeed;
+
   const uniforms = useMemo(
     () => ({
-      uGridScale: { value: 28.0 },
+      uGridScale: { value: gridScale },
       uLineWidth: { value: 0.5 },
       uEdgeWidth: { value: 0.14 },
       uEdgeAmp: { value: 1.35 },
@@ -22,7 +30,7 @@ export function GridPlane({ targetCenterUv }: Props) {
       uCenterAmp: { value: 0.9 },
       uCenter: { value: new Vector2(0.5, 0.5) },
       uTime: { value: 0.0 },
-      uScrollSpeed: { value: 0.01 },
+      uScrollSpeed: { value: gridScrollSpeed },
       uResolution: { value: new Vector2(1, 1) },
       uLineColor: { value: GRID_LINE_COLOR.clone() },
     }),
@@ -36,6 +44,10 @@ export function GridPlane({ targetCenterUv }: Props) {
 
     elapsedRef.current += delta;
     material.uniforms.uTime.value = elapsedRef.current;
+    material.uniforms.uGridScale.value +=
+      (gridScaleTarget.current - material.uniforms.uGridScale.value) * 0.1;
+    material.uniforms.uScrollSpeed.value +=
+      (gridScrollSpeedTarget.current - material.uniforms.uScrollSpeed.value) * 0.1;
     (material.uniforms.uCenter.value as Vector2).lerp(targetCenterUv.current, 0.08);
   });
 

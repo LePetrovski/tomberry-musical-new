@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { BlogCard } from "@/components/BlogCard";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { PageWrapper } from "@/components/PageWrapper";
 import { client } from "@/lib/sanity/client";
 import { postsQuery } from "@/lib/sanity/queries";
 import type { PostPreview } from "@/lib/sanity/types";
@@ -21,7 +22,7 @@ export default async function BlogPage() {
   const posts = await client.fetch<PostPreview[]>(postsQuery).catch(() => []);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <PageWrapper background="grid-thin" width="default">
       <JsonLd data={collectionPageSchema({ name: title, description, path: "/blog" })} />
       <Breadcrumbs
         className="mb-8"
@@ -43,6 +44,6 @@ export default async function BlogPage() {
           Aucun article publié pour le moment.
         </p>
       )}
-    </div>
+    </PageWrapper>
   );
 }

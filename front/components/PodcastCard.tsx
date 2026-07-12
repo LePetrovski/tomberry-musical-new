@@ -9,9 +9,39 @@ type Props = {
 
 export function PodcastCard({ podcast }: Props) {
     return (
-        <article className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-primary-500 shadow-sm transition hover:-translate-y-2 hover:shadow-md">
-        <Link href={`/podcasts/${podcast.slug}`} className="flex flex-1 flex-col">
-            <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
+        <article className="group relative flex flex-col overflow-hidden transition ">
+        <Link href={`/podcasts/${podcast.slug}`} className="flex flex-1 md:flex-col flex-row flex-nowrap max-md:gap-4 space-y-2">
+
+            <div className="flex flex-1 flex-col gap-3 p-5 rounded-2xl border border-zinc-200 bg-primary-500 shadow-sm max-md:h-full">
+
+                <div className="flex flex-row justify-between gap-3">
+                    <div className="flex items-center gap-2 text-md! font-medium uppercase tracking-wide text-zinc-500">
+                        {podcast.episodeNumber && <span>Épisode {podcast.episodeNumber}</span>}
+                        {podcast.duration && <span>· {podcast.duration}</span>}
+                    </div>
+
+                    {podcast.categories && podcast.categories.length > 0 && (
+                        <div className="flex flex-row flex-wrap gap-1.5">
+                        {podcast.categories.map((category) => (
+                            <span
+                            key={category._id}
+                            className="rounded-full bg-secondary-500/10 px-2.5 py-0.5 text-xs font-medium text-secondary-900"
+                            >
+                            {category.title}
+                            </span>
+                        ))}
+                        </div>
+                    )}
+                </div>
+
+                <h2 className="text-xl! font-semibold text-zinc-900 group-hover:text-zinc-700 max-md:mb-0! transition-all duration-300">
+                    {podcast.title}
+                </h2>
+
+                <p className="line-clamp-2 text-base!  max-md:hidden leading-6 text-zinc-600" dangerouslySetInnerHTML={{ __html: podcast.description }} />
+            </div>
+
+            <div className="relative h-30 max-md:aspect-square overflow-hidden bg-zinc-10 rounded-2xl group-hover:md:-translate-y-2 transition-all duration-300">
             {podcast.coverImage ? (
                 <Image
                 src={urlFor(podcast.coverImage).width(800).height(500).url()}
@@ -26,33 +56,6 @@ export function PodcastCard({ podcast }: Props) {
                 Sans visuel
                 </div>
             )}
-            </div>
-
-            <div className="flex flex-1 flex-col gap-3 p-5">
-
-                <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
-                    {podcast.episodeNumber && <span>Épisode {podcast.episodeNumber}</span>}
-                    {podcast.duration && <span>· {podcast.duration}</span>}
-                </div>
-
-                {podcast.categories && podcast.categories.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                    {podcast.categories.map((category) => (
-                        <span
-                        key={category._id}
-                        className="rounded-full bg-secondary-500/10 px-2.5 py-0.5 text-xs font-medium text-secondary-900"
-                        >
-                        {category.title}
-                        </span>
-                    ))}
-                    </div>
-                )}
-
-                <h2 className="text-lg font-semibold text-zinc-900 group-hover:text-zinc-700">
-                    {podcast.title}
-                </h2>
-
-                <p className="line-clamp-2 text-sm leading-6 text-zinc-600">{podcast.description}</p>
             </div>
         </Link>
         </article>
