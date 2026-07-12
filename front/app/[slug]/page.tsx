@@ -57,9 +57,9 @@ export default async function CmsPage({ params }: Props) {
                 items={[{ label: "Accueil", href: "/" }, { label: page.title }]}
             />
             <header className="mb-10">
-                <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{page.title}</h1>
+                <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{page.title}</h1>
                 {page.description && (
-                    <p className="mt-4 text-lg leading-8 text-zinc-600">{page.description}</p>
+                    <p className="mt-4 text-lg leading-8 text-secondary-600">{page.description}</p>
                 )}
             </header>
 

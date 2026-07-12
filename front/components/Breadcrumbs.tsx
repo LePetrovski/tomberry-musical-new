@@ -16,26 +16,26 @@ export function Breadcrumbs({ items, className }: Props) {
     <>
         <JsonLd data={breadcrumbListSchema(items)} />
         <nav aria-label="Fil d'Ariane" className={className + " bg-primary-500! w-fit px-4 py-2 rounded-full"}>
-            <ol className="flex flex-wrap items-center gap-1.5 text-sm text-zinc-500">
+            <ol className="flex flex-wrap items-center gap-1.5 text-sm text-secondary-500">
             {items.map((item, index) => {
                 const isLast = index === items.length - 1;
 
                 return (
                 <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
                     {index > 0 && (
-                    <span aria-hidden="true" className="text-zinc-300">
+                    <span aria-hidden="true" className="text-secondary-300">
                         /
                     </span>
                     )}
                     {item.href && !isLast ? (
                     <Link
                         href={item.href}
-                        className="transition-colors hover:text-zinc-900"
+                        className="transition-colors hover:text-secondary-900"
                     >
                         {item.label}
                     </Link>
                     ) : (
-                    <span aria-current="page" className="font-medium text-zinc-700">
+                    <span aria-current="page" className="font-medium text-secondary-700">
                         {item.label}
                     </span>
                     )}

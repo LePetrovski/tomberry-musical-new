@@ -39,7 +39,7 @@ export function PageWrapper({
   contentClassName,
 }: Props) {
   return (
-    <div className={joinClasses("min-h-full w-full", backgroundClasses[background], className)}>
+    <div className={joinClasses("h-full w-full min-h-screen", backgroundClasses[background], className)}>
       <div
         className={joinClasses(
           "mx-auto pt-30 pb-40",

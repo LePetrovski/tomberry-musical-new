@@ -23,6 +23,10 @@ const podcastFields = `
   episodeNumber,
   duration,
   audioUrl,
+  soundcloud,
+  embedSoundcloud,
+  youtube,
+  embedYoutube,
   publishedAt,
   body,
   "categories": categories[]->{ _id, title, "slug": slug.current }

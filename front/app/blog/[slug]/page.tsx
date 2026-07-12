@@ -73,12 +73,12 @@ export default async function BlogPostPage({ params }: Props) {
         ]}
       />
       <header className="mb-10">
-        <div className="mb-4 text-sm text-zinc-500">
+        <div className="mb-4 text-sm text-secondary-500">
           {post.author && <span>Par {post.author} · </span>}
           <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
         </div>
-        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{post.title}</h1>
-        <p className="mt-4 text-lg leading-8 text-zinc-600">{post.excerpt}</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{post.title}</h1>
+        <p className="mt-4 text-lg leading-8 text-secondary-600">{post.excerpt}</p>
       </header>
 
       {post.coverImage && (

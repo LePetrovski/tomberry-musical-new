@@ -33,8 +33,8 @@ export default async function PodcastsPage() {
             items={[{ label: "Accueil", href: "/" }, { label: title }]}
         />
         <div className="mb-12 max-w-2xl bg-primary-500! p-6 rounded-2xl">
-            <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{title}</h1>
-            <p className="mt-4 text-lg leading-8 text-zinc-600">{description}</p>
+            <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{title}</h1>
+            <p className="mt-4 text-lg leading-8 text-secondary-600">{description}</p>
         </div>
 
         <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-zinc-100" />}>

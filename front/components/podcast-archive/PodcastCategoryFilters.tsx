@@ -10,7 +10,7 @@ function filterButtonClass(isActive: boolean) {
   return `rounded-full px-4 py-1.5 text-sm font-medium transition cursor-pointer ${
     isActive
       ? "bg-secondary-500 text-white"
-      : "border border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400"
+      : "border border-zinc-300 bg-white text-secondary-700 hover:border-zinc-400"
   }`;
 }
 

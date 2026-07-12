@@ -29,20 +29,20 @@ export function BlogCard({ post }: Props) {
               sizes="(max-width: 768px) 100vw, 33vw"
             />
           ) : (
-            <div className="flex h-full items-center justify-center text-sm text-zinc-400">
+            <div className="flex h-full items-center justify-center text-sm text-secondary-400">
               Sans visuel
             </div>
           )}
         </div>
         <div className="flex flex-1 flex-col gap-3 p-5">
-          <div className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+          <div className="text-xs font-medium uppercase tracking-wide text-secondary-500">
             {post.author ? `Par ${post.author}` : "Article"}
           </div>
-          <h2 className="text-lg font-semibold text-zinc-900 group-hover:text-zinc-700">
+          <h2 className="text-lg font-semibold text-secondary-900 group-hover:text-secondary-700">
             {post.title}
           </h2>
-          <p className="line-clamp-3 text-sm leading-6 text-zinc-600">{post.excerpt}</p>
-          <time className="mt-auto text-xs text-zinc-400" dateTime={post.publishedAt}>
+          <p className="line-clamp-3 text-sm leading-6 text-secondary-600">{post.excerpt}</p>
+          <time className="mt-auto text-xs text-secondary-400" dateTime={post.publishedAt}>
             {formatDate(post.publishedAt)}
           </time>
         </div>

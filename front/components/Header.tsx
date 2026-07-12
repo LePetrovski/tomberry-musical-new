@@ -48,7 +48,7 @@ export function Header() {
 	}, []);
 
 	return (
-		<header className="fixed top-3 left-1/2 z-50 lg:w-fit w-full -translate-x-1/2 border border-secondary-500/50 rounded-3xl">
+		<header className="fixed top-3 left-1/2 z-50 lg:max-w-[800px] md:w-[80vw] w-[94vw] -translate-x-1/2 border border-secondary-500/50 bg-primary-500 rounded-3xl">
 			<div className="relative lg:px-0 px-6">
 				<nav className="flex items-center justify-between gap-6 rounded-3xl bg-primary-500 px-6 py-5 text-secondary-500 xl:gap-12 lg:gap-4">
 					<div className="flex w-8 items-center justify-center lg:w-auto lg:justify-start">

@@ -29,8 +29,8 @@ export default async function BlogPage() {
         items={[{ label: "Accueil", href: "/" }, { label: title }]}
       />
       <div className="mb-12 max-w-2xl">
-        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{title}</h1>
-        <p className="mt-4 text-lg leading-8 text-zinc-600">{description}</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{title}</h1>
+        <p className="mt-4 text-lg leading-8 text-secondary-600">{description}</p>
       </div>
 
       {posts.length > 0 ? (
@@ -40,7 +40,7 @@ export default async function BlogPage() {
           ))}
         </div>
       ) : (
-        <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-zinc-600">
+        <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-secondary-600">
           Aucun article publié pour le moment.
         </p>
       )}

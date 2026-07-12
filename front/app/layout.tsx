@@ -48,7 +48,7 @@ export default function RootLayout({
 			<body className="min-h-full flex flex-col" suppressHydrationWarning>
 				<GlobalJsonLd />
 				<App>
-					<main className="flex-1">{children}</main>
+					<main className="flex-1 h-full">{children}</main>
 				</App>
 				<Footer />
 			</body>

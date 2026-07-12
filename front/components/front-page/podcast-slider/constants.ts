@@ -25,7 +25,7 @@ export const TUBE_COLS = 12;
 
 export const GRID_PLANE_Z = -5.2;
 export const GRID_PLANE_SIZE = 18;
-export const GRID_LINE_COLOR = new Color("#0c5d66"); // --color-secondary-900
+export const GRID_LINE_COLOR = new Color("#DFE6F3"); // --color-secondary-200
 
 export const CAMERA_POSITION: [number, number, number] = [0, 0, 6.5];
 export const CAMERA_FOV = 50;

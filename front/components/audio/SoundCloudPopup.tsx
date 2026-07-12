@@ -11,7 +11,7 @@ export function SoundCloudPopup() {
             {activePlayer && (
                 <motion.div
                     key={activePlayer.embedUrl}
-                    className="fixed md:top-[5.75rem] top-[7rem] left-1/2 z-40 w-[92vw] max-w-[668px] -translate-x-1/2 overflow-hidden pr-10"
+                    className="fixed top-[7rem] left-1/2 z-40 w-[92vw] max-w-[668px] -translate-x-1/2 overflow-hidden pr-10"
                     role="dialog"
                     aria-label={`Lecteur SoundCloud — ${activePlayer.title}`}
                     initial={{ y: "-120%", opacity: 0 }}

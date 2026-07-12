@@ -46,7 +46,7 @@ export function buildEpisodeBadgeTexture(episodeNumber: number): Texture {
     ctx.fillStyle = "rgba(247, 245, 240, 1)";
     ctx.fill();
 
-    ctx.fillStyle = "#1CA9B9";
+    ctx.fillStyle = "#274ba5";
     ctx.font = "700 54px lexend, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

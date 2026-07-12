@@ -18,7 +18,7 @@ export function Footer() {
 	return (
 		<>
 			<footer className="fixed bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block">
-				<div className="mx-auto flex max-w-6xl flex-col gap-2 px-8 py-5 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+				<div className="mx-auto flex max-w-6xl flex-col gap-2 px-8 py-5 text-sm text-secondary-500 sm:flex-row sm:items-center sm:justify-between">
 					<p>© {year} Le Tomberry Musical. Tous droits réservés.</p>
 				</div>
 			</footer>
@@ -49,7 +49,7 @@ export function Footer() {
 							mass: 0.8,
 						}}
 					>
-						<p className="text-sm text-zinc-500">
+						<p className="text-sm text-secondary-500">
 							© {year} Le Tomberry Musical. Tous droits réservés.
 						</p>
 						<button

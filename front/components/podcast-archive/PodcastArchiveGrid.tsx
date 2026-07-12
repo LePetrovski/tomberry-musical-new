@@ -9,7 +9,7 @@ type Props = {
 export function PodcastArchiveGrid({ podcasts, hasActiveFilters }: Props) {
   if (podcasts.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-zinc-600">
+      <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-secondary-600">
         {hasActiveFilters
           ? "Aucun épisode ne correspond à votre recherche."
           : "Aucun podcast publié pour le moment."}
