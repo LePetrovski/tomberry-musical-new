@@ -1,4 +1,18 @@
-import type { Podcast, PodcastPreview, Post, PostPreview } from "./types";
+import type { Podcast, PodcastCategory, PodcastPreview, Post, PostPreview } from "./types";
+
+const podcastPreviewFields = `
+  _id,
+  title,
+  "slug": slug.current,
+  description,
+  coverImage,
+  episodeNumber,
+  duration,
+  publishedAt,
+  soundcloud,
+  embedSoundcloud,
+  "categories": categories[]->{ _id, title, "slug": slug.current }
+`;
 
 const podcastFields = `
   _id,
@@ -9,8 +23,13 @@ const podcastFields = `
   episodeNumber,
   duration,
   audioUrl,
+  soundcloud,
+  embedSoundcloud,
+  youtube,
+  embedYoutube,
   publishedAt,
-  body
+  body,
+  "categories": categories[]->{ _id, title, "slug": slug.current }
 `;
 
 const postFields = `
@@ -25,16 +44,13 @@ const postFields = `
 `;
 
 export const podcastsQuery = `*[_type == "podcast"] | order(episodeNumber desc) {
+  ${podcastPreviewFields}
+}`;
+
+export const podcastCategoriesQuery = `*[_type == "podcastCategory"] | order(title asc) {
   _id,
   title,
-  "slug": slug.current,
-  description,
-  coverImage,
-  episodeNumber,
-  duration,
-  publishedAt,
-  soundcloud,
-  embedSoundcloud
+  "slug": slug.current
 }`;
 
 export const podcastBySlugQuery = `*[_type == "podcast" && slug.current == $slug][0] {
@@ -96,4 +112,4 @@ export const latestPostsQuery = `*[_type == "post"] | order(publishedAt desc)[0.
   publishedAt
 }`;
 
-export type { Podcast, PodcastPreview, Post, PostPreview };
+export type { Podcast, PodcastCategory, PodcastPreview, Post, PostPreview };

@@ -46,3 +46,7 @@ export function useSoundCloudPlayer() {
     }
     return context;
 }
+
+export function useSoundCloudPlayerOptional() {
+    return useContext(SoundCloudPlayerContext);
+}

@@ -12,6 +12,7 @@ const BUTTON_HOVER_LERP_SPEED = 10;
 
 type Props = TileHoverHandlers & {
     tileTexture: Texture;
+    tileScale: number;
     title: string;
     episodeNumber?: number;
     canPlay: boolean;
@@ -21,6 +22,7 @@ type Props = TileHoverHandlers & {
 
 function PodcastTileComponent({
     tileTexture,
+    tileScale,
     title,
     episodeNumber,
     canPlay,
@@ -35,12 +37,17 @@ function PodcastTileComponent({
     const hoverMixCurrent = useRef({ play: 0, detail: 0 });
     const size = useThree((state) => state.size);
     const resolution = Math.max(size.width, size.height);
+    const safeTileScale = Number.isFinite(tileScale) && tileScale > 0 ? tileScale : 1;
+    const planeWidth = TILE_PLANE_WIDTH * safeTileScale;
+    const planeHeight = TILE_PLANE_HEIGHT * safeTileScale;
 
     useLayoutEffect(() => {
         const mesh = meshRef.current;
         if (!mesh) return;
-        mesh.material = getTileImageMaterial(tileTexture, resolution);
-    }, [resolution, tileTexture]);
+        const material = getTileImageMaterial(tileTexture, resolution);
+        material.scale.set(planeWidth, planeHeight);
+        mesh.material = material;
+    }, [planeHeight, planeWidth, resolution, tileTexture]);
 
     const setButtonHoverTarget = useCallback((hover: TileButtonHover) => {
         hoverMixTarget.current = {
@@ -122,7 +129,7 @@ function PodcastTileComponent({
         <group>
             <mesh
                 ref={meshRef}
-                scale={[TILE_PLANE_WIDTH, TILE_PLANE_HEIGHT, 1]}
+                scale={[planeWidth, planeHeight, 1]}
                 onClick={handleClick}
                 onPointerOver={handlePointerOver}
                 onPointerMove={handlePointerMove}
@@ -130,7 +137,9 @@ function PodcastTileComponent({
             >
                 <planeGeometry args={[1, 1]} />
             </mesh>
-            {episodeNumber != null && <EpisodeBadge episodeNumber={episodeNumber} />}
+            {episodeNumber != null && (
+                <EpisodeBadge episodeNumber={episodeNumber} tileScale={safeTileScale} />
+            )}
         </group>
     );
 }

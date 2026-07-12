@@ -113,7 +113,7 @@ function drawTileButton(
     ctx.lineWidth = enabled && !accent ? 1.5 : 0;
     if (ctx.lineWidth > 0) ctx.stroke();
 
-    ctx.fillStyle = enabled ? (accent ? "#f7f5f0" : "#0c5d66") : "#9a968c";
+    ctx.fillStyle = enabled ? (accent ? "#f7f5f0" : "#14295b") : "#9a968c";
     ctx.font = "600 36px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

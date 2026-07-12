@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { PageWrapper } from "@/components/PageWrapper";
 import { RichText } from "@/components/RichText";
 import { getPageBySlug } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
@@ -48,16 +49,17 @@ export default async function CmsPage({ params }: Props) {
     const ogImage = getOgImageUrl(page.coverImage);
 
     return (
-        <article className="mx-auto max-w-3xl px-6 py-16">
+        <PageWrapper background="polka" width="narrow">
+            <article>
             <JsonLd data={webPageSchema(page, ogImage)} />
             <Breadcrumbs
                 className="mb-8"
                 items={[{ label: "Accueil", href: "/" }, { label: page.title }]}
             />
             <header className="mb-10">
-                <h1 className="text-4xl font-semibold tracking-tight text-zinc-900">{page.title}</h1>
+                <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{page.title}</h1>
                 {page.description && (
-                    <p className="mt-4 text-lg leading-8 text-zinc-600">{page.description}</p>
+                    <p className="mt-4 text-lg leading-8 text-secondary-600">{page.description}</p>
                 )}
             </header>
 
@@ -77,6 +79,7 @@ export default async function CmsPage({ params }: Props) {
             <div className="prose prose-zinc max-w-none">
                 <RichText value={page.body} />
             </div>
-        </article>
+            </article>
+        </PageWrapper>
     );
 }

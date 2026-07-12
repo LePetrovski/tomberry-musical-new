@@ -5,6 +5,12 @@ export type SanityImage = {
   alt?: string;
 };
 
+export type PodcastCategory = {
+  _id: string;
+  title: string;
+  slug: string;
+};
+
 export type Podcast = {
   _id: string;
   title: string;
@@ -22,6 +28,7 @@ export type Podcast = {
   second?: SanityImage;
   third?: SanityImage;
   fourth?: SanityImage;
+  categories?: PodcastCategory[];
   publishedAt: string;
   body?: PortableTextBlock[];
 };
@@ -49,6 +56,7 @@ export type PodcastPreview = Pick<
   | "publishedAt"
   | "soundcloud"
   | "embedSoundcloud"
+  | "categories"
 >;
 
 export type PostPreview = Pick<

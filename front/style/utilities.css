@@ -77,3 +77,42 @@
     border-color: var(--color-secondary-500);
     color: var(--color-primary-200);
 }
+
+@utility bg-polka {
+    background-color: (var(--color-primary-500));
+    opacity: 0.8;
+    background-image: radial-gradient(var(--color-secondary-500) 1px, var(--color-primary-500) 1px);
+    background-size: 10px 10px;
+}
+
+@utility bg-grid-thin {
+    background-color: (var(--color-primary-500));
+    opacity: 0.8;
+    background-image:  linear-gradient(var(--color-secondary-500) 1px, transparent 1px), linear-gradient(90deg, var(--color-secondary-500) 1px, transparent 1px), linear-gradient(var(--color-secondary-500) 0.5px, transparent 0.5px), linear-gradient(90deg, var(--color-secondary-500) 0.5px, var(--color-primary-500) 0.5px);
+    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+    background-position: -1px -1px, -1px -1px, -0.5px -0.5px, -0.5px -0.5px;
+}
+
+@utility bg-cross {
+    background-color: (var(--color-primary-500));
+    opacity: 0.8;
+    background: radial-gradient(circle, transparent 20%, var(--color-primary-500) 20%, var(--color-primary-500) 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, var(--color-primary-500) 20%, var(--color-primary-500) 80%, transparent 80%, transparent) 25px 25px, linear-gradient(var(--color-secondary-500) 2px, transparent 2px) 0 -1px, linear-gradient(90deg, var(--color-secondary-500) 2px, var(--color-primary-500) 2px) -1px 0;
+    background-size: 50px 50px, 50px 50px, 25px 25px, 25px 25px;
+}
+
+@utility bg-zigzag {
+    background-color: (var(--color-primary-500));
+    opacity: 0.8;
+    background-image:  linear-gradient(135deg, var(--color-secondary-500) 25%, transparent 25%), linear-gradient(225deg, var(--color-secondary-500) 25%, transparent 25%), linear-gradient(45deg, var(--color-secondary-500) 25%, transparent 25%), linear-gradient(315deg, var(--color-secondary-500) 25%, var(--color-primary-500) 25%);
+    background-position:  10px 0, 10px 0, 0 0, 0 0;
+    background-size: 20px 20px;
+    background-repeat: repeat;
+}
+
+@utility bg-tiled-rosette {
+    background-color: (var(--color-primary-500));
+    opacity: 0.8;
+    background-image:  radial-gradient(var(--color-secondary-500) 17%, var(--color-primary-500) 18% 35%, transparent 36.5%), radial-gradient(var(--color-secondary-500) 17%, var(--color-primary-500) 18% 35%, transparent 36.5%), radial-gradient(var(--color-primary-500) 34%, var(--color-secondary-500) 36% 68%, transparent 70%), repeating-linear-gradient(45deg, var(--color-secondary-500) -12.5% 12.5%, var(--color-primary-500) 0 37.5%);
+    background-position: -20px -20px, 20px 20px, 0 0, 0 0;
+    background-size: 80px 80px, 80px 80px, 40px 40px, 80px 80px;
+}
