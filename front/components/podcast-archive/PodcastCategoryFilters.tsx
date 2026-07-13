@@ -23,27 +23,43 @@ export function PodcastCategoryFilters({
     return null;
   }
 
+  const activeCategory = categories.find((category) => category.slug === selectedCategory);
+
   return (
-    <div className="flex flex-wrap gap-2">
-      <button
-        type="button"
-        onClick={() => onSelectCategory(null)}
-        className={filterButtonClass(!selectedCategory)}
-      >
-        Tous
-      </button>
-      {categories.map((category) => (
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2">
         <button
-          key={category._id}
           type="button"
-          onClick={() =>
-            onSelectCategory(selectedCategory === category.slug ? null : category.slug)
-          }
-          className={filterButtonClass(selectedCategory === category.slug)}
+          onClick={() => onSelectCategory(null)}
+          className={filterButtonClass(!selectedCategory)}
         >
-          {category.title}
+          Tous
         </button>
-      ))}
+        {categories.map((category) => (
+          <button
+            key={category._id}
+            type="button"
+            onClick={() =>
+              onSelectCategory(selectedCategory === category.slug ? null : category.slug)
+            }
+            className={filterButtonClass(selectedCategory === category.slug)}
+          >
+            {category.title}
+            {category.featured ? " ★" : ""}
+          </button>
+        ))}
+      </div>
+
+      {activeCategory?.youtubePlaylistUrl && (
+        <a
+          href={activeCategory.youtubePlaylistUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex text-sm font-medium text-secondary-700 transition-colors hover:text-secondary-900"
+        >
+          Voir la playlist YouTube « {activeCategory.title} » →
+        </a>
+      )}
     </div>
   );
 }

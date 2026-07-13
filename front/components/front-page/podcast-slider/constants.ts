@@ -16,10 +16,37 @@ export const EPISODE_BADGE_PADDING_X = 0.055;
 export const EPISODE_BADGE_PADDING_Y = 0.055;
 export const EPISODE_BADGE_HEIGHT = 0.13;
 export const EPISODE_BADGE_Z = -0.08;
+export const EPISODE_BADGE_FONT = "/font/Lexend_Regular.json";
+export const EPISODE_BADGE_TEXT_COLOR = "#72b2b4";
+export const EPISODE_BADGE_BG_COLOR = "";
+export const EPISODE_BADGE_TEXT_SIZE = 0.08;
+export const EPISODE_BADGE_TEXT_DEPTH = 0.02;
+export const EPISODE_BADGE_BG_DEPTH = 0.012;
+export const EPISODE_BADGE_BG_RADIUS = 0.016;
+export const EPISODE_BADGE_BG_PAD_X = 0.035;
+export const EPISODE_BADGE_BG_PAD_Y = 0.022;
+
+/** Inclinaison légère au survol (parallaxe curseur, sans contrôle Drei global). */
+export const TILE_TILT_POLAR_MAX = Math.PI / 32;
+export const TILE_TILT_AZIMUTH_MAX = Math.PI / 32;
+
 /** Rotation commune des overlays (badge, boutons) pour affichage face caméra. */
 export const TILE_OVERLAY_ROTATION: [number, number, number] = [0, Math.PI, 0];
 /** Légèrement devant la cover pour le raycast et l’effet de relief. */
 export const TILE_BUTTON_Z = -0.06;
+
+/** Reflets discrets + léger foil irisé sur les covers. */
+export const TILE_ROUGHNESS = 0.4;
+export const TILE_METALNESS = 0.08;
+export const TILE_CLEARCOAT = 0.38;
+export const TILE_CLEARCOAT_ROUGHNESS = 0.4;
+export const TILE_ENV_MAP_INTENSITY = 0.22;
+export const TILE_SPECULAR_INTENSITY = 0.16;
+export const TILE_IRIDESCENCE = 0.5;
+export const TILE_IRIDESCENCE_IOR = 1.35;
+export const TILE_IRIDESCENCE_THICKNESS_MIN = 180;
+export const TILE_IRIDESCENCE_THICKNESS_MAX = 360;
+export const SLIDER_ENV_INTENSITY = 0.4;
 
 export const TUBE_RADIUS = 4;
 export const TUBE_Y_SPACING = 2.7;

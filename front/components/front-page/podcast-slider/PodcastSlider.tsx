@@ -1,14 +1,23 @@
 "use client";
 
-import { Bvh, Environment, Loader, Preload } from "@react-three/drei";
+import { Bvh, Environment } from "@react-three/drei";
+import {
+  SceneLoadReporter,
+  SceneReveal,
+} from "@/components/initial-loader/SceneLoading";
+import { SceneLoadProvider } from "@/components/initial-loader/SceneLoadProvider";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useSoundCloudPlayer } from "@/components/audio/SoundCloudPlayerContext";
 import { textureProxyUrlFor } from "@/lib/sanity/image";
 import { useTexture } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { PerspectiveCamera, Vector2 } from "three";
+import { useLoader } from "@react-three/fiber";
 import { CrystalScene } from "./CrystalScene";
 import {
+  EPISODE_BADGE_FONT,
+  SLIDER_ENV_INTENSITY,
   TUBE_COLS,
   TUBE_REPEAT_COUNT,
   TUBE_ROWS,
@@ -58,6 +67,10 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
     }
   }, [coverUrls]);
 
+  useEffect(() => {
+    useLoader.preload(FontLoader, EPISODE_BADGE_FONT);
+  }, []);
+
   const initialTubeScroll = useMemo(
     () => getLatestRowScrollOffset(TUBE_ROWS, TUBE_Y_SPACING, TUBE_REPEAT_COUNT),
     [],
@@ -103,19 +116,22 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
 
   return (
     <TileSoundProvider>
-    <div className="sceneRoot h-full w-full" ref={containerRef} onWheel={onWheel}>
+    <SceneLoadProvider>
+    <SceneReveal className="sceneRoot h-full w-full" ref={containerRef} onWheel={onWheel}>
+      <SceneLoadReporter />
       <Canvas
         className="sceneCanvas"
         camera={{ position: config.cameraPosition, fov: config.cameraFov }}
-        onCreated={({ camera }) => {
+        onCreated={({ camera, scene }) => {
           camera.lookAt(0, 0, 0);
+          scene.environmentIntensity = SLIDER_ENV_INTENSITY;
         }}
       >
         <ResponsiveCamera config={config} />
         <Suspense fallback={null}>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 5, 5]} intensity={1} />
-          <Environment preset="studio" blur={10.5} />
+          <ambientLight intensity={0.42} />
+          <directionalLight position={[5, 6, 5]} intensity={0.55} />
+          <Environment preset="studio" blur={2.4} />
 
           <Bvh firstHitOnly>
             <GridPlane
@@ -144,7 +160,6 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
             />
             <CrystalScene tubeAngleRef={tubeAngle} />
           </Bvh>
-          <Preload all />
         </Suspense>
       </Canvas>
 
@@ -157,8 +172,8 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
         style={{ opacity: 0, visibility: "hidden" }}
       />
 
-      <Loader />
-    </div>
+    </SceneReveal>
+    </SceneLoadProvider>
     </TileSoundProvider>
   );
 }

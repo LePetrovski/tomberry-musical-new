@@ -114,12 +114,12 @@ export function podcastEpisodeSchema(podcast: Podcast, imageUrl?: string) {
       name: siteConfig.name,
       url: absoluteUrl("/podcasts"),
     },
-    ...(podcast.audioUrl
+    ...(podcast.audioFile?.asset?.url || podcast.audioUrl
       ? {
           associatedMedia: {
             "@type": "MediaObject",
-            contentUrl: podcast.audioUrl,
-            encodingFormat: "audio/mpeg",
+            contentUrl: podcast.audioFile?.asset?.url ?? podcast.audioUrl,
+            encodingFormat: podcast.audioFile?.asset?.mimeType ?? "audio/mpeg",
           },
         }
       : {}),

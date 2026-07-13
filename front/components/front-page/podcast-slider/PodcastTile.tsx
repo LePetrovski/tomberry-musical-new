@@ -1,13 +1,18 @@
 import type { ThreeEvent } from "@react-three/fiber";
-import { useLayoutEffect, useMemo, useRef, useCallback } from "react";
-import { memo } from "react";
-import type { Mesh, Texture } from "three";
-import { TILE_BUTTON_BAR_UV, TILE_PLANE_HEIGHT, TILE_PLANE_WIDTH } from "./constants";
+import { useFrame } from "@react-three/fiber";
+import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import type { Group, Mesh, Texture } from "three";
+import {
+    TILE_BUTTON_BAR_UV,
+    TILE_PLANE_HEIGHT,
+    TILE_PLANE_WIDTH,
+    TILE_TILT_AZIMUTH_MAX,
+    TILE_TILT_POLAR_MAX,
+} from "./constants";
 import type { TileButtonHover, TileHoverHandlers } from "./types";
 import { getTileImageMaterial } from "./utils/tile-image-material";
 import { EpisodeBadge } from "./EpisodeBadge";
 import { TileButton, getTileButtonLayout } from "./TileButton";
-import { useThree } from "@react-three/fiber";
 
 type Props = TileHoverHandlers & {
     tileTexture: Texture;
@@ -32,8 +37,10 @@ function PodcastTileComponent({
     onHoverEnd,
 }: Props) {
     const meshRef = useRef<Mesh>(null);
-    const size = useThree((state) => state.size);
-    const resolution = Math.max(size.width, size.height);
+    const tiltGroupRef = useRef<Group>(null);
+    const tiltTargetX = useRef(0);
+    const tiltTargetY = useRef(0);
+    const isTileHoveredRef = useRef(false);
     const safeTileScale = Number.isFinite(tileScale) && tileScale > 0 ? tileScale : 1;
     const planeWidth = TILE_PLANE_WIDTH * safeTileScale;
     const planeHeight = TILE_PLANE_HEIGHT * safeTileScale;
@@ -45,52 +52,84 @@ function PodcastTileComponent({
     useLayoutEffect(() => {
         const mesh = meshRef.current;
         if (!mesh) return;
-        const material = getTileImageMaterial(tileTexture, resolution);
-        material.scale.set(planeWidth, planeHeight);
-        mesh.material = material;
-    }, [planeHeight, planeWidth, resolution, tileTexture]);
+        mesh.material = getTileImageMaterial(tileTexture);
+    }, [tileTexture]);
+
+    const updateTiltFromPointer = useCallback((event: ThreeEvent<PointerEvent>) => {
+        if (!event.uv) return;
+        const u = event.uv.x;
+        const v = event.uv.y;
+        tiltTargetX.current = -(v - 0.5) * 2 * TILE_TILT_POLAR_MAX;
+        tiltTargetY.current = (u - 0.5) * 2 * TILE_TILT_AZIMUTH_MAX;
+        isTileHoveredRef.current = true;
+    }, []);
+
+    const resetTilt = useCallback(() => {
+        isTileHoveredRef.current = false;
+    }, []);
+
+    useFrame((_, delta) => {
+        const group = tiltGroupRef.current;
+        if (!group) return;
+
+        const step = 1 - Math.pow(0.001, delta);
+        const targetX = isTileHoveredRef.current ? tiltTargetX.current : 0;
+        const targetY = isTileHoveredRef.current ? tiltTargetY.current : 0;
+        group.rotation.x += (targetX - group.rotation.x) * step;
+        group.rotation.y += (targetY - group.rotation.y) * step;
+
+        if (!isTileHoveredRef.current) {
+            tiltTargetX.current = 0;
+            tiltTargetY.current = 0;
+        }
+    });
 
     const handleCoverPointerOver = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
             if (event.uv && event.uv.y <= TILE_BUTTON_BAR_UV) return;
+            updateTiltFromPointer(event);
             onHoverStart(title, event);
             onHoverMove(event, null);
         },
-        [onHoverMove, onHoverStart, title],
+        [onHoverMove, onHoverStart, title, updateTiltFromPointer],
     );
 
     const handleCoverPointerMove = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
             if (event.uv && event.uv.y <= TILE_BUTTON_BAR_UV) return;
+            updateTiltFromPointer(event);
             onHoverMove(event, null);
         },
-        [onHoverMove],
+        [onHoverMove, updateTiltFromPointer],
     );
 
     const handleCoverPointerOut = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
+            resetTilt();
             onHoverEnd();
         },
-        [onHoverEnd],
+        [onHoverEnd, resetTilt],
     );
 
     const handleButtonHover = useCallback(
         (hover: TileButtonHover, event: ThreeEvent<PointerEvent>) => {
+            if (hover) updateTiltFromPointer(event);
             onHoverStart(title, event);
             onHoverMove(event, hover);
         },
-        [onHoverMove, onHoverStart, title],
+        [onHoverMove, onHoverStart, title, updateTiltFromPointer],
     );
 
     const handleButtonHoverEnd = useCallback(() => {
+        resetTilt();
         onHoverEnd();
-    }, [onHoverEnd]);
+    }, [onHoverEnd, resetTilt]);
 
     return (
-        <group>
+        <group ref={tiltGroupRef}>
             <mesh
                 ref={meshRef}
                 scale={[planeWidth, planeHeight, 1]}

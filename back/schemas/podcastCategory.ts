@@ -24,6 +24,19 @@ export const podcastCategory = defineType({
       type: "text",
       rows: 2,
     }),
+    defineField({
+      name: "youtubePlaylistUrl",
+      title: "Playlist YouTube",
+      type: "url",
+      description: "Lien vers la playlist YouTube associée à cette catégorie",
+    }),
+    defineField({
+      name: "featured",
+      title: "Mettre en avant",
+      type: "boolean",
+      description: "Afficher cette catégorie en priorité dans les filtres (ex. Backlog)",
+      initialValue: false,
+    }),
   ],
   preview: {
     select: { title: "title" },

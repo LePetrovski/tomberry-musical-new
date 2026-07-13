@@ -9,6 +9,29 @@ export type PodcastCategory = {
   _id: string;
   title: string;
   slug: string;
+  description?: string;
+  youtubePlaylistUrl?: string;
+  featured?: boolean;
+};
+
+export type ListeningPlatformId =
+  | "youtube"
+  | "soundcloud"
+  | "apple_podcasts"
+  | "deezer"
+  | "podcast_addict"
+  | "rss";
+
+export type ListeningPlatform = {
+  platform: ListeningPlatformId;
+  url: string;
+};
+
+export type SanityFileAsset = {
+  url: string;
+  originalFilename?: string;
+  mimeType?: string;
+  size?: number;
 };
 
 export type PostCategory = {
@@ -50,6 +73,10 @@ export type Podcast = {
   episodeNumber?: number;
   duration?: string;
   audioUrl?: string;
+  audioFile?: {
+    asset: SanityFileAsset;
+  };
+  listeningPlatforms?: ListeningPlatform[];
   youtube?: string;
   embedYoutube?: string;
   soundcloud?: string;
@@ -119,6 +146,33 @@ export type SocialLink = {
   url: string;
 };
 
+export type ReviewLink = {
+  platform: string;
+  label: string;
+  url: string;
+};
+
+export type FeaturedLinkGroup = "writing" | "social" | "projects";
+
+export type FeaturedLink = {
+  group: FeaturedLinkGroup;
+  label: string;
+  url: string;
+  description?: string;
+};
+
+export type GuestAppearance = {
+  _id: string;
+  showName: string;
+  episodeTitle: string;
+  url: string;
+  coverImage?: SanityImage;
+  platform?: string;
+  publishedAt?: string;
+};
+
 export type SiteSettings = {
   socialLinks?: SocialLink[];
+  reviewLinks?: ReviewLink[];
+  featuredLinks?: FeaturedLink[];
 };
