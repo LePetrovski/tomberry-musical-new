@@ -17,6 +17,10 @@ body {
 
 .motion-curtain {
     background: var(--color-secondary-500);
+    background-image: url('/tombgif.gif');
+    background-size: 300px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
 }
 
 .font-mono {
