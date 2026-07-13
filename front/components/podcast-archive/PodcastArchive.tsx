@@ -39,7 +39,7 @@ export function PodcastArchive({ podcasts, categories }: Props) {
                 />
             </div>
 
-        <PodcastArchiveGrid podcasts={filteredPodcasts} hasActiveFilters={hasActiveFilters} />
+            <PodcastArchiveGrid key={filteredPodcasts.length} podcasts={filteredPodcasts} hasActiveFilters={hasActiveFilters} />
         </div>
     );
 }
