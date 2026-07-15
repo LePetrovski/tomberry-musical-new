@@ -9,7 +9,7 @@ type Props = {
 
 export function PodcastCard({ podcast }: Props) {
     return (
-        <article className="group relative flex flex-col overflow-hidden transition ">
+        <article className="group relative flex flex-col overflow-hidden transition">
         <CurtainLink href={`/podcasts/${podcast.slug}`} className="flex flex-1 md:flex-col flex-row flex-nowrap max-md:gap-4 space-y-2">
 
             <div className="flex flex-1 flex-col gap-3 p-5 rounded-2xl border bg-primary-500 shadow-sm max-md:h-full group-hover:border-secondary-500 border-transparent transition-all duration-300">
@@ -41,7 +41,7 @@ export function PodcastCard({ podcast }: Props) {
                 <p className="line-clamp-2 text-base!  max-md:hidden leading-6 text-secondary-600" dangerouslySetInnerHTML={{ __html: podcast.description }} />
             </div>
 
-            <div className="relative h-30 max-md:aspect-square overflow-hidden bg-zinc-10 rounded-2xl group-hover:md:-translate-y-2 transition-all duration-300">
+            <div className="relative h-40 max-md:aspect-square overflow-hidden bg-zinc-10 rounded-2xl group-hover:md:-translate-y-2 transition-all duration-300">
             {podcast.coverImage ? (
                 <Image
                 src={urlFor(podcast.coverImage).width(800).height(500).url()}

@@ -5,6 +5,7 @@ import type {
   Post,
   PostCategory,
   PostPreview,
+  GuestAppearance,
 } from "./types";
 
 const podcastPreviewFields = `
@@ -30,6 +31,18 @@ const podcastFields = `
   episodeNumber,
   duration,
   audioUrl,
+  audioFile {
+    asset->{
+      url,
+      originalFilename,
+      mimeType,
+      size
+    }
+  },
+  listeningPlatforms[] {
+    platform,
+    url
+  },
   soundcloud,
   embedSoundcloud,
   youtube,
@@ -76,10 +89,13 @@ export const podcastsQuery = `*[_type == "podcast"] | order(episodeNumber desc) 
   ${podcastPreviewFields}
 }`;
 
-export const podcastCategoriesQuery = `*[_type == "podcastCategory"] | order(title asc) {
+export const podcastCategoriesQuery = `*[_type == "podcastCategory"] | order(featured desc, title asc) {
   _id,
   title,
-  "slug": slug.current
+  "slug": slug.current,
+  description,
+  youtubePlaylistUrl,
+  featured
 }`;
 
 export const podcastBySlugQuery = `*[_type == "podcast" && slug.current == $slug][0] {
@@ -153,7 +169,28 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0] {
     name,
     icon,
     url
+  },
+  reviewLinks[] {
+    platform,
+    label,
+    url
+  },
+  featuredLinks[] {
+    group,
+    label,
+    url,
+    description
   }
 }`;
 
-export type { Podcast, PodcastCategory, PodcastPreview, Post, PostCategory, PostPreview };
+export const guestAppearancesQuery = `*[_type == "guestAppearance"] | order(publishedAt desc) {
+  _id,
+  showName,
+  episodeTitle,
+  url,
+  coverImage,
+  platform,
+  publishedAt
+}`;
+
+export type { Podcast, PodcastCategory, PodcastPreview, Post, PostCategory, PostPreview, GuestAppearance };
