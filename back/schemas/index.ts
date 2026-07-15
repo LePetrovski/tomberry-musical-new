@@ -10,6 +10,7 @@ import {
   postTextImageBlock,
 } from "./postContent";
 import { postCategory } from "./postCategory";
+import { guestAppearance } from "./guestAppearance";
 import { siteSettings } from "./siteSettings";
 
 export const schemaTypes = [
@@ -24,4 +25,5 @@ export const schemaTypes = [
   postImageBlock,
   postTextImageBlock,
   siteSettings,
+  guestAppearance,
 ];

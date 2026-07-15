@@ -1,4 +1,5 @@
-import { defineType, defineField } from "sanity";
+import { defineType, defineField, defineArrayMember } from "sanity";
+import { LISTENING_PLATFORM_OPTIONS } from "./listeningPlatform";
 
 export const podcast = defineType({
   name: "podcast",
@@ -56,10 +57,54 @@ export const podcast = defineType({
       description: "Ex. 42 min",
     }),
     defineField({
+      name: "audioFile",
+      title: "Fichier audio (MP3)",
+      type: "file",
+      options: {
+        accept: "audio/mpeg,audio/mp3,.mp3",
+      },
+      description: "Fichier MP3 hébergé sur Sanity pour le téléchargement direct",
+    }),
+    defineField({
       name: "audioUrl",
-      title: "URL audio",
+      title: "URL audio (legacy)",
       type: "url",
-      description: "Lien vers le fichier audio ou le flux RSS",
+      description: "Lien externe de secours (Mega, etc.) — préférer le fichier MP3 ci-dessus",
+    }),
+    defineField({
+      name: "listeningPlatforms",
+      title: "Plateformes d'écoute",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "listeningPlatform",
+          fields: [
+            defineField({
+              name: "platform",
+              title: "Plateforme",
+              type: "string",
+              options: {
+                list: [...LISTENING_PLATFORM_OPTIONS],
+                layout: "dropdown",
+              },
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "url",
+              title: "URL",
+              type: "url",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: "platform",
+              subtitle: "url",
+            },
+          },
+        }),
+      ],
     }),
     defineField({
       name: "youtube",
