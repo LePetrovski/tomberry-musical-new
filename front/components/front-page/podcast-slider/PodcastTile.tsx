@@ -4,6 +4,7 @@ import { memo, useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import type { Group, Mesh, Texture } from "three";
 import {
     TILE_BUTTON_BAR_UV,
+    TILE_COVER_ROTATION,
     TILE_PLANE_HEIGHT,
     TILE_PLANE_WIDTH,
     TILE_TILT_AZIMUTH_MAX,
@@ -132,6 +133,7 @@ function PodcastTileComponent({
         <group ref={tiltGroupRef}>
             <mesh
                 ref={meshRef}
+                rotation={TILE_COVER_ROTATION}
                 scale={[planeWidth, planeHeight, 1]}
                 onPointerOver={handleCoverPointerOver}
                 onPointerMove={handleCoverPointerMove}

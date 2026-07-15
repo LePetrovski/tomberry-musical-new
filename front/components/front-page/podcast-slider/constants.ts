@@ -32,6 +32,8 @@ export const TILE_TILT_AZIMUTH_MAX = Math.PI / 32;
 
 /** Rotation commune des overlays (badge, boutons) pour affichage face caméra. */
 export const TILE_OVERLAY_ROTATION: [number, number, number] = [0, Math.PI, 0];
+/** Rotation de la cover (texture seule) pour corriger l’orientation face caméra. */
+export const TILE_COVER_ROTATION: [number, number, number] = [0, Math.PI, 0];
 /** Légèrement devant la cover pour le raycast et l’effet de relief. */
 export const TILE_BUTTON_Z = -0.06;
 
@@ -56,7 +58,7 @@ export const TUBE_COLS = 12;
 
 export const GRID_PLANE_Z = -5.2;
 export const GRID_PLANE_SIZE = 18;
-export const GRID_LINE_COLOR = new Color("#DFE6F3"); // --color-secondary-200
+export const GRID_LINE_COLOR = new Color("#89c3c4"); // --color-secondary-200
 
 export const CAMERA_POSITION: [number, number, number] = [0, 0, 6.5];
 export const CAMERA_FOV = 50;

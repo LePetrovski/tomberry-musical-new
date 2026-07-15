@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
-import { forwardRef, useEffect, useState, type ComponentPropsWithoutRef } from "react";
+import { motion, type HTMLMotionProps } from "motion/react";
+import { forwardRef, useEffect, useState } from "react";
 import { useInitialLoaderOptional } from "./InitialLoaderProvider";
 import { useSceneLoad } from "./SceneLoadProvider";
 
@@ -22,7 +22,10 @@ export function SceneLoadReporter() {
     return null;
 }
 
-type SceneRevealProps = ComponentPropsWithoutRef<"div">;
+type SceneRevealProps = Omit<
+    HTMLMotionProps<"div">,
+    "ref" | "initial" | "animate" | "transition"
+>;
 
 export const SceneReveal = forwardRef<HTMLDivElement, SceneRevealProps>(function SceneReveal(
     { children, className, style, ...props },
@@ -36,16 +39,20 @@ export const SceneReveal = forwardRef<HTMLDivElement, SceneRevealProps>(function
     const isSceneReady = initialLoader?.isSceneReady ?? true;
     const isPastInitialLoad = initialLoader ? !initialLoader.isInitialLoading : true;
     const assetsReady = isPastInitialLoad ? isStableReady : isSceneReady;
+    const readyToReveal = !isLoaderVisible && assetsReady;
+    const showScene = hasRevealed || readyToReveal;
 
     useEffect(() => {
-        if (hasRevealed) {
+        if (hasRevealed || !readyToReveal) {
             return;
         }
 
-        if (!isLoaderVisible && assetsReady) {
+        const frame = requestAnimationFrame(() => {
             setHasRevealed(true);
-        }
-    }, [assetsReady, hasRevealed, isLoaderVisible]);
+        });
+
+        return () => cancelAnimationFrame(frame);
+    }, [hasRevealed, readyToReveal]);
 
     return (
         <motion.div
@@ -53,10 +60,10 @@ export const SceneReveal = forwardRef<HTMLDivElement, SceneRevealProps>(function
             className={className}
             style={{
                 ...style,
-                pointerEvents: hasRevealed ? undefined : "none",
+                pointerEvents: showScene ? undefined : "none",
             }}
             initial={false}
-            animate={{ opacity: hasRevealed ? 1 : 0 }}
+            animate={{ opacity: showScene ? 1 : 0 }}
             transition={{ duration: SCENE_FADE_DURATION_S, ease: [0.4, 0, 0.2, 1] }}
             {...props}
         >
