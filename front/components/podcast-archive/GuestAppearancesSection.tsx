@@ -11,12 +11,12 @@ export function GuestAppearancesSection({ appearances }: Props) {
 
   return (
     <section className="mt-16">
-      <div className="mb-8 max-w-2xl rounded-2xl bg-primary-500 p-6">
+      <div className="mb-8 max-w-3xl rounded-2xl bg-primary-500 p-6">
         <h2 className="text-2xl font-semibold tracking-tight text-secondary-900">
-          Là où j&apos;ai été invité
+          Les podcasts d&apos;autres reflets
         </h2>
         <p className="mt-2 text-secondary-600">
-          D&apos;autres podcasts et émissions où je suis passé en invité.
+          D&apos;autres podcasts et émissions où j&apos;ai été invité.
         </p>
       </div>
 
