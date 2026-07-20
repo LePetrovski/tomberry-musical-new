@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useState } from "react";
 import { SocialLinks } from "@/components/SocialLinks";
 import type { SocialLink } from "@/lib/sanity/types";
+import { usePathname } from "next/navigation";
 
 type FooterProps = {
 	socialLinks?: SocialLink[];
@@ -21,9 +22,16 @@ export function Footer({ socialLinks = [] }: FooterProps) {
 		setOpen(false);
 	}, []);
 
+    const pathname = usePathname();
+    const isHome = pathname === "/";
+
 	return (
 		<>
-			<footer className="fixed bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block">
+			<footer className={
+                isHome ?
+                "fixed bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block"
+                : "relative bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block"
+            }>
 				<div className="mx-auto flex max-w-6xl flex-col flex-wrap gap-2 px-8 py-5 text-sm text-secondary-500 sm:flex-row items-center justify-center">
                     <SocialLinks links={socialLinks} />
 
