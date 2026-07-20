@@ -16,7 +16,7 @@ function formatDate(date: string) {
 export function EpisodeMeta({ podcast }: Props) {
   return (
     <header className="mb-10">
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-secondary-500">
+      <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-secondary-600">
         {podcast.episodeNumber && <span>Épisode {podcast.episodeNumber}</span>}
         {podcast.duration && <span>· {podcast.duration}</span>}
         <span>· {formatDate(podcast.publishedAt)}</span>
@@ -38,7 +38,7 @@ export function EpisodeMeta({ podcast }: Props) {
 
       <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{podcast.title}</h1>
       <p
-        className="mt-4 text-lg leading-8 text-secondary-600"
+        className="mt-4 text-lg leading-8 text-secondary-700"
         dangerouslySetInnerHTML={{ __html: podcast.description }}
       />
     </header>
