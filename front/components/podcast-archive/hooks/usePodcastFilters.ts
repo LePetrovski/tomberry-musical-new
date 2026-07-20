@@ -2,20 +2,25 @@
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { PodcastPreview } from "@/lib/sanity/types";
+import type { GuestAppearance, PodcastPreview } from "@/lib/sanity/types";
 import { normalizeSearch } from "../utils/normalizeSearch";
+
+export type ArchiveView = "episodes" | "apparitions";
 
 type Params = {
   podcasts: PodcastPreview[];
+  appearances: GuestAppearance[];
 };
 
-export function usePodcastFilters({ podcasts }: Params) {
+export function usePodcastFilters({ podcasts, appearances }: Params) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const selectedCategory = searchParams.get("categorie") ?? "";
   const searchQuery = searchParams.get("q") ?? "";
+  const selectedView: ArchiveView =
+    searchParams.get("vue") === "apparitions" ? "apparitions" : "episodes";
   const [searchInput, setSearchInput] = useState(searchQuery);
 
   const updateParams = useCallback(
@@ -36,6 +41,16 @@ export function usePodcastFilters({ podcasts }: Params) {
       });
     },
     [router, searchParams],
+  );
+
+  const setView = useCallback(
+    (view: ArchiveView) => {
+      updateParams({
+        vue: view === "apparitions" ? "apparitions" : null,
+        categorie: view === "apparitions" ? null : selectedCategory || null,
+      });
+    },
+    [selectedCategory, updateParams],
   );
 
   useEffect(() => {
@@ -65,13 +80,35 @@ export function usePodcastFilters({ podcasts }: Params) {
     });
   }, [podcasts, selectedCategory, searchInput]);
 
-  const hasActiveFilters = Boolean(selectedCategory || searchInput);
+  const filteredAppearances = useMemo(() => {
+    const normalizedSearch = normalizeSearch(searchInput);
+
+    if (!normalizedSearch) {
+      return appearances;
+    }
+
+    return appearances.filter((appearance) => {
+      return (
+        normalizeSearch(appearance.episodeTitle).includes(normalizedSearch) ||
+        normalizeSearch(appearance.showName).includes(normalizedSearch) ||
+        normalizeSearch(appearance.platform ?? "").includes(normalizedSearch)
+      );
+    });
+  }, [appearances, searchInput]);
+
+  const hasActiveFilters =
+    selectedView === "apparitions"
+      ? Boolean(searchInput)
+      : Boolean(selectedCategory || searchInput);
 
   return {
+    selectedView,
+    setView,
     selectedCategory,
     searchInput,
     setSearchInput,
     filteredPodcasts,
+    filteredAppearances,
     hasActiveFilters,
     isPending,
     updateParams,

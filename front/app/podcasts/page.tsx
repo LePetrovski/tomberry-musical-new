@@ -4,8 +4,8 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
 import { ElsewhereLinks } from "@/components/podcast-archive/ElsewhereLinks";
-import { GuestAppearancesSection } from "@/components/podcast-archive/GuestAppearancesSection";
 import { LatestEpisodeCard } from "@/components/podcast-archive/LatestEpisodeCard";
+import { LatestGuestAppearanceCard } from "@/components/podcast-archive/LatestGuestAppearanceCard";
 import { PodcastArchive } from "@/components/PodcastArchive";
 import { getSiteSettings } from "@/lib/sanity/cached";
 import { client } from "@/lib/sanity/client";
@@ -36,6 +36,7 @@ export default async function PodcastsPage() {
   ]);
 
   const latestEpisode = podcasts[0];
+  const latestGuestAppearance = guestAppearances[0];
 
   return (
     <PageWrapper background="polka" width="wide">
@@ -49,13 +50,21 @@ export default async function PodcastsPage() {
             <p className="mt-4 text-lg leading-8 text-secondary-600">{description}</p>
         </div>
 
-        {latestEpisode && <LatestEpisodeCard podcast={latestEpisode} />}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {latestEpisode && <LatestEpisodeCard podcast={latestEpisode} />}
+            {latestGuestAppearance && (
+              <LatestGuestAppearanceCard appearance={latestGuestAppearance} />
+            )}
+        </div>
 
         <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-zinc-100" />}>
-            <PodcastArchive podcasts={podcasts} categories={categories} />
+            <PodcastArchive
+              podcasts={podcasts}
+              categories={categories}
+              appearances={guestAppearances}
+            />
         </Suspense>
 
-        <GuestAppearancesSection appearances={guestAppearances} />
         <ElsewhereLinks links={siteSettings?.featuredLinks} />
     </PageWrapper>
   );
