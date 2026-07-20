@@ -72,7 +72,7 @@ export default async function PodcastDetailPage({ params }: Props) {
                         <EpisodeMeta podcast={podcast} />
 
                         {podcast.body && podcast.body.length > 0 && (
-                            <div className="prose prose-zinc max-w-none">
+                            <div className="proseprose-secondary max-w-none">
                             <RichText value={podcast.body} />
                             </div>
                         )}
