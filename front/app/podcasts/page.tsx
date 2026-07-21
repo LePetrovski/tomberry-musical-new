@@ -8,12 +8,13 @@ import { LatestEpisodeCard } from "@/components/podcast-archive/LatestEpisodeCar
 import { LatestGuestAppearanceCard } from "@/components/podcast-archive/LatestGuestAppearanceCard";
 import { PodcastArchive } from "@/components/PodcastArchive";
 import { getSiteSettings } from "@/lib/sanity/cached";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import {
   guestAppearancesQuery,
   podcastCategoriesQuery,
   podcastsQuery,
 } from "@/lib/sanity/queries";
+import { sanityTags } from "@/lib/sanity/tags";
 import type { GuestAppearance, PodcastCategory, PodcastPreview } from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { collectionPageSchema } from "@/lib/seo/schemas";
@@ -29,9 +30,19 @@ export const metadata: Metadata = createPageMetadata({
 
 export default async function PodcastsPage() {
   const [podcasts, categories, guestAppearances, siteSettings] = await Promise.all([
-    client.fetch<PodcastPreview[]>(podcastsQuery).catch(() => []),
-    client.fetch<PodcastCategory[]>(podcastCategoriesQuery).catch(() => []),
-    client.fetch<GuestAppearance[]>(guestAppearancesQuery).catch(() => []),
+    sanityFetch<PodcastPreview[]>(podcastsQuery, {}, { tags: [sanityTags.podcasts] }).catch(
+      () => [],
+    ),
+    sanityFetch<PodcastCategory[]>(
+      podcastCategoriesQuery,
+      {},
+      { tags: [sanityTags.podcasts] },
+    ).catch(() => []),
+    sanityFetch<GuestAppearance[]>(
+      guestAppearancesQuery,
+      {},
+      { tags: [sanityTags.guestAppearances] },
+    ).catch(() => []),
     getSiteSettings(),
   ]);
 

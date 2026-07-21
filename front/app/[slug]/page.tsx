@@ -6,9 +6,10 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
 import { RichText } from "@/components/RichText";
 import { getPageBySlug } from "@/lib/sanity/cached";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
 import { pageSlugsQuery } from "@/lib/sanity/queries";
+import { sanityTags } from "@/lib/sanity/tags";
 import { getOgImageUrl } from "@/lib/seo/images";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { webPageSchema } from "@/lib/seo/schemas";
@@ -18,7 +19,9 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-    const slugs = await client.fetch<string[]>(pageSlugsQuery).catch(() => []);
+    const slugs = await sanityFetch<string[]>(pageSlugsQuery, {}, { tags: [sanityTags.pages] }).catch(
+        () => [],
+    );
     return slugs.map((slug) => ({ slug }));
 }
 

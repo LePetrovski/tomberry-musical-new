@@ -7,9 +7,10 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { PostContent } from "@/components/PostContent";
 import { RichText } from "@/components/RichText";
 import { getPostBySlug } from "@/lib/sanity/cached";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
 import { postSlugsQuery } from "@/lib/sanity/queries";
+import { sanityTags } from "@/lib/sanity/tags";
 import { getOgImageUrl } from "@/lib/seo/images";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { articleSchema } from "@/lib/seo/schemas";
@@ -27,7 +28,9 @@ function formatDate(date: string) {
 }
 
 export async function generateStaticParams() {
-  const slugs = await client.fetch<string[]>(postSlugsQuery).catch(() => []);
+  const slugs = await sanityFetch<string[]>(postSlugsQuery, {}, { tags: [sanityTags.posts] }).catch(
+    () => [],
+  );
   return slugs.map((slug) => ({ slug }));
 }
 

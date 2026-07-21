@@ -8,8 +8,8 @@ const projectId = process.env.SANITY_STUDIO_PROJECT_ID!;
 const dataset = process.env.SANITY_STUDIO_DATASET ?? "production";
 
 export default defineConfig({
-  name: "podcast-studio",
-  title: "Podcast Studio",
+  name: "le-tomberry-musical",
+  title: "Le Tomberry Musical",
   projectId,
   dataset,
   plugins: [structureTool({ structure }), visionTool()],
