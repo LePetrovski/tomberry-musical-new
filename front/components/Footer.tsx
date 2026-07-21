@@ -29,8 +29,8 @@ export function Footer({ socialLinks = [] }: FooterProps) {
 		<>
 			<footer className={
                 isHome ?
-                "fixed bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block"
-                : "relative bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block"
+                "fixed bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block -mt-21.5"
+                : "relative bottom-4 left-1/2 z-50 hidden w-fit -translate-x-1/2 rounded-3xl border-t border-zinc-200 bg-primary-500 md:block -mt-21.5"
             }>
 				<div className="mx-auto flex max-w-6xl flex-col flex-wrap gap-2 px-8 py-5 text-sm text-secondary-500 sm:flex-row items-center justify-center">
                     <SocialLinks links={socialLinks} />

@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import { pageSlugsQuery, podcastSlugsQuery, postSlugsQuery } from "@/lib/sanity/queries";
+import { sanityTags } from "@/lib/sanity/tags";
 import { getSiteUrl } from "@/lib/seo/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [postSlugs, podcastSlugs, pageSlugs] = await Promise.all([
-    client.fetch<string[]>(postSlugsQuery).catch(() => []),
-    client.fetch<string[]>(podcastSlugsQuery).catch(() => []),
-    client.fetch<string[]>(pageSlugsQuery).catch(() => []),
+    sanityFetch<string[]>(postSlugsQuery, {}, { tags: [sanityTags.posts] }).catch(() => []),
+    sanityFetch<string[]>(podcastSlugsQuery, {}, { tags: [sanityTags.podcasts] }).catch(() => []),
+    sanityFetch<string[]>(pageSlugsQuery, {}, { tags: [sanityTags.pages] }).catch(() => []),
   ]);
 
   const base = getSiteUrl();

@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Podcast Studio",
+  name: "Le Tomberry Musical",
   description: "Vitrine, podcasts et blog propulsés par Next.js et Sanity.",
   locale: "fr_FR",
   language: "fr",

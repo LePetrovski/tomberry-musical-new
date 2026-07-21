@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import { podcastsQuery } from "@/lib/sanity/queries";
+import { sanityTags } from "@/lib/sanity/tags";
 import type { PodcastPreview } from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/seo/site";
@@ -15,7 +16,11 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function HomePage() {
-	const podcasts = await client.fetch<PodcastPreview[]>(podcastsQuery).catch(() => []);
+	const podcasts = await sanityFetch<PodcastPreview[]>(
+		podcastsQuery,
+		{},
+		{ tags: [sanityTags.podcasts] },
+	).catch(() => []);
 
 	return (
 		<>
