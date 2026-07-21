@@ -6,8 +6,9 @@ import { ListenPanel } from "@/components/podcast-detail/ListenPanel";
 import { ReviewCTA } from "@/components/podcast-detail/ReviewCTA";
 import { RichText } from "@/components/RichText";
 import { getPodcastBySlug, getSiteSettings } from "@/lib/sanity/cached";
-import { client } from "@/lib/sanity/client";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import { podcastSlugsQuery } from "@/lib/sanity/queries";
+import { sanityTags } from "@/lib/sanity/tags";
 import { getOgImageUrl } from "@/lib/seo/images";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { podcastEpisodeSchema } from "@/lib/seo/schemas";
@@ -19,7 +20,11 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-    const slugs = await client.fetch<string[]>(podcastSlugsQuery).catch(() => []);
+    const slugs = await sanityFetch<string[]>(
+        podcastSlugsQuery,
+        {},
+        { tags: [sanityTags.podcasts] },
+    ).catch(() => []);
     return slugs.map((slug) => ({ slug }));
 }
 

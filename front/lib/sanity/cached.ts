@@ -1,25 +1,38 @@
 import { cache } from "react";
-import { client } from "./client";
+import { sanityFetch } from "./fetch";
 import {
   pageBySlugQuery,
   podcastBySlugQuery,
   postBySlugQuery,
   siteSettingsQuery,
 } from "./queries";
+import { sanityTags } from "./tags";
 import type { Page, Podcast, Post, SiteSettings } from "./types";
 
 export const getPostBySlug = cache(async (slug: string) => {
-    return client.fetch<Post | null>(postBySlugQuery, { slug }).catch(() => null);
+  return sanityFetch<Post | null>(postBySlugQuery, { slug }, { tags: [sanityTags.posts] }).catch(
+    () => null,
+  );
 });
 
 export const getPodcastBySlug = cache(async (slug: string) => {
-    return client.fetch<Podcast | null>(podcastBySlugQuery, { slug }).catch(() => null);
+  return sanityFetch<Podcast | null>(
+    podcastBySlugQuery,
+    { slug },
+    { tags: [sanityTags.podcasts] },
+  ).catch(() => null);
 });
 
 export const getPageBySlug = cache(async (slug: string) => {
-    return client.fetch<Page | null>(pageBySlugQuery, { slug }).catch(() => null);
+  return sanityFetch<Page | null>(pageBySlugQuery, { slug }, { tags: [sanityTags.pages] }).catch(
+    () => null,
+  );
 });
 
 export const getSiteSettings = cache(async () => {
-    return client.fetch<SiteSettings | null>(siteSettingsQuery).catch(() => null);
+  return sanityFetch<SiteSettings | null>(
+    siteSettingsQuery,
+    {},
+    { tags: [sanityTags.siteSettings] },
+  ).catch(() => null);
 });
