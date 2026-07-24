@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { withSanityFallback } from "./fallback";
 import { sanityFetch } from "./fetch";
 import {
   pageBySlugQuery,
@@ -10,29 +11,41 @@ import { sanityTags } from "./tags";
 import type { Page, Podcast, Post, SiteSettings } from "./types";
 
 export const getPostBySlug = cache(async (slug: string) => {
-  return sanityFetch<Post | null>(postBySlugQuery, { slug }, { tags: [sanityTags.posts] }).catch(
-    () => null,
+  return withSanityFallback(
+    sanityFetch<Post | null>(postBySlugQuery, { slug }, { tags: [sanityTags.posts] }),
+    null,
+    `getPostBySlug(${slug})`,
   );
 });
 
 export const getPodcastBySlug = cache(async (slug: string) => {
-  return sanityFetch<Podcast | null>(
-    podcastBySlugQuery,
-    { slug },
-    { tags: [sanityTags.podcasts] },
-  ).catch(() => null);
+  return withSanityFallback(
+    sanityFetch<Podcast | null>(
+      podcastBySlugQuery,
+      { slug },
+      { tags: [sanityTags.podcasts] },
+    ),
+    null,
+    `getPodcastBySlug(${slug})`,
+  );
 });
 
 export const getPageBySlug = cache(async (slug: string) => {
-  return sanityFetch<Page | null>(pageBySlugQuery, { slug }, { tags: [sanityTags.pages] }).catch(
-    () => null,
+  return withSanityFallback(
+    sanityFetch<Page | null>(pageBySlugQuery, { slug }, { tags: [sanityTags.pages] }),
+    null,
+    `getPageBySlug(${slug})`,
   );
 });
 
 export const getSiteSettings = cache(async () => {
-  return sanityFetch<SiteSettings | null>(
-    siteSettingsQuery,
-    {},
-    { tags: [sanityTags.siteSettings] },
-  ).catch(() => null);
+  return withSanityFallback(
+    sanityFetch<SiteSettings | null>(
+      siteSettingsQuery,
+      {},
+      { tags: [sanityTags.siteSettings] },
+    ),
+    null,
+    "getSiteSettings",
+  );
 });

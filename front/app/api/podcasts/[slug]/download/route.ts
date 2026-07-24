@@ -21,19 +21,22 @@ export async function GET(_request: Request, context: RouteContext) {
     return new Response("Aucun fichier audio disponible pour cet épisode.", { status: 404 });
   }
 
-  const response = await fetch(sanityUrl);
+  const upstream = await fetch(sanityUrl);
 
-  if (!response.ok) {
+  if (!upstream.ok || !upstream.body) {
     return new Response("Impossible de récupérer le fichier audio.", { status: 502 });
   }
 
-  const buffer = await response.arrayBuffer();
-
-  return new Response(buffer, {
-    headers: {
-      "Content-Type": podcast.audioFile?.asset?.mimeType ?? "audio/mpeg",
-      "Content-Disposition": `attachment; filename="${filename}"`,
-      "Cache-Control": "public, max-age=3600",
-    },
+  const headers = new Headers({
+    "Content-Type": podcast.audioFile?.asset?.mimeType ?? "audio/mpeg",
+    "Content-Disposition": `attachment; filename="${filename}"`,
+    "Cache-Control": "public, max-age=3600",
   });
+
+  const contentLength = upstream.headers.get("content-length");
+  if (contentLength) {
+    headers.set("Content-Length", contentLength);
+  }
+
+  return new Response(upstream.body, { status: 200, headers });
 }

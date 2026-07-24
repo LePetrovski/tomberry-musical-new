@@ -6,6 +6,7 @@ import { ListenPanel } from "@/components/podcast-detail/ListenPanel";
 import { ReviewCTA } from "@/components/podcast-detail/ReviewCTA";
 import { RichText } from "@/components/RichText";
 import { getPodcastBySlug, getSiteSettings } from "@/lib/sanity/cached";
+import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import { podcastSlugsQuery } from "@/lib/sanity/queries";
 import { sanityTags } from "@/lib/sanity/tags";
@@ -20,11 +21,11 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-    const slugs = await sanityFetch<string[]>(
-        podcastSlugsQuery,
-        {},
-        { tags: [sanityTags.podcasts] },
-    ).catch(() => []);
+    const slugs = await withSanityFallback(
+        sanityFetch<string[]>(podcastSlugsQuery, {}, { tags: [sanityTags.podcasts] }),
+        [],
+        "podcast generateStaticParams",
+    );
     return slugs.map((slug) => ({ slug }));
 }
 
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         image: getOgImageUrl(podcast.coverImage),
         type: "article",
         publishedTime: podcast.publishedAt,
-        modifiedTime: podcast.publishedAt,
+        modifiedTime: podcast._updatedAt ?? podcast.publishedAt,
     });
 }
 
@@ -77,7 +78,7 @@ export default async function PodcastDetailPage({ params }: Props) {
                         <EpisodeMeta podcast={podcast} />
 
                         {podcast.body && podcast.body.length > 0 && (
-                            <div className="proseprose-secondary max-w-none">
+                            <div className="prose prose-zinc max-w-none">
                             <RichText value={podcast.body} />
                             </div>
                         )}

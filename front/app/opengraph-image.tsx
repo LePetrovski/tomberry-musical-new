@@ -25,7 +25,7 @@ export default function Image() {
           {siteConfig.name}
         </div>
         <div style={{ marginTop: 16, fontSize: 28, color: "#d4d4d8", maxWidth: 800 }}>
-          {siteConfig.description}
+          {siteConfig.tagline}
         </div>
       </div>
     ),

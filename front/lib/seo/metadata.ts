@@ -24,6 +24,7 @@ export function createPageMetadata({
 }: PageMetadataOptions): Metadata {
   const url = absoluteUrl(path);
   const ogImage = image ?? absoluteUrl("/opengraph-image");
+  const resolvedModifiedTime = modifiedTime ?? publishedTime;
 
   return {
     title,
@@ -36,7 +37,9 @@ export function createPageMetadata({
       siteName: siteConfig.name,
       locale: siteConfig.locale,
       type,
-      ...(type === "article" && publishedTime ? { publishedTime, modifiedTime } : {}),
+      ...(type === "article" && publishedTime
+        ? { publishedTime, modifiedTime: resolvedModifiedTime }
+        : {}),
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
