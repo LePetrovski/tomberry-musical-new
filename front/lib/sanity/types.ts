@@ -87,6 +87,7 @@ export type Podcast = {
   fourth?: SanityImage;
   categories?: PodcastCategory[];
   publishedAt: string;
+  _updatedAt?: string;
   body?: PortableTextBlock[];
 };
 
@@ -98,6 +99,7 @@ export type Post = {
   coverImage?: SanityImage;
   author?: string;
   publishedAt: string;
+  _updatedAt?: string;
   categories?: PostCategory[];
   content?: PostContentBlock[];
   body?: PortableTextBlock[];

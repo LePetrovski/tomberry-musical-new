@@ -13,7 +13,28 @@ export const structure: StructureResolver = (S) =>
             .documentId("siteSettings"),
         ),
       S.divider(),
-      ...S.documentTypeListItems().filter(
-        (item) => item.getId() !== "siteSettings",
-      ),
+      S.listItem()
+        .title("Podcasts")
+        .child(
+          S.list()
+            .title("Podcasts")
+            .items([
+              S.documentTypeListItem("podcast").title("Épisodes"),
+              S.documentTypeListItem("podcastCategory").title("Catégories"),
+              S.documentTypeListItem("guestAppearance").title(
+                "Apparitions invitées",
+              ),
+            ]),
+        ),
+      S.listItem()
+        .title("Blog")
+        .child(
+          S.list()
+            .title("Blog")
+            .items([
+              S.documentTypeListItem("post").title("Articles"),
+              S.documentTypeListItem("postCategory").title("Catégories"),
+            ]),
+        ),
+      S.documentTypeListItem("page").title("Pages"),
     ]);

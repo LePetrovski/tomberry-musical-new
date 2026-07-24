@@ -1,0 +1,24 @@
+# Le Tomberry Musical
+
+> Podcast francophone dédié à la musique de jeux vidéo (VGM) : bandes originales, compositeurs, coulisses et culture.
+
+## Pages principales
+
+- Accueil: /
+- Podcasts (épisodes): /podcasts
+- Blog: /blog
+
+## À propos
+
+Le Tomberry Musical est animé par Tomberry. Le site publie les épisodes du podcast et des articles autour de la musique de jeux vidéo.
+
+## Contenu utile pour résumé
+
+- Type: podcast + blog
+- Langue: français
+- Thématique: musique de jeux vidéo, OST, compositeurs, culture VGM
+- Écoute: page /podcasts et plateformes liées depuis chaque épisode
+
+## Contact
+
+Voir les réseaux sociaux et liens mis en avant sur le site (footer / réglages globaux).
