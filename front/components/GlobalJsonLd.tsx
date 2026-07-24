@@ -1,6 +1,12 @@
-import { organizationSchema, webSiteSchema } from "@/lib/seo/schemas";
+import { organizationSchema, podcastSeriesSchema, webSiteSchema } from "@/lib/seo/schemas";
 import { JsonLd } from "./JsonLd";
 
-export function GlobalJsonLd() {
-  return <JsonLd data={[organizationSchema(), webSiteSchema()]} />;
+type Props = {
+  sameAs?: string[];
+};
+
+export function GlobalJsonLd({ sameAs = [] }: Props) {
+  return (
+    <JsonLd data={[organizationSchema({ sameAs }), webSiteSchema({ sameAs }), podcastSeriesSchema({ sameAs })]} />
+  );
 }

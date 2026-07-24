@@ -2,8 +2,10 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { PageHero } from "@/components/PageHero";
 import { PageWrapper } from "@/components/PageWrapper";
 import { BlogArchive } from "@/components/BlogArchive";
+import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import { postCategoriesQuery, postsQuery } from "@/lib/sanity/queries";
 import { sanityTags } from "@/lib/sanity/tags";
@@ -12,7 +14,8 @@ import { createPageMetadata } from "@/lib/seo/metadata";
 import { collectionPageSchema } from "@/lib/seo/schemas";
 
 const title = "Blog";
-const description = "Articles, analyses et coulisses.";
+const description =
+  "Articles et coulisses autour de la musique de jeux vidéo : compositeurs, bandes originales et culture VGM.";
 
 export const metadata: Metadata = createPageMetadata({
   title,
@@ -22,9 +25,15 @@ export const metadata: Metadata = createPageMetadata({
 
 export default async function BlogPage() {
   const [posts, categories] = await Promise.all([
-    sanityFetch<PostPreview[]>(postsQuery, {}, { tags: [sanityTags.posts] }).catch(() => []),
-    sanityFetch<PostCategory[]>(postCategoriesQuery, {}, { tags: [sanityTags.posts] }).catch(
-      () => [],
+    withSanityFallback(
+      sanityFetch<PostPreview[]>(postsQuery, {}, { tags: [sanityTags.posts] }),
+      [],
+      "BlogPage.posts",
+    ),
+    withSanityFallback(
+      sanityFetch<PostCategory[]>(postCategoriesQuery, {}, { tags: [sanityTags.posts] }),
+      [],
+      "BlogPage.categories",
     ),
   ]);
 
@@ -35,10 +44,7 @@ export default async function BlogPage() {
         className="mb-8"
         items={[{ label: "Accueil", href: "/" }, { label: title }]}
       />
-      <div className="mb-12 max-w-2xl rounded-2xl bg-primary-500 p-6">
-        <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{title}</h1>
-        <p className="mt-4 text-lg leading-8 text-secondary-600">{description}</p>
-      </div>
+      <PageHero title={title} description={description} className="mb-12 max-w-2xl" />
 
       <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-zinc-100" />}>
         <BlogArchive posts={posts} categories={categories} />

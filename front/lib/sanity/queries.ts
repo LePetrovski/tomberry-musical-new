@@ -48,6 +48,7 @@ const podcastFields = `
   youtube,
   embedYoutube,
   publishedAt,
+  _updatedAt,
   body,
   "categories": categories[]->{ _id, title, "slug": slug.current }
 `;
@@ -80,6 +81,7 @@ const postFields = `
   coverImage,
   author,
   publishedAt,
+  _updatedAt,
   "categories": categories[]->{ _id, title, "slug": slug.current },
   ${postContentFields},
   body
