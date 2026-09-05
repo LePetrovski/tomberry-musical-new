@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { type KeyboardEvent as ReactKeyboardEvent, useId, useMemo, useState } from "react";
 import type { Podcast } from "@/lib/sanity/types";
 import {
   getListeningOptions,
-  type EmbeddedPlayer,
+  type InlinePlayer,
 } from "@/lib/podcast/listening-options";
 import { DownloadEpisodeButton } from "./DownloadEpisodeButton";
+import { PodcastMp3Player } from "./PodcastMp3Player";
 
 type Props = {
   podcast: Podcast;
@@ -16,21 +17,42 @@ function PlayerTabs({
   players,
   activeId,
   onSelect,
+  panelId,
 }: {
-  players: EmbeddedPlayer[];
-  activeId: string;
-  onSelect: (id: EmbeddedPlayer["id"]) => void;
+  players: InlinePlayer[];
+  activeId: InlinePlayer["id"];
+  onSelect: (id: InlinePlayer["id"]) => void;
+  panelId: string;
 }) {
-  if (players.length <= 1) return null;
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % players.length;
+    if (event.key === "ArrowLeft") nextIndex = (index - 1 + players.length) % players.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = players.length - 1;
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    const nextPlayer = players[nextIndex];
+    onSelect(nextPlayer.id);
+    document.getElementById(`${panelId}-tab-${nextPlayer.id}`)?.focus();
+  };
 
   return (
-    <div className="mb-4 flex flex-wrap gap-2">
-      {players.map((player) => (
+    <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Lecteurs disponibles">
+      {players.map((player, index) => (
         <button
           key={player.id}
+          id={`${panelId}-tab-${player.id}`}
           type="button"
           onClick={() => onSelect(player.id)}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition cursor-pointer ${
+          onKeyDown={(event) => handleKeyDown(event, index)}
+          role="tab"
+          aria-selected={activeId === player.id}
+          aria-controls={panelId}
+          tabIndex={activeId === player.id ? 0 : -1}
+          className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium transition ${
             activeId === player.id
               ? "bg-secondary-500 text-primary-500"
               : "bg-secondary-500/10 text-secondary-900 hover:bg-secondary-500/20"
@@ -43,58 +65,80 @@ function PlayerTabs({
   );
 }
 
-function EmbeddedPlayerView({ player }: { player: EmbeddedPlayer }) {
-  if (player.id === "youtube" && player.embedHtml) {
+function InlinePlayerView({
+  player,
+  podcastTitle,
+  panelId,
+}: {
+  player: InlinePlayer;
+  podcastTitle: string;
+  panelId: string;
+}) {
+  const accessibilityProps = {
+    id: panelId,
+    role: "tabpanel",
+    "aria-labelledby": `${panelId}-tab-${player.id}`,
+  } as const;
+
+  if (player.id === "mp3") {
+    return (
+      <div {...accessibilityProps}>
+        <PodcastMp3Player key={player.audioUrl} audioUrl={player.audioUrl} title={podcastTitle} />
+      </div>
+    );
+  }
+
+  if (player.id === "youtube") {
     return (
       <div
+        {...accessibilityProps}
         className="relative aspect-video w-full overflow-hidden rounded-2xl bg-secondary-900 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0"
         dangerouslySetInnerHTML={{ __html: player.embedHtml }}
       />
     );
   }
 
-  if (player.id === "soundcloud") {
-    const src = player.embedUrl;
-    if (!src) {
-      if (player.embedHtml) {
-        return (
-          <div
-            className="w-full overflow-hidden rounded-2xl [&_iframe]:h-[166px] [&_iframe]:w-full [&_iframe]:border-0"
-            dangerouslySetInnerHTML={{ __html: player.embedHtml }}
-          />
-        );
-      }
-      return null;
-    }
-
-    return (
-      <div className="w-full overflow-hidden rounded-2xl">
-        <iframe
-          title={`SoundCloud — ${player.label}`}
-          src={src}
-          className="h-[166px] w-full border-0"
-          allow="autoplay"
+  const src = player.embedUrl;
+  if (!src) {
+    if (player.embedHtml) {
+      return (
+        <div
+          {...accessibilityProps}
+          className="w-full overflow-hidden rounded-2xl [&_iframe]:h-[166px] [&_iframe]:w-full [&_iframe]:border-0"
+          dangerouslySetInnerHTML={{ __html: player.embedHtml }}
         />
-      </div>
-    );
+      );
+    }
+    return null;
   }
 
-  return null;
+  return (
+    <div {...accessibilityProps} className="w-full overflow-hidden rounded-2xl">
+      <iframe
+        title={`SoundCloud — ${player.label}`}
+        src={src}
+        className="h-[166px] w-full border-0"
+        allow="autoplay"
+      />
+    </div>
+  );
 }
 
 export function ListenPanel({ podcast }: Props) {
-  const { embeddedPlayers, externalLinks, canDownload } = useMemo(
+  const playerPanelId = `${useId()}-player-panel`;
+  const { inlinePlayers, externalLinks, canDownload } = useMemo(
     () => getListeningOptions(podcast),
     [podcast],
   );
+  const [selection, setSelection] = useState<{
+    podcastSlug: string;
+    playerId: InlinePlayer["id"];
+  } | null>(null);
 
-  const [activePlayerId, setActivePlayerId] = useState<EmbeddedPlayer["id"] | null>(
-    embeddedPlayers[0]?.id ?? null,
-  );
-
+  const activePlayerId = selection?.podcastSlug === podcast.slug ? selection.playerId : null;
   const activePlayer =
-    embeddedPlayers.find((player) => player.id === activePlayerId) ?? embeddedPlayers[0] ?? null;
-  const hasContent = embeddedPlayers.length > 0 || externalLinks.length > 0 || canDownload;
+    inlinePlayers.find((player) => player.id === activePlayerId) ?? inlinePlayers[0] ?? null;
+  const hasContent = inlinePlayers.length > 0 || externalLinks.length > 0 || canDownload;
 
   if (!hasContent) {
     return (
@@ -105,16 +149,21 @@ export function ListenPanel({ podcast }: Props) {
   }
 
   return (
-    <aside className="space-y-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 min-w-0 overflow-hidden">
-      {embeddedPlayers.length > 0 && activePlayer && (
+    <aside className="min-w-0 space-y-8 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-6">
+      {inlinePlayers.length > 0 && activePlayer && (
         <section>
           <h2 className="mb-3 text-sm font-medium text-secondary-700">Écouter ici</h2>
           <PlayerTabs
-            players={embeddedPlayers}
+            players={inlinePlayers}
             activeId={activePlayer.id}
-            onSelect={setActivePlayerId}
+            onSelect={(playerId) => setSelection({ podcastSlug: podcast.slug, playerId })}
+            panelId={playerPanelId}
           />
-          <EmbeddedPlayerView player={activePlayer} />
+          <InlinePlayerView
+            player={activePlayer}
+            podcastTitle={podcast.title}
+            panelId={playerPanelId}
+          />
         </section>
       )}
 

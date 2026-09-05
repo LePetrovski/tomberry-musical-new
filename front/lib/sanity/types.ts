@@ -27,6 +27,11 @@ export type ListeningPlatform = {
   url: string;
 };
 
+export type PodcastPurchaseLinks = {
+  gameUrl?: string;
+  soundtrackUrl?: string;
+};
+
 export type SanityFileAsset = {
   url: string;
   originalFilename?: string;
@@ -77,6 +82,7 @@ export type Podcast = {
     asset: SanityFileAsset;
   };
   listeningPlatforms?: ListeningPlatform[];
+  purchaseLinks?: PodcastPurchaseLinks;
   youtube?: string;
   embedYoutube?: string;
   soundcloud?: string;

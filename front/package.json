@@ -20,6 +20,7 @@
     "@types/three": "^0.185.1",
     "@vercel/analytics": "^2.0.1",
     "@web-kits/audio": "^0.1.0",
+    "howler": "^2.2.4",
     "lightningcss": "^1.32.0",
     "motion": "^12.42.2",
     "motion-plus": "npm:@motionplus/core@^2.12.0",
@@ -31,6 +32,7 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

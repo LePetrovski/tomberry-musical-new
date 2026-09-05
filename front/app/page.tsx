@@ -8,6 +8,7 @@ import type { PodcastPreview } from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/seo/site";
 import { PodcastSlider } from "@/components/front-page/PodcastSlider";
+import { AsideInfoDrawer } from "@/components/front-page/AsideInfoDrawer";
 
 export const metadata: Metadata = {
 	...createPageMetadata({
@@ -33,12 +34,15 @@ export default async function HomePage() {
 				<PodcastSlider podcasts={podcasts} />
 			</section>
 
-			<section className="border-t border-zinc-200 bg-primary-500">
-				<div className="mx-auto max-w-3xl px-6 py-16 sm:py-20">
-					<p className="text-sm font-medium uppercase tracking-[0.18em] text-secondary-500">
+			<AsideInfoDrawer>
+				<div className="px-7 py-10 sm:px-10 sm:py-12">
+					<p className="text-sm font-medium uppercase tracking-[0.18em] text-secondary-500 ">
 						Podcast
 					</p>
-					<h1 className="mt-3 text-3xl font-semibold tracking-tight text-secondary-900 sm:text-4xl">
+					<h1
+						id="aside-info-title"
+						className="mt-3 text-3xl font-semibold tracking-tight text-secondary-900 sm:text-4xl"
+					>
 						{siteConfig.name}
 					</h1>
 					<p className="mt-2 text-lg font-medium text-secondary-700">{siteConfig.tagline}</p>
@@ -61,7 +65,7 @@ export default async function HomePage() {
 						</CurtainLink>
 					</div>
 				</div>
-			</section>
+			</AsideInfoDrawer>
 		</>
 	);
 }

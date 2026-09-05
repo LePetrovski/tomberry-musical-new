@@ -3,6 +3,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
 import { EpisodeMeta } from "@/components/podcast-detail/EpisodeMeta";
 import { ListenPanel } from "@/components/podcast-detail/ListenPanel";
+import { PurchaseCTA } from "@/components/podcast-detail/PurchaseCTA";
 import { ReviewCTA } from "@/components/podcast-detail/ReviewCTA";
 import { RichText } from "@/components/RichText";
 import { getPodcastBySlug, getSiteSettings } from "@/lib/sanity/cached";
@@ -86,6 +87,7 @@ export default async function PodcastDetailPage({ params }: Props) {
 
                     <div className="sticky top-30 mb-10 h-fit space-y-6 lg:w-[40%]">
                         <ListenPanel podcast={podcast} />
+                        <PurchaseCTA purchaseLinks={podcast.purchaseLinks} />
                         <ReviewCTA reviewLinks={siteSettings?.reviewLinks} />
                     </div>
                 </div>

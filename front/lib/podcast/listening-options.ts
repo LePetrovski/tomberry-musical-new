@@ -10,12 +10,23 @@ export const PLATFORM_LABELS: Record<ListeningPlatformId, string> = {
   rss: "RSS",
 };
 
-export type EmbeddedPlayer = {
-  id: "youtube" | "soundcloud";
-  label: string;
-  embedHtml?: string;
-  embedUrl?: string;
-};
+export type InlinePlayer =
+  | {
+      id: "mp3";
+      label: string;
+      audioUrl: string;
+    }
+  | {
+      id: "youtube";
+      label: string;
+      embedHtml: string;
+    }
+  | {
+      id: "soundcloud";
+      label: string;
+      embedHtml?: string;
+      embedUrl?: string;
+    };
 
 export type ExternalPlatformLink = {
   id: ListeningPlatformId;
@@ -24,7 +35,7 @@ export type ExternalPlatformLink = {
 };
 
 export type ListeningOptions = {
-  embeddedPlayers: EmbeddedPlayer[];
+  inlinePlayers: InlinePlayer[];
   externalLinks: ExternalPlatformLink[];
   canDownload: boolean;
 };
@@ -41,12 +52,21 @@ function addExternalLink(
 }
 
 export function getListeningOptions(podcast: Podcast): ListeningOptions {
-  const embeddedPlayers: EmbeddedPlayer[] = [];
+  const inlinePlayers: InlinePlayer[] = [];
   const externalLinks: ExternalPlatformLink[] = [];
   const seenExternal = new Set<string>();
+  const audioUrl = podcast.audioFile?.asset?.url;
+
+  if (audioUrl) {
+    inlinePlayers.push({
+      id: "mp3",
+      label: "MP3",
+      audioUrl,
+    });
+  }
 
   if (podcast.embedYoutube) {
-    embeddedPlayers.push({
+    inlinePlayers.push({
       id: "youtube",
       label: PLATFORM_LABELS.youtube,
       embedHtml: podcast.embedYoutube,
@@ -60,14 +80,14 @@ export function getListeningOptions(podcast: Podcast): ListeningOptions {
   );
 
   if (podcast.embedSoundcloud) {
-    embeddedPlayers.push({
+    inlinePlayers.push({
       id: "soundcloud",
       label: PLATFORM_LABELS.soundcloud,
       embedHtml: podcast.embedSoundcloud,
       embedUrl: soundcloudEmbedUrl ?? undefined,
     });
   } else if (soundcloudEmbedUrl) {
-    embeddedPlayers.push({
+    inlinePlayers.push({
       id: "soundcloud",
       label: PLATFORM_LABELS.soundcloud,
       embedUrl: soundcloudEmbedUrl,
@@ -83,7 +103,7 @@ export function getListeningOptions(podcast: Podcast): ListeningOptions {
 
   const canDownload = Boolean(podcast.audioFile?.asset?.url);
 
-  return { embeddedPlayers, externalLinks, canDownload };
+  return { inlinePlayers, externalLinks, canDownload };
 }
 
 export function buildEpisodeDownloadFilename(podcast: Podcast) {

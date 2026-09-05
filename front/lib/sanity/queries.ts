@@ -43,6 +43,10 @@ const podcastFields = `
     platform,
     url
   },
+  purchaseLinks {
+    gameUrl,
+    soundtrackUrl
+  },
   soundcloud,
   embedSoundcloud,
   youtube,
