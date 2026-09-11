@@ -7,7 +7,7 @@ import { useSoundCloudPlayerOptional } from "@/components/audio/SoundCloudPlayer
 
 const menuLinks = [
 	{ href: "/podcasts", label: "podcasts" },
-	{ href: "/blog", label: "blog" },
+	{ href: "/podcasts?vue=compilations", label: "compilations" },
 ] as const;
 
 function BurgerIcon({ open }: { open: boolean }) {
@@ -76,8 +76,8 @@ export function Header() {
 					</CurtainLink>
 
 					<div className="lg:flex hidden w-8 items-center justify-center lg:w-auto lg:justify-end">
-						<CurtainLink href="/blog" className="text-podcast-slider-menu-item hidden lg:inline">
-							blog
+						<CurtainLink href="/podcasts?vue=compilations" className="text-podcast-slider-menu-item hidden lg:inline">
+							compilations
 						</CurtainLink>
 					</div>
 				</nav>

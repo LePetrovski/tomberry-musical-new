@@ -6,9 +6,10 @@ import {
   podcastBySlugQuery,
   postBySlugQuery,
   siteSettingsQuery,
+  compilationBySlugQuery,
 } from "./queries";
 import { sanityTags } from "./tags";
-import type { Page, Podcast, Post, SiteSettings } from "./types";
+import type { Compilation, Page, PodcastDetail, Post, SiteSettings } from "./types";
 
 export const getPostBySlug = cache(async (slug: string) => {
   return withSanityFallback(
@@ -20,7 +21,7 @@ export const getPostBySlug = cache(async (slug: string) => {
 
 export const getPodcastBySlug = cache(async (slug: string) => {
   return withSanityFallback(
-    sanityFetch<Podcast | null>(
+    sanityFetch<PodcastDetail | null>(
       podcastBySlugQuery,
       { slug },
       { tags: [sanityTags.podcasts] },
@@ -47,5 +48,17 @@ export const getSiteSettings = cache(async () => {
     ),
     null,
     "getSiteSettings",
+  );
+});
+
+export const getCompilationBySlug = cache(async (slug: string) => {
+  return withSanityFallback(
+    sanityFetch<Compilation | null>(
+      compilationBySlugQuery,
+      { slug },
+      { tags: [sanityTags.compilations] },
+    ),
+    null,
+    `getCompilationBySlug(${slug})`,
   );
 });

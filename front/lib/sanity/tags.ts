@@ -7,6 +7,7 @@ export const sanityTags = {
   posts: "sanity:posts",
   pages: "sanity:pages",
   guestAppearances: "sanity:guest-appearances",
+  compilations: "sanity:compilations",
   siteSettings: "sanity:site-settings",
 } as const;
 

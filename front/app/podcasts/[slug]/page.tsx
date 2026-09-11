@@ -5,13 +5,16 @@ import { EpisodeMeta } from "@/components/podcast-detail/EpisodeMeta";
 import { ListenPanel } from "@/components/podcast-detail/ListenPanel";
 import { PurchaseCTA } from "@/components/podcast-detail/PurchaseCTA";
 import { ReviewCTA } from "@/components/podcast-detail/ReviewCTA";
+import { RelatedPodcastsCarousel } from "@/components/podcast-detail/RelatedPodcastsCarousel";
 import { RichText } from "@/components/RichText";
+import Image from "next/image";
 import { getPodcastBySlug, getSiteSettings } from "@/lib/sanity/cached";
 import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import { podcastSlugsQuery } from "@/lib/sanity/queries";
 import { sanityTags } from "@/lib/sanity/tags";
 import { getOgImageUrl } from "@/lib/seo/images";
+import { urlFor } from "@/lib/sanity/image";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { podcastEpisodeSchema } from "@/lib/seo/schemas";
 import type { Metadata } from "next";
@@ -74,23 +77,47 @@ export default async function PodcastDetailPage({ params }: Props) {
                     { label: podcast.title },
                     ]}
                 />
-                <div className="flex flex-col gap-8 lg:flex-row">
-                    <div className="mb-10 rounded-2xl bg-primary-500 p-6 lg:w-[60%]">
-                        <EpisodeMeta podcast={podcast} />
-
-                        {podcast.body && podcast.body.length > 0 && (
-                            <div className="prose prose-zinc max-w-none">
-                            <RichText value={podcast.body} />
+                <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,.65fr)] lg:items-start">
+                    <section className="overflow-hidden rounded-[2rem] bg-primary-500 shadow-[0_20px_65px_rgba(39,62,63,0.12)] ring-1 ring-secondary-500/15">
+                        <div className="grid md:grid-cols-[minmax(260px,.85fr)_minmax(0,1.15fr)] md:items-stretch">
+                            <div className="relative aspect-square min-h-72 overflow-hidden bg-secondary-100 md:aspect-auto md:min-h-[520px]">
+                                {podcast.coverImage ? (
+                                    <Image
+                                        src={urlFor(podcast.coverImage).width(1000).height(1000).url()}
+                                        alt={podcast.coverImage.alt ?? podcast.title}
+                                        fill
+                                        priority
+                                        className="object-cover"
+                                        sizes="(max-width: 768px) 100vw, 38vw"
+                                    />
+                                ) : (
+                                    <div className="flex h-full items-center justify-center text-sm font-medium text-secondary-500">Sans visuel</div>
+                                )}
                             </div>
-                        )}
-                    </div>
+                            <div className="flex items-center p-6 sm:p-8 lg:p-10">
+                                <EpisodeMeta podcast={podcast} />
+                            </div>
+                        </div>
+                    </section>
 
-                    <div className="sticky top-30 mb-10 h-fit space-y-6 lg:w-[40%]">
+                    <div className="space-y-6 lg:sticky lg:top-28 lg:col-start-2 lg:row-span-2 lg:row-start-1">
                         <ListenPanel podcast={podcast} />
                         <PurchaseCTA purchaseLinks={podcast.purchaseLinks} />
                         <ReviewCTA reviewLinks={siteSettings?.reviewLinks} />
                     </div>
+
+                    {podcast.body && podcast.body.length > 0 && (
+                        <section className="rounded-[2rem] bg-primary-500 p-6 shadow-[0_16px_55px_rgba(39,62,63,0.10)] ring-1 ring-secondary-500/15 sm:p-8 lg:col-start-1">
+                            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary-500">Pour aller plus loin</p>
+                            <h2 className="mt-2 text-3xl! font-semibold tracking-tight text-secondary-900">Notes de l&apos;épisode</h2>
+                            <div className="prose prose-zinc mt-8 max-w-[70ch] text-secondary-800">
+                                <RichText value={podcast.body} />
+                            </div>
+                        </section>
+                    )}
                 </div>
+
+                <RelatedPodcastsCarousel podcasts={podcast.relatedPodcasts ?? []} />
             </article>
         </PageWrapper>
     );

@@ -8,6 +8,9 @@ import {
 } from "@/lib/podcast/listening-options";
 import { DownloadEpisodeButton } from "./DownloadEpisodeButton";
 import { PodcastMp3Player } from "./PodcastMp3Player";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   podcast: Podcast;
@@ -42,7 +45,7 @@ function PlayerTabs({
   return (
     <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Lecteurs disponibles">
       {players.map((player, index) => (
-        <button
+        <Button
           key={player.id}
           id={`${panelId}-tab-${player.id}`}
           type="button"
@@ -52,14 +55,11 @@ function PlayerTabs({
           aria-selected={activeId === player.id}
           aria-controls={panelId}
           tabIndex={activeId === player.id ? 0 : -1}
-          className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium transition ${
-            activeId === player.id
-              ? "bg-secondary-500 text-primary-500"
-              : "bg-secondary-500/10 text-secondary-900 hover:bg-secondary-500/20"
-          }`}
+          variant={activeId === player.id ? "default" : "secondary"}
+          size="sm"
         >
           {player.label}
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -142,17 +142,19 @@ export function ListenPanel({ podcast }: Props) {
 
   if (!hasContent) {
     return (
-      <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-sm text-secondary-600">
+      <div className="rounded-[1.5rem] border border-secondary-500/15 bg-primary-500 p-6 text-sm text-secondary-600">
         Aucun mode d&apos;écoute disponible pour cet épisode.
       </div>
     );
   }
 
   return (
-    <aside className="min-w-0 space-y-8 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-6">
+    <Card className="min-w-0 gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-primary-500 p-6 ring-1 ring-secondary-500/15">
+      <aside className="space-y-7">
       {inlinePlayers.length > 0 && activePlayer && (
         <section>
-          <h2 className="mb-3 text-sm font-medium text-secondary-700">Écouter ici</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary-500">Votre écoute</p>
+          <h2 className="mb-4 mt-1 text-2xl! font-semibold text-secondary-900">Écouter ici</h2>
           <PlayerTabs
             players={inlinePlayers}
             activeId={activePlayer.id}
@@ -169,6 +171,7 @@ export function ListenPanel({ podcast }: Props) {
 
       {externalLinks.length > 0 && (
         <section>
+          <Separator className="mb-6 bg-secondary-500/15" />
           <h2 className="mb-3 text-sm font-medium text-secondary-700">Écouter ailleurs</h2>
           <div className="flex flex-wrap gap-2">
             {externalLinks.map((link) => (
@@ -188,10 +191,12 @@ export function ListenPanel({ podcast }: Props) {
 
       {canDownload && (
         <section>
+          <Separator className="mb-6 bg-secondary-500/15" />
           <h2 className="mb-3 text-sm font-medium text-secondary-700">Télécharger</h2>
           <DownloadEpisodeButton slug={podcast.slug} title={podcast.title} />
         </section>
       )}
-    </aside>
+      </aside>
+    </Card>
   );
 }

@@ -24,6 +24,7 @@ export const structure: StructureResolver = (S) =>
               S.documentTypeListItem("guestAppearance").title(
                 "Apparitions invitées",
               ),
+              S.documentTypeListItem("compilation").title("Compilations"),
             ]),
         ),
       S.listItem()

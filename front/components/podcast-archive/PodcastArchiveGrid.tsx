@@ -1,51 +1,53 @@
+"use client";
+
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { PodcastCard } from "@/components/PodcastCard";
 import type { PodcastPreview } from "@/lib/sanity/types";
-import { motion, stagger } from "motion/react";
 
 type Props = {
-    podcasts: PodcastPreview[];
-    hasActiveFilters: boolean;
+  podcasts: PodcastPreview[];
+  hasActiveFilters: boolean;
+  displayMode: "grid" | "list";
 };
 
-export function PodcastArchiveGrid({ podcasts, hasActiveFilters }: Props) {
-    if (podcasts.length === 0) {
-        return (
-        <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-secondary-600">
-            {hasActiveFilters
-            ? "Aucun épisode ne correspond à votre recherche."
-            : "Aucun podcast publié pour le moment."}
-        </p>
-        );
-    }
+export function PodcastArchiveGrid({ podcasts, hasActiveFilters, displayMode }: Props) {
+  const shouldReduceMotion = useReducedMotion();
 
-    const container = {
-        hidden: { opacity: 0, y: 10 },
-        show: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            delayChildren: stagger(0.1)
-        }
-        }
-    }
-
-    const item = {
-        hidden: { opacity: 0, y: 10 },
-        show: { opacity: 1, y: 0 }
-    }
-
+  if (podcasts.length === 0) {
     return (
-        <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        exit="hidden"
-        className="grid gap-y-8 gap-x-6 md:grid-cols-2">
-        {podcasts.map((podcast) => (
-            <motion.div key={podcast._id} variants={item}>
-            <PodcastCard podcast={podcast} />
-            </motion.div>
-        ))}
-        </motion.div>
+      <p className="rounded-[1.5rem] border border-dashed border-secondary-500/30 bg-primary-500 p-8 text-secondary-600">
+        {hasActiveFilters
+          ? "Aucun épisode ne correspond à votre recherche."
+          : "Aucun podcast publié pour le moment."}
+      </p>
     );
+  }
+
+  return (
+    <LayoutGroup id="podcast-archive">
+      <motion.div
+        layout
+        className={
+          displayMode === "grid"
+            ? "grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+            : "grid gap-5"
+        }
+      >
+        <AnimatePresence initial={false} mode="popLayout">
+          {podcasts.map((podcast, index) => (
+            <motion.div
+              layout
+              key={podcast._id}
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.2, delay: shouldReduceMotion ? 0 : Math.min(index, 8) * 0.025 }}
+            >
+              <PodcastCard podcast={podcast} variant={displayMode} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    </LayoutGroup>
+  );
 }

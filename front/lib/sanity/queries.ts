@@ -2,10 +2,13 @@ import type {
   Podcast,
   PodcastCategory,
   PodcastPreview,
+  PodcastDetail,
   Post,
   PostCategory,
   PostPreview,
   GuestAppearance,
+  Compilation,
+  CompilationPreview,
 } from "./types";
 
 const podcastPreviewFields = `
@@ -105,7 +108,14 @@ export const podcastCategoriesQuery = `*[_type == "podcastCategory"] | order(fea
 }`;
 
 export const podcastBySlugQuery = `*[_type == "podcast" && slug.current == $slug][0] {
-  ${podcastFields}
+  ${podcastFields},
+  "relatedPodcasts": *[
+    _type == "podcast" &&
+    _id != ^._id &&
+    count(categories[@._ref in ^.categories[]._ref]) > 0
+  ] | order(publishedAt desc)[0...6] {
+    ${podcastPreviewFields}
+  }
 }`;
 
 export const podcastSlugsQuery = `*[_type == "podcast" && defined(slug.current)][].slug.current`;
@@ -199,4 +209,59 @@ export const guestAppearancesQuery = `*[_type == "guestAppearance"] | order(publ
   publishedAt
 }`;
 
-export type { Podcast, PodcastCategory, PodcastPreview, Post, PostCategory, PostPreview, GuestAppearance };
+const compilationTrackFields = `
+  _key,
+  timecode,
+  artist,
+  title,
+  externalLink {
+    label,
+    url
+  }
+`;
+
+const compilationPreviewFields = `
+  _id,
+  title,
+  "slug": slug.current,
+  coverImage,
+  "introText": coalesce(pt::text(introduction), ""),
+  curatorName,
+  tracks[] {
+    ${compilationTrackFields}
+  },
+  publishedAt
+`;
+
+export const compilationsQuery = `*[_type == "compilation"] | order(publishedAt desc) {
+  ${compilationPreviewFields}
+}`;
+
+export const compilationBySlugQuery = `*[_type == "compilation" && slug.current == $slug][0] {
+  ${compilationPreviewFields},
+  introduction,
+  _updatedAt,
+  audioFile {
+    asset->{
+      url,
+      originalFilename,
+      mimeType,
+      size
+    }
+  }
+}`;
+
+export const compilationSlugsQuery = `*[_type == "compilation" && defined(slug.current)][].slug.current`;
+
+export type {
+  Compilation,
+  CompilationPreview,
+  GuestAppearance,
+  Podcast,
+  PodcastCategory,
+  PodcastDetail,
+  PodcastPreview,
+  Post,
+  PostCategory,
+  PostPreview,
+};

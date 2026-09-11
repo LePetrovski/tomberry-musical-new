@@ -1,7 +1,10 @@
 "use client";
 
 import { Howl } from "howler";
+import { ExternalLink, Music2 } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import type { CompilationTrack } from "@/lib/sanity/types";
+import { parseTimecode } from "@/lib/audio/timecode";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2] as const;
 const INITIAL_VOLUME = 0.8;
@@ -12,6 +15,8 @@ type PlayerStatus = "loading" | "ready" | "playing" | "paused" | "ended" | "erro
 type Props = {
 	audioUrl: string;
 	title: string;
+	tracks?: CompilationTrack[];
+	contentLabel?: string;
 };
 
 function formatTime(value: number) {
@@ -41,7 +46,12 @@ function PlayPauseIcon({ isPlaying }: { isPlaying: boolean }) {
 	);
 }
 
-export function PodcastMp3Player({ audioUrl, title }: Props) {
+export function PodcastMp3Player({
+	audioUrl,
+	title,
+	tracks = [],
+	contentLabel = "Lecture MP3",
+}: Props) {
 	const controlId = useId();
 	const progressId = `${controlId}-progress`;
 	const volumeId = `${controlId}-volume`;
@@ -57,6 +67,15 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 	const [volume, setVolume] = useState(INITIAL_VOLUME);
 	const [isMuted, setIsMuted] = useState(false);
 	const [playbackRate, setPlaybackRate] = useState(1);
+	const preparedTracks = tracks
+		.map((track) => ({ ...track, startSeconds: parseTimecode(track.timecode) }))
+		.filter(
+			(track): track is CompilationTrack & { startSeconds: number } =>
+				track.startSeconds !== null,
+		);
+	const activeTrackIndex = preparedTracks.findLastIndex(
+		(track) => currentTime >= track.startSeconds,
+	);
 
 	const cancelProgressSync = useCallback(() => {
 		if (animationFrameRef.current === null) return;
@@ -167,7 +186,8 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 
 	const seekTo = useCallback(
 		(value: number) => {
-			const clampedValue = Math.min(Math.max(value, 0), duration || 0);
+			const clampedValue =
+				duration > 0 ? Math.min(Math.max(value, 0), duration) : Math.max(value, 0);
 			const howl = howlRef.current;
 			const soundId = soundIdRef.current;
 
@@ -185,7 +205,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 
 	const togglePlayback = () => {
 		const howl = howlRef.current;
-		if (!howl || status === "loading" || status === "error") return;
+		if (!howl || status === "error") return;
 
 		const soundId = soundIdRef.current;
 		if (soundId !== null && howl.playing(soundId)) {
@@ -232,6 +252,21 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 		howl.load();
 	};
 
+	const playFrom = (value: number) => {
+		seekTo(value);
+
+		const howl = howlRef.current;
+		if (!howl || status === "loading" || status === "error") return;
+
+		const soundId = soundIdRef.current;
+		if (soundId !== null && howl.playing(soundId)) return;
+
+		const nextSoundId = soundId === null ? howl.play() : howl.play(soundId);
+		soundIdRef.current = nextSoundId;
+		howl.seek(value, nextSoundId);
+		pendingSeekRef.current = 0;
+	};
+
 	const isPlaying = status === "playing";
 	const isUnavailable = status === "loading" || status === "error";
 
@@ -240,7 +275,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 			<div className="mb-5 flex min-w-0 items-start justify-between gap-4">
 				<div className="min-w-0">
 					<p className="text-xs font-semibold tracking-[0.14em] text-secondary-500 uppercase">
-						Lecture MP3
+						{contentLabel}
 					</p>
 					<p className="mt-1 truncate text-sm font-medium text-secondary-900" title={title}>
 						{title}
@@ -310,7 +345,12 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 						value={Math.min(currentTime, duration || 0)}
 						onChange={(event) => seekTo(Number(event.currentTarget.value))}
 						disabled={isUnavailable || duration === 0}
-						className="block h-2 w-full cursor-pointer accent-secondary-500 disabled:cursor-not-allowed disabled:opacity-40"
+						style={{
+							background: `linear-gradient(to right, var(--color-secondary-500) ${
+								duration > 0 ? (currentTime / duration) * 100 : 0
+							}%, var(--color-secondary-100) 0%)`,
+						}}
+						className="audio-progress block h-3 w-full cursor-pointer appearance-none rounded-full border border-secondary-500/25 disabled:cursor-not-allowed disabled:opacity-40"
 					/>
 					<div className="mt-1 flex justify-between text-xs tabular-nums text-secondary-600">
 						<span>{formatTime(currentTime)}</span>
@@ -359,6 +399,58 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 					</div>
 				</>
 			)}
+
+			{preparedTracks.length > 0 ? (
+				<section className="mt-7 border-t border-secondary-500/15 pt-6" aria-labelledby={`${controlId}-playlist-title`}>
+					<div className="mb-4 flex items-center gap-2">
+						<Music2 aria-hidden="true" className="size-4 text-secondary-500" />
+						<h3 id={`${controlId}-playlist-title`} className="text-lg! font-semibold text-secondary-900">
+							Playlist
+						</h3>
+					</div>
+					<ol className="space-y-2">
+						{preparedTracks.map((track, index) => {
+							const isActive = index === activeTrackIndex;
+							return (
+								<li
+									key={track._key}
+									className={`grid gap-3 rounded-xl border p-3 transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center ${
+										isActive
+											? "border-secondary-500/45 bg-secondary-500/10"
+											: "border-secondary-500/15 bg-primary-200/45"
+									}`}
+									aria-current={isActive ? "true" : undefined}
+								>
+									<button
+										type="button"
+										onClick={() => playFrom(track.startSeconds)}
+										disabled={status === "error"}
+										className="w-fit cursor-pointer rounded-full bg-secondary-900 px-3 py-1.5 text-xs font-semibold tabular-nums text-primary-500 transition-colors hover:bg-secondary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 disabled:cursor-not-allowed disabled:opacity-40"
+										aria-label={`Lire ${track.artist} — ${track.title} à ${track.timecode}`}
+									>
+										{track.timecode}
+									</button>
+									<div className="min-w-0">
+										<p className="truncate text-sm font-semibold text-secondary-900">{track.title}</p>
+										<p className="truncate text-xs text-secondary-600">{track.artist}</p>
+									</div>
+									{track.externalLink ? (
+										<a
+											href={track.externalLink.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold text-secondary-700 underline-offset-4 hover:text-secondary-900 hover:underline"
+										>
+											{track.externalLink.label}
+											<ExternalLink aria-hidden="true" className="size-3.5" />
+										</a>
+									) : null}
+								</li>
+							);
+						})}
+					</ol>
+				</section>
+			) : null}
 		</div>
 	);
 }

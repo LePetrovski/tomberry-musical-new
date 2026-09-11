@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
-import { pageSlugsQuery, podcastSlugsQuery, postSlugsQuery } from "@/lib/sanity/queries";
+import { compilationSlugsQuery, pageSlugsQuery, podcastSlugsQuery, postSlugsQuery } from "@/lib/sanity/queries";
 import { sanityTags } from "@/lib/sanity/tags";
 import { getSiteUrl } from "@/lib/seo/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [postSlugs, podcastSlugs, pageSlugs] = await Promise.all([
+  const [postSlugs, podcastSlugs, compilationSlugs, pageSlugs] = await Promise.all([
     withSanityFallback(
       sanityFetch<string[]>(postSlugsQuery, {}, { tags: [sanityTags.posts] }),
       [],
@@ -16,6 +16,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       sanityFetch<string[]>(podcastSlugsQuery, {}, { tags: [sanityTags.podcasts] }),
       [],
       "sitemap.podcasts",
+    ),
+    withSanityFallback(
+      sanityFetch<string[]>(
+        compilationSlugsQuery,
+        {},
+        { tags: [sanityTags.compilations] },
+      ),
+      [],
+      "sitemap.compilations",
     ),
     withSanityFallback(
       sanityFetch<string[]>(pageSlugsQuery, {}, { tags: [sanityTags.pages] }),
@@ -50,6 +59,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...postSlugs.map((slug) => ({
       url: `${base}/blog/${slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...compilationSlugs.map((slug) => ({
+      url: `${base}/compilations/${slug}`,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),

@@ -1,4 +1,6 @@
 import type { ReviewLink } from "@/lib/sanity/types";
+import { Heart } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 type Props = {
   reviewLinks?: ReviewLink[];
@@ -9,8 +11,10 @@ export function ReviewCTA({ reviewLinks = [] }: Props) {
   if (!reviewLinks.length) return null;
 
   return (
-    <section className="rounded-2xl border border-secondary-500/20 bg-secondary-500/5 p-5">
-      <h2 className="text-sm font-semibold text-secondary-900">Aider le podcast à grandir</h2>
+    <Card className="gap-0 rounded-[1.5rem] border-0 bg-primary-500 p-5 ring-1 ring-secondary-500/15">
+      <section>
+      <Heart aria-hidden="true" className="size-5 text-tertiary-500" />
+      <h2 className="mt-3 text-xl! font-semibold text-secondary-900">Aider le podcast à grandir</h2>
       <p className="mt-2 text-sm leading-6 text-secondary-600">
         Un avis ou un commentaire sur une plateforme d&apos;écoute aide le podcast à être
         découvert. Merci si vous prenez une minute pour le laisser.
@@ -28,6 +32,7 @@ export function ReviewCTA({ reviewLinks = [] }: Props) {
           </a>
         ))}
       </div>
-    </section>
+      </section>
+    </Card>
   );
 }

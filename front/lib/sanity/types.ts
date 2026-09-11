@@ -126,6 +126,10 @@ export type PodcastPreview = Pick<
   | "categories"
 >;
 
+export type PodcastDetail = Podcast & {
+  relatedPodcasts: PodcastPreview[];
+};
+
 export type PostPreview = Pick<
   Post,
   | "_id"
@@ -178,6 +182,45 @@ export type GuestAppearance = {
   platform?: string;
   publishedAt?: string;
 };
+
+export type CompilationTrack = {
+  _key: string;
+  timecode: string;
+  artist: string;
+  title: string;
+  externalLink?: {
+    label: string;
+    url: string;
+  };
+};
+
+export type Compilation = {
+  _id: string;
+  title: string;
+  slug: string;
+  coverImage: SanityImage;
+  introduction?: PortableTextBlock[];
+  introText: string;
+  curatorName?: string;
+  audioFile: {
+    asset: SanityFileAsset;
+  };
+  tracks: CompilationTrack[];
+  publishedAt: string;
+  _updatedAt?: string;
+};
+
+export type CompilationPreview = Pick<
+  Compilation,
+  | "_id"
+  | "title"
+  | "slug"
+  | "coverImage"
+  | "introText"
+  | "curatorName"
+  | "tracks"
+  | "publishedAt"
+>;
 
 export type SiteSettings = {
   socialLinks?: SocialLink[];

@@ -38,6 +38,12 @@ function handleDocumentType(_type: string | undefined, slug?: string) {
       revalidatePath("/podcasts");
       break;
 
+    case "compilation":
+      revalidateImmediate(sanityTags.compilations);
+      revalidatePath("/podcasts");
+      if (slug) revalidatePath(`/compilations/${slug}`);
+      break;
+
     case "post":
     case "postCategory":
       revalidateImmediate(sanityTags.posts);
@@ -60,6 +66,7 @@ function handleDocumentType(_type: string | undefined, slug?: string) {
       revalidateImmediate(sanityTags.posts);
       revalidateImmediate(sanityTags.pages);
       revalidateImmediate(sanityTags.guestAppearances);
+      revalidateImmediate(sanityTags.compilations);
       revalidateImmediate(sanityTags.siteSettings);
       revalidatePath("/", "layout");
       revalidatePath("/");

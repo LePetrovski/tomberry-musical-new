@@ -1,4 +1,4 @@
-import type { Page, Podcast, Post } from "@/lib/sanity/types";
+import type { Compilation, Page, Podcast, Post } from "@/lib/sanity/types";
 import { absoluteUrl, getSiteUrl, siteConfig } from "./site";
 
 export type BreadcrumbItem = {
@@ -181,6 +181,46 @@ export function podcastEpisodeSchema(podcast: Podcast, imageUrl?: string) {
           },
         }
       : {}),
+  };
+}
+
+export function musicPlaylistSchema(compilation: Compilation, imageUrl?: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "MusicPlaylist",
+    name: compilation.title,
+    description:
+      compilation.introText.trim() || `${compilation.title}, une compilation du Tomberry Musical.`,
+    url: absoluteUrl(`/compilations/${compilation.slug}`),
+    datePublished: compilation.publishedAt,
+    dateModified: compilation._updatedAt ?? compilation.publishedAt,
+    inLanguage: siteConfig.language,
+    ...(imageUrl ? { image: [imageUrl] } : {}),
+    ...(compilation.curatorName
+      ? { creator: personSchema(compilation.curatorName) }
+      : {
+          creator: {
+            "@type": "Organization",
+            name: siteConfig.name,
+            url: getSiteUrl(),
+          },
+        }),
+    numTracks: compilation.tracks.length,
+    track: compilation.tracks.map((track, index) => ({
+      "@type": "MusicRecording",
+      position: index + 1,
+      name: track.title,
+      byArtist: {
+        "@type": "MusicGroup",
+        name: track.artist,
+      },
+      ...(track.externalLink ? { url: track.externalLink.url } : {}),
+    })),
+    associatedMedia: {
+      "@type": "MediaObject",
+      contentUrl: compilation.audioFile.asset.url,
+      encodingFormat: compilation.audioFile.asset.mimeType ?? "audio/mpeg",
+    },
   };
 }
 
