@@ -13,6 +13,7 @@ import { postCategory } from "./postCategory";
 import { guestAppearance } from "./guestAppearance";
 import { siteSettings } from "./siteSettings";
 import { compilation } from "./compilation";
+import { homepage } from "./homepage";
 
 export const schemaTypes = [
   blockContent,
@@ -28,4 +29,5 @@ export const schemaTypes = [
   siteSettings,
   guestAppearance,
   compilation,
+  homepage,
 ];

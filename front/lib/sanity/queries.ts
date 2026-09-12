@@ -209,6 +209,22 @@ export const guestAppearancesQuery = `*[_type == "guestAppearance"] | order(publ
   publishedAt
 }`;
 
+export const homepageQuery = `*[_id == "homepage"][0] {
+  asideLabel,
+  asideEyebrow,
+  asideTitle,
+  asideTagline,
+  asideDescription,
+  asidePrimaryLink {
+    label,
+    href
+  },
+  asideSecondaryLink {
+    label,
+    href
+  }
+}`;
+
 const compilationTrackFields = `
   _key,
   timecode,

@@ -227,3 +227,18 @@ export type SiteSettings = {
   reviewLinks?: ReviewLink[];
   featuredLinks?: FeaturedLink[];
 };
+
+export type HomepageLink = {
+  label: string;
+  href: string;
+};
+
+export type Homepage = {
+  asideLabel: string;
+  asideEyebrow: string;
+  asideTitle: string;
+  asideTagline: string;
+  asideDescription: string;
+  asidePrimaryLink: HomepageLink;
+  asideSecondaryLink: HomepageLink;
+};

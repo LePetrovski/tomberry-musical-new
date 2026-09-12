@@ -4,9 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type AsideInfoDrawerProps = {
 	children: React.ReactNode;
+	label: string;
 };
 
-export function AsideInfoDrawer({ children }: AsideInfoDrawerProps) {
+export function AsideInfoDrawer({ children, label }: AsideInfoDrawerProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -39,14 +40,14 @@ export function AsideInfoDrawer({ children }: AsideInfoDrawerProps) {
 				className="absolute top-1/2 right-full flex h-36 w-12 -translate-y-1/2 cursor-pointer flex-col items-center justify-center gap-3 rounded-l-2xl border border-r-0 border-secondary-500/50 bg-primary-500 text-secondary-700 shadow-[-8px_4px_24px_rgba(39,62,63,0.12)] transition-colors hover:bg-secondary-500 hover:text-primary-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500"
 				aria-expanded={isOpen}
 				aria-controls="aside-info-panel"
-				aria-label={isOpen ? "Fermer le volet À propos" : "Ouvrir le volet À propos"}
+				aria-label={isOpen ? `Fermer le volet ${label}` : `Ouvrir le volet ${label}`}
 				onClick={() => setIsOpen((open) => !open)}
 			>
 				<span className="text-lg leading-none" aria-hidden="true">
 					{isOpen ? "→" : "←"}
 				</span>
 				<span className="text-[0.65rem] font-semibold tracking-[0.16em] uppercase [writing-mode:vertical-rl] rotate-180">
-					À propos
+					{label}
 				</span>
 			</button>
 

@@ -15,5 +15,13 @@ export default defineConfig({
   plugins: [structureTool({ structure }), visionTool()],
   schema: {
     types: schemaTypes,
+    templates: (templates) =>
+      templates.filter(({ schemaType }) => schemaType !== "homepage"),
+  },
+  document: {
+    actions: (actions, { schemaType }) =>
+      schemaType === "homepage"
+        ? actions.filter(({ action }) => action !== "duplicate" && action !== "delete")
+        : actions,
   },
 });
