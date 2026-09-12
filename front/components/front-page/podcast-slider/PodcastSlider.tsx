@@ -12,7 +12,7 @@ import { textureProxyUrlFor } from "@/lib/sanity/image";
 import { useTexture } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { PerspectiveCamera, Vector2 } from "three";
+import { PerspectiveCamera } from "three";
 import { useLoader } from "@react-three/fiber";
 import { CrystalScene } from "./CrystalScene";
 import {
@@ -24,7 +24,6 @@ import {
   TUBE_Y_SPACING,
   type SliderResponsiveConfig,
 } from "./constants";
-import { GridPlane } from "./GridPlane";
 import { useSliderInteractions } from "./hooks/useSliderInteractions";
 import { useSliderResponsive } from "./hooks/useSliderResponsive";
 import { ImageTube } from "./ImageTube";
@@ -49,7 +48,6 @@ function ResponsiveCamera({ config }: { config: SliderResponsiveConfig }) {
 
 export function PodcastSlider({ podcasts }: PodcastSliderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const targetCenterUv = useRef(new Vector2(0.5, 0.5));
   const { play } = useSoundCloudPlayer();
   const { config } = useSliderResponsive();
 
@@ -103,7 +101,6 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
     onWheel,
   } = useSliderInteractions({
     containerRef,
-    targetCenterUv,
     tubeScrollTarget,
     tubeSpinVelocity,
     tubeNaturalDir,
@@ -122,8 +119,10 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
       <Canvas
         className="sceneCanvas"
         camera={{ position: config.cameraPosition, fov: config.cameraFov }}
-        onCreated={({ camera, scene }) => {
+        gl={{ alpha: true }}
+        onCreated={({ camera, gl, scene }) => {
           camera.lookAt(0, 0, 0);
+          gl.setClearColor(0x000000, 0);
           scene.environmentIntensity = SLIDER_ENV_INTENSITY;
         }}
       >
@@ -134,11 +133,6 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
           <Environment preset="studio" blur={2.4} />
 
           <Bvh firstHitOnly>
-            <GridPlane
-              targetCenterUv={targetCenterUv}
-              gridScale={config.gridScale}
-              gridScrollSpeed={config.gridScrollSpeed}
-            />
             <ImageTube
               scrollTargetRef={tubeScrollTarget}
               spinVelocityRef={tubeSpinVelocity}

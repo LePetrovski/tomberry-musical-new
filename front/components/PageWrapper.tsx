@@ -13,12 +13,12 @@ type Props = {
 };
 
 const backgroundClasses: Record<PageBackground, string> = {
-  cross: "bg-cross",
-  polka: "bg-polka",
-  zigzag: "bg-zigzag",
-  rosette: "bg-tiled-rosette",
-  "grid-thin": "bg-grid-thin",
-  none: "bg-primary-500",
+  cross: "bg-transparent",
+  polka: "bg-transparent",
+  zigzag: "bg-transparent",
+  rosette: "bg-transparent",
+  "grid-thin": "bg-transparent",
+  none: "bg-transparent",
 };
 
 const widthClasses: Record<PageWidth, string> = {

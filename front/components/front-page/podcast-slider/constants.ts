@@ -56,10 +56,6 @@ export const TUBE_REPEAT_COUNT = 3;
 export const TUBE_ROWS = 5;
 export const TUBE_COLS = 12;
 
-export const GRID_PLANE_Z = -5.2;
-export const GRID_PLANE_SIZE = 18;
-export const GRID_LINE_COLOR = new Color("#89c3c4"); // --color-secondary-200
-
 export const CAMERA_POSITION: [number, number, number] = [0, 0, 6.5];
 export const CAMERA_FOV = 50;
 
@@ -67,8 +63,6 @@ export const SLIDER_MOBILE_MAX_WIDTH = 991;
 export const SLIDER_MOBILE_QUERY = `(max-width: ${SLIDER_MOBILE_MAX_WIDTH}px)`;
 
 export type SliderResponsiveConfig = {
-  gridScale: number;
-  gridScrollSpeed: number;
   baseSpeed: number;
   tileScale: number;
   tubeYSpacing: number;
@@ -84,8 +78,6 @@ export const SLIDER_RESPONSIVE: {
   mobile: SliderResponsiveConfig;
 } = {
   desktop: {
-    gridScale: 28,
-    gridScrollSpeed: 0.01,
     baseSpeed: 0.16,
     tileScale: 1,
     tubeYSpacing: TUBE_Y_SPACING,
@@ -96,8 +88,6 @@ export const SLIDER_RESPONSIVE: {
     scrollTouchMultiplier: 3.5,
   },
   mobile: {
-    gridScale: 44,
-    gridScrollSpeed: 0.005,
     baseSpeed: 0.07,
     tileScale: 0.68,
     tubeYSpacing: 1.4,

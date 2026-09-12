@@ -1,11 +1,9 @@
 import type { ThreeEvent } from "@react-three/fiber";
 import { useCallback, useEffect, useRef } from "react";
-import { Vector2 } from "three";
 import type { TileButtonHover } from "../types";
 
 type Options = {
   containerRef: React.RefObject<HTMLDivElement | null>;
-  targetCenterUv: React.MutableRefObject<Vector2>;
   tubeScrollTarget: React.MutableRefObject<number>;
   tubeSpinVelocity: React.MutableRefObject<number>;
   tubeNaturalDir: React.MutableRefObject<number>;
@@ -20,7 +18,6 @@ const HOVER_END_DELAY_MS = 80;
 
 export function useSliderInteractions({
   containerRef,
-  targetCenterUv,
   tubeScrollTarget,
   tubeSpinVelocity,
   tubeNaturalDir,
@@ -149,49 +146,13 @@ export function useSliderInteractions({
     const root = containerRef.current;
     if (!root) return;
 
-    const updateGridCenterFromPointer = (clientX: number, clientY: number) => {
-      const rect = root.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-
-      const nx = (clientX - rect.left) / rect.width;
-      const ny = (clientY - rect.top) / rect.height;
-      const uvX = Math.min(1, Math.max(0, nx));
-      const uvY = 1 - Math.min(1, Math.max(0, ny));
-      const strength = 0.4;
-      const cx = 0.5 + (uvX - 0.5) * strength;
-      const cy = 0.5 + (uvY - 0.5) * strength;
-      targetCenterUv.current.set(Math.min(1, Math.max(0, cx)), Math.min(1, Math.max(0, cy)));
-    };
-
-    let gridRaf: number | null = null;
-    let pendingPointer: { x: number; y: number } | null = null;
-
-    const flushPointer = () => {
-      gridRaf = null;
-      if (!pendingPointer) return;
-
-      updateGridCenterFromPointer(pendingPointer.x, pendingPointer.y);
-      pendingPointer = null;
-    };
-
     const onPointerMove = (event: PointerEvent) => {
       if (isHoveringTile.current) {
         syncTooltipPosition(event.clientX, event.clientY);
       }
-
-      pendingPointer = { x: event.clientX, y: event.clientY };
-      if (gridRaf == null) {
-        gridRaf = requestAnimationFrame(flushPointer);
-      }
     };
 
     const onPointerLeave = () => {
-      pendingPointer = null;
-      if (gridRaf != null) {
-        cancelAnimationFrame(gridRaf);
-        gridRaf = null;
-      }
-      targetCenterUv.current.set(0.5, 0.5);
       hideTooltip();
     };
 
@@ -199,12 +160,11 @@ export function useSliderInteractions({
     root.addEventListener("pointerleave", onPointerLeave);
 
     return () => {
-      if (gridRaf != null) cancelAnimationFrame(gridRaf);
       if (hoverEndTimer.current != null) clearTimeout(hoverEndTimer.current);
       root.removeEventListener("pointermove", onPointerMove);
       root.removeEventListener("pointerleave", onPointerLeave);
     };
-  }, [containerRef, hideTooltip, syncTooltipPosition, targetCenterUv]);
+  }, [containerRef, hideTooltip, syncTooltipPosition]);
 
   const applyScrollDelta = useCallback(
     (deltaY: number, touchMultiplier = 1) => {
