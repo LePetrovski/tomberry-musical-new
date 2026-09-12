@@ -11,7 +11,7 @@ export function LatestCompilationCard({ compilation }: Props) {
   return (
     <CurtainLink
       href={`/compilations/${compilation.slug}`}
-      className="crt-dark group grid h-full min-h-56 overflow-hidden rounded-2xl text-primary-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary-500 sm:grid-cols-[minmax(0,1fr)_120px] lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_110px]"
+      className="ff-feature-card group grid h-full min-h-56 overflow-hidden rounded-2xl sm:grid-cols-[minmax(0,1fr)_120px] lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_110px]"
     >
       <div className="flex min-w-0 flex-col p-4.5">
         <div className="flex flex-wrap items-center gap-2">
@@ -22,17 +22,17 @@ export function LatestCompilationCard({ compilation }: Props) {
           </Badge>
         </div>
         {compilation.curatorName ? (
-          <p className="mt-3 text-xs font-medium text-secondary-200">
+          <p className="ff-archive-kicker mt-3 text-xs font-medium">
             Sélection de {compilation.curatorName}
           </p>
         ) : null}
-        <h2 className="mt-2 mb-0! line-clamp-2 text-lg! font-semibold leading-tight text-primary-500">{compilation.title}</h2>
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-3 text-xs font-semibold text-secondary-200">
+        <h2 className="ff-archive-title mt-2 mb-0! line-clamp-2 text-lg! font-semibold leading-tight">{compilation.title}</h2>
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-3 text-xs font-semibold text-primary-200">
           Écouter
           <ArrowUpRight aria-hidden="true" className="size-4" />
         </span>
       </div>
-      <div className="relative min-h-36 overflow-hidden bg-secondary-700 sm:min-h-full lg:min-h-28 xl:min-h-full">
+      <div className="ff-feature-image relative min-h-36 overflow-hidden border-t-2 sm:min-h-full sm:border-t-0 sm:border-l-2 lg:min-h-28 lg:border-t-2 lg:border-l-0 xl:min-h-full xl:border-t-0 xl:border-l-2">
         <Image
           src={urlFor(compilation.coverImage).width(500).height(500).url()}
           alt={compilation.coverImage.alt ?? compilation.title}

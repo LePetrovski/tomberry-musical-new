@@ -24,9 +24,9 @@ export function ElsewhereLinks({ links = [] }: Props) {
     );
 
     return (
-        <section className="crt-card mt-12 rounded-2xl p-5 sm:p-6">
-        <h2 className="text-2xl font-semibold tracking-tight text-secondary-900">Ailleurs</h2>
-        <p className="mt-2 text-secondary-600">
+        <section className="ff-menu-window ff-archive-window mt-12 rounded-2xl p-5 sm:p-6">
+        <h2 className="ff-archive-title text-2xl font-semibold tracking-tight">Ailleurs</h2>
+        <p className="ff-archive-copy mt-2">
             Articles, réseaux et projets autour du Tomberry Musical.
         </p>
 
@@ -37,7 +37,7 @@ export function ElsewhereLinks({ links = [] }: Props) {
 
             return (
                 <div key={group}>
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-secondary-500">
+                <h3 className="ff-archive-kicker text-sm font-semibold uppercase tracking-wide">
                     {GROUP_LABELS[group]}
                 </h3>
                 <ul className="mt-3 space-y-3">
@@ -47,12 +47,12 @@ export function ElsewhereLinks({ links = [] }: Props) {
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-secondary-900 transition-colors hover:text-secondary-700"
+                        className="ff-menu-list-link font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
                         >
                         {link.label}
                         </a>
                         {link.description && (
-                        <p className="mt-1 text-sm text-secondary-600">{link.description}</p>
+                        <p className="ff-archive-copy mt-1 pl-4 text-sm">{link.description}</p>
                         )}
                     </li>
                     ))}

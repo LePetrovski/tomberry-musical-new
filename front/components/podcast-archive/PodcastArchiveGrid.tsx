@@ -15,7 +15,7 @@ export function PodcastArchiveGrid({ podcasts, hasActiveFilters, displayMode }: 
 
   if (podcasts.length === 0) {
     return (
-      <p className="crt-card rounded-2xl border-dashed p-6 text-secondary-600">
+      <p className="ff-menu-window ff-archive-window ff-empty-state rounded-2xl p-6">
         {hasActiveFilters
           ? "Aucun épisode ne correspond à votre recherche."
           : "Aucun podcast publié pour le moment."}

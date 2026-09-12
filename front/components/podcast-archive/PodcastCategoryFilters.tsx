@@ -26,8 +26,10 @@ export function PodcastCategoryFilters({
         <Button
           type="button"
           onClick={() => onSelectCategory(null)}
-          variant={!selectedCategory ? "default" : "outline"}
+          variant="ghost"
           size="sm"
+          className="ff-command-button"
+          aria-pressed={!selectedCategory}
         >
           Tous
         </Button>
@@ -38,8 +40,10 @@ export function PodcastCategoryFilters({
             onClick={() =>
               onSelectCategory(selectedCategory === category.slug ? null : category.slug)
             }
-            variant={selectedCategory === category.slug ? "default" : "outline"}
+            variant="ghost"
             size="sm"
+            className="ff-command-button"
+            aria-pressed={selectedCategory === category.slug}
           >
             {category.title}
             {category.featured ? " ★" : ""}
@@ -52,7 +56,7 @@ export function PodcastCategoryFilters({
           href={activeCategory.youtubePlaylistUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex text-sm font-medium text-secondary-700 transition-colors hover:text-secondary-900"
+          className="ff-menu-list-link text-sm font-medium"
         >
           Voir la playlist YouTube « {activeCategory.title} » →
         </a>

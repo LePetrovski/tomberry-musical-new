@@ -15,7 +15,7 @@ export function CompilationArchiveGrid({ compilations, hasActiveFilters, display
 
   if (compilations.length === 0) {
     return (
-      <p className="crt-card rounded-2xl border-dashed p-6 text-secondary-600">
+      <p className="ff-menu-window ff-archive-window ff-empty-state rounded-2xl p-6">
         {hasActiveFilters
           ? "Aucune compilation ne correspond à votre recherche."
           : "Aucune compilation publiée pour le moment."}

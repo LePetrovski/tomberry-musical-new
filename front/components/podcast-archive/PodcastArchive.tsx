@@ -46,6 +46,11 @@ type DisplayMode = "grid" | "list";
 const VIEW_STORAGE_KEY = "tomberry:podcasts:view";
 const VIEW_CHANGE_EVENT = "tomberry-podcast-view-change";
 const PAGE_SIZE = 12;
+const SORT_LABELS: Record<ArchiveSort, string> = {
+  recent: "Plus récents",
+  oldest: "Plus anciens",
+  az: "Titre A–Z",
+};
 
 function subscribeToDisplayMode(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -117,15 +122,17 @@ function ArchiveResults({
       )}
 
       {remaining > 0 ? (
-        <div className="mt-8 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="lg"
+            className="ff-menu-window ff-load-more min-w-56 px-7 text-primary-200"
             onClick={() =>
               setPagination({ key: resetKey, count: visibleCount + PAGE_SIZE })
             }
           >
+            <span aria-hidden="true" className="text-[0.62rem] text-primary-200">◆</span>
             Afficher {Math.min(PAGE_SIZE, remaining)} de plus
           </Button>
         </div>
@@ -182,19 +189,11 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
   const resultsKey = `${selectedView}-${selectedCategory}-${selectedSort}-${searchInput}-${displayMode}`;
 
   return (
-    <section aria-labelledby="podcast-archive-title" className="mt-12">
-      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-secondary-600">
-            Tous les contenus
-          </p>
-          <h2
-            id="podcast-archive-title"
-            className="mt-1.5 mb-0! text-3xl! font-semibold tracking-tight text-secondary-900"
-          >
-            Explorer les archives
-          </h2>
-        </div>
+    <section aria-label="Archives des podcasts" className="mt-12">
+      <div className="ff-menu-window ff-archive-window mb-5 flex flex-col gap-4 rounded-2xl p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
+        <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.18em]">
+          Tous les contenus
+        </p>
         <PodcastArchiveTabs
           selectedView={selectedView}
           onSelectView={setView}
@@ -204,9 +203,9 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
         />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-10">
         <div
-          className={`crt-glass z-20 rounded-2xl p-2.5 transition-opacity lg:sticky lg:top-24 ${isPending ? "opacity-70" : "opacity-100"}`}
+          className={`ff-menu-window ff-archive-window ff-command-bar rounded-2xl p-3 transition-opacity ${isPending ? "opacity-70" : "opacity-100"}`}
         >
           <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
             <div className="min-w-0 flex-1">
@@ -243,14 +242,16 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
                 >
                   <SelectTrigger
                     id="podcast-category"
-                    className="h-10 w-44 rounded-xl border-secondary-500/25 bg-primary-200/80 px-3 text-secondary-900"
+                    className="ff-command-field h-10 w-44 px-3"
                   >
-                    <SelectValue />
+                    <SelectValue>
+                      {() => activeCategory?.title ?? "Toutes catégories"}
+                    </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="border-secondary-500/20 bg-primary-200 text-secondary-900">
-                    <SelectItem value="all">Toutes catégories</SelectItem>
+                  <SelectContent className="ff-select-popup">
+                    <SelectItem value="all" className="ff-select-item">Toutes catégories</SelectItem>
                     {categories.map((category) => (
-                      <SelectItem key={category._id} value={category.slug}>
+                      <SelectItem key={category._id} value={category.slug} className="ff-select-item">
                         {category.title}{category.featured ? " ★" : ""}
                       </SelectItem>
                     ))}
@@ -265,14 +266,16 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
             <Select value={selectedSort} onValueChange={(value) => setSort(value as ArchiveSort)}>
               <SelectTrigger
                 id="podcast-sort"
-                className="h-10 w-full shrink-0 rounded-xl border-secondary-500/25 bg-primary-200/80 px-3 text-secondary-900 lg:w-40"
+                className="ff-command-field h-10 w-full shrink-0 px-3 lg:w-40"
               >
-                <SelectValue />
+                <SelectValue>
+                  {(value) => SORT_LABELS[value as ArchiveSort] ?? SORT_LABELS.recent}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent className="border-secondary-500/20 bg-primary-200 text-secondary-900">
-                <SelectItem value="recent">Plus récents</SelectItem>
-                <SelectItem value="oldest">Plus anciens</SelectItem>
-                <SelectItem value="az">Titre A–Z</SelectItem>
+              <SelectContent className="ff-select-popup">
+                <SelectItem value="recent" className="ff-select-item">Plus récents</SelectItem>
+                <SelectItem value="oldest" className="ff-select-item">Plus anciens</SelectItem>
+                <SelectItem value="az" className="ff-select-item">Titre A–Z</SelectItem>
               </SelectContent>
             </Select>
 
@@ -280,19 +283,19 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
               <div className="lg:hidden">
                 <Sheet>
                   <SheetTrigger
-                    render={<Button type="button" variant="outline" className="h-10 w-full" />}
+                    render={<Button type="button" variant="ghost" className="ff-command-button h-10 w-full" />}
                   >
                     <SlidersHorizontal aria-hidden="true" />
                     Catégories
                   </SheetTrigger>
-                  <SheetContent className="bg-primary-500 text-secondary-900">
+                  <SheetContent className="ff-mobile-sheet">
                     <SheetHeader>
-                      <SheetTitle className="text-secondary-900">Filtrer les épisodes</SheetTitle>
-                      <SheetDescription className="text-secondary-600">
+                      <SheetTitle className="ff-archive-title text-lg">Filtrer les épisodes</SheetTitle>
+                      <SheetDescription className="ff-archive-copy">
                         Choisissez une catégorie. La recherche et le tri restent actifs.
                       </SheetDescription>
                     </SheetHeader>
-                    <Separator className="bg-secondary-500/15" />
+                    <Separator className="bg-primary-200/20" />
                     <div className="overflow-y-auto p-4">
                       <PodcastCategoryFilters
                         categories={categories}
@@ -306,11 +309,12 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
               </div>
             ) : null}
 
-            <div className="flex h-10 shrink-0 items-center justify-between gap-1 rounded-xl border border-secondary-500/20 bg-primary-200/80 p-1">
+            <div className="flex h-10 shrink-0 items-center justify-between gap-1 rounded-xl border border-primary-200/25 bg-secondary-900/35 p-1 shadow-[inset_0_0_0_1px_rgb(7_26_42_/_0.5)]">
               <Button
                 type="button"
                 size="icon-sm"
-                variant={displayMode === "grid" ? "default" : "ghost"}
+                variant="ghost"
+                className="ff-command-button"
                 onClick={() => setDisplayMode("grid")}
                 aria-label="Afficher en grille"
                 aria-pressed={displayMode === "grid"}
@@ -320,7 +324,8 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
               <Button
                 type="button"
                 size="icon-sm"
-                variant={displayMode === "list" ? "default" : "ghost"}
+                variant="ghost"
+                className="ff-command-button"
                 onClick={() => setDisplayMode("list")}
                 aria-label="Afficher en liste"
                 aria-pressed={displayMode === "list"}
@@ -329,7 +334,7 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
               </Button>
             </div>
 
-            <div className="flex shrink-0 items-center justify-between gap-2 px-1 lg:justify-start">
+            <div className="ff-command-status flex shrink-0 items-center justify-between gap-2 px-2 lg:justify-start">
               <PodcastResultsCount
                 count={resultsCount}
                 noun={
@@ -341,25 +346,27 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
                 }
               />
               {hasActiveFilters ? (
-                <Button type="button" variant="ghost" size="icon-sm" onClick={resetFilters}>
+                <Button type="button" variant="ghost" size="icon-sm" className="ff-command-button" onClick={resetFilters}>
                   <RotateCcw aria-hidden="true" />
                   <span className="sr-only">Réinitialiser les filtres</span>
                 </Button>
               ) : null}
             </div>
           </div>
-        </div>
 
-        {activeCategory?.youtubePlaylistUrl ? (
-          <a
-            href={activeCategory.youtubePlaylistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex text-sm font-medium text-secondary-700 transition-colors hover:text-secondary-900"
-          >
-            Voir la playlist YouTube « {activeCategory.title} » →
-          </a>
-        ) : null}
+          {activeCategory?.youtubePlaylistUrl ? (
+            <div className="mt-2 border-t border-primary-200/20 px-1 pt-2">
+              <a
+                href={activeCategory.youtubePlaylistUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ff-menu-list-link rounded-lg px-2 py-1.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
+              >
+                Voir la playlist YouTube « {activeCategory.title} » →
+              </a>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <ArchiveResults

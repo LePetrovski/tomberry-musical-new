@@ -55,8 +55,9 @@ function PlayerTabs({
           aria-selected={activeId === player.id}
           aria-controls={panelId}
           tabIndex={activeId === player.id ? 0 : -1}
-          variant={activeId === player.id ? "default" : "secondary"}
+          variant="ghost"
           size="sm"
+          className="ff-command-button rounded-md"
         >
           {player.label}
         </Button>
@@ -92,7 +93,7 @@ function InlinePlayerView({
     return (
       <div
         {...accessibilityProps}
-        className="relative aspect-video w-full overflow-hidden rounded-2xl bg-secondary-900 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0"
+        className="ff-media-well relative aspect-video w-full overflow-hidden rounded-xl bg-secondary-900 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0"
         dangerouslySetInnerHTML={{ __html: player.embedHtml }}
       />
     );
@@ -104,7 +105,7 @@ function InlinePlayerView({
       return (
         <div
           {...accessibilityProps}
-          className="w-full overflow-hidden rounded-2xl [&_iframe]:h-[166px] [&_iframe]:w-full [&_iframe]:border-0"
+          className="ff-media-well w-full overflow-hidden rounded-xl [&_iframe]:h-[166px] [&_iframe]:w-full [&_iframe]:border-0"
           dangerouslySetInnerHTML={{ __html: player.embedHtml }}
         />
       );
@@ -113,7 +114,7 @@ function InlinePlayerView({
   }
 
   return (
-    <div {...accessibilityProps} className="w-full overflow-hidden rounded-2xl">
+    <div {...accessibilityProps} className="ff-media-well w-full overflow-hidden rounded-xl">
       <iframe
         title={`SoundCloud — ${player.label}`}
         src={src}
@@ -142,19 +143,19 @@ export function ListenPanel({ podcast }: Props) {
 
   if (!hasContent) {
     return (
-      <div className="crt-card rounded-2xl p-5 text-sm text-secondary-600">
+      <div className="ff-menu-window ff-archive-window rounded-2xl p-5 text-sm text-primary-200">
         Aucun mode d&apos;écoute disponible pour cet épisode.
       </div>
     );
   }
 
   return (
-    <Card className="crt-card min-w-0 gap-0 overflow-hidden rounded-2xl p-5">
+    <Card className="ff-menu-window ff-archive-window min-w-0 gap-0 overflow-hidden rounded-2xl p-5">
       <aside className="space-y-6">
       {inlinePlayers.length > 0 && activePlayer && (
         <section>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary-500">Votre écoute</p>
-          <h2 className="mb-4 mt-1 text-2xl! font-semibold text-secondary-900">Écouter ici</h2>
+          <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.16em]">Votre écoute</p>
+          <h2 className="ff-archive-title mb-4 mt-1 text-2xl! font-semibold">Écouter ici</h2>
           <PlayerTabs
             players={inlinePlayers}
             activeId={activePlayer.id}
@@ -171,8 +172,8 @@ export function ListenPanel({ podcast }: Props) {
 
       {externalLinks.length > 0 && (
         <section>
-          <Separator className="mb-6 bg-secondary-500/15" />
-          <h2 className="mb-3 text-sm font-medium text-secondary-700">Écouter ailleurs</h2>
+          <Separator className="mb-6 bg-primary-200/20" />
+          <h2 className="mb-3 text-sm font-semibold text-primary-200">Écouter ailleurs</h2>
           <div className="flex flex-wrap gap-2">
             {externalLinks.map((link) => (
               <a
@@ -180,7 +181,7 @@ export function ListenPanel({ podcast }: Props) {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-secondary-500/25 bg-primary-500 px-4 py-2 text-sm font-medium text-secondary-700 transition-colors hover:border-secondary-500 hover:bg-secondary-500 hover:text-primary-500"
+                className="ff-command-button inline-flex rounded-md px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
               >
                 {link.label}
               </a>
@@ -191,8 +192,8 @@ export function ListenPanel({ podcast }: Props) {
 
       {canDownload && (
         <section>
-          <Separator className="mb-6 bg-secondary-500/15" />
-          <h2 className="mb-3 text-sm font-medium text-secondary-700">Télécharger</h2>
+          <Separator className="mb-6 bg-primary-200/20" />
+          <h2 className="mb-3 text-sm font-semibold text-primary-200">Télécharger</h2>
           <DownloadEpisodeButton slug={podcast.slug} title={podcast.title} />
         </section>
       )}

@@ -15,10 +15,10 @@ export function PurchaseCTA({ purchaseLinks }: Props) {
   if (links.length === 0) return null;
 
   return (
-    <Card className="crt-dark gap-0 rounded-2xl p-4.5 text-primary-500">
+    <Card className="ff-menu-window ff-archive-window gap-0 rounded-2xl p-4.5 text-primary-200">
       <section>
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-tertiary-500">Autour de l&apos;épisode</p>
-      <h2 className="mt-1 text-xl! font-semibold text-primary-500">Acheter</h2>
+      <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.16em]">Autour de l&apos;épisode</p>
+      <h2 className="ff-archive-title mt-1 text-xl! font-semibold">Acheter</h2>
       <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         {links.map((link) => (
           <a
@@ -27,7 +27,7 @@ export function PurchaseCTA({ purchaseLinks }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${link.label} (nouvel onglet)`}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-primary-500/20 bg-primary-500/10 px-4 py-2 text-center text-sm font-semibold text-primary-500 transition-colors hover:border-tertiary-500 hover:bg-tertiary-500 hover:text-secondary-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary-500"
+            className="ff-command-button inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-4 py-2 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
           >
             <link.icon aria-hidden="true" className="size-4" />
             {link.label}

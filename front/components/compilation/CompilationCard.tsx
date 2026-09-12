@@ -23,7 +23,7 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
   const isList = variant === "list";
 
   return (
-    <Card className="crt-card group h-full gap-0 overflow-hidden rounded-2xl py-0 transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(39,62,63,0.14)]">
+    <Card className="ff-content-card group h-full gap-0 overflow-hidden rounded-2xl py-0" data-view={variant}>
       <article className="h-full">
         <CurtainLink
           href={`/compilations/${compilation.slug}`}
@@ -32,7 +32,7 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
           }`}
         >
           <div
-            className={`relative shrink-0 overflow-hidden bg-secondary-100 ${
+            className={`ff-card-image relative shrink-0 overflow-hidden bg-secondary-100 ${
               isList ? "aspect-square sm:w-64" : "aspect-square"
             }`}
           >
@@ -53,7 +53,7 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col p-4.5 sm:p-5">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-secondary-600">
+            <div className="ff-card-meta flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-secondary-600">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays aria-hidden="true" className="size-3.5" />
                 {formatDate(compilation.publishedAt)}
@@ -80,7 +80,7 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
               </p>
             ) : null}
 
-            <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-secondary-800">
+            <span className="ff-card-action mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold">
               Écouter la compilation
               <ArrowUpRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
             </span>

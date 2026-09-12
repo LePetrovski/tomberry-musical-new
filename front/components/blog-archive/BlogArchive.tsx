@@ -28,6 +28,7 @@ export function BlogArchive({ posts, categories }: Props) {
     isPending,
     updateParams,
   } = useBlogFilters({ posts });
+  const activeCategory = categories.find((category) => category.slug === selectedCategory);
 
   return (
     <div className={isPending ? "opacity-70 transition-opacity" : undefined}>
@@ -51,7 +52,9 @@ export function BlogArchive({ posts, categories }: Props) {
                 id="blog-category"
                 className="h-10 w-full rounded-xl border-secondary-500/25 bg-primary-200/80 px-3 text-secondary-900 sm:w-48"
               >
-                <SelectValue />
+                <SelectValue>
+                  {() => activeCategory?.title ?? "Toutes catégories"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="border-secondary-500/20 bg-primary-200 text-secondary-900">
                 <SelectItem value="all">Toutes catégories</SelectItem>

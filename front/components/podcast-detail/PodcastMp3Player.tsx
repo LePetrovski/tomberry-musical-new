@@ -271,7 +271,7 @@ export function PodcastMp3Player({
 	const isUnavailable = status === "loading" || status === "error";
 
 	return (
-		<div className="crt-card rounded-2xl p-4 sm:p-5">
+		<div className="ff-player-console rounded-xl p-4 sm:p-5">
 			<div className="mb-5 flex min-w-0 items-start justify-between gap-4">
 				<div className="min-w-0">
 					<p className="text-xs font-semibold tracking-[0.14em] text-secondary-500 uppercase">
@@ -287,7 +287,7 @@ export function PodcastMp3Player({
 			</div>
 
 			{status === "error" ? (
-				<div className="rounded-xl border border-secondary-500/25 bg-secondary-500/5 p-4" role="alert">
+				<div className="ff-player-error rounded-lg p-4" role="alert">
 					<p className="text-sm leading-6 text-secondary-800">
 						{errorMessage ?? "Impossible de charger ce fichier audio."}
 					</p>
@@ -304,7 +304,7 @@ export function PodcastMp3Player({
 					<div className="mb-5 flex items-center justify-center gap-4">
 						<button
 							type="button"
-							className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-secondary-500/30 text-xs font-semibold text-secondary-800 transition-colors hover:border-secondary-500 hover:bg-secondary-500 hover:text-primary-500 disabled:cursor-not-allowed disabled:opacity-40"
+							className="ff-player-button inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-40"
 							onClick={() => seekTo(currentTime - SKIP_SECONDS)}
 							disabled={isUnavailable || duration === 0}
 							aria-label="Reculer de 15 secondes"
@@ -314,7 +314,7 @@ export function PodcastMp3Player({
 
 						<button
 							type="button"
-							className="inline-flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-secondary-500 text-primary-500 shadow-sm transition-transform hover:scale-105 hover:bg-secondary-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+							className="ff-player-button-primary inline-flex h-14 w-14 cursor-pointer items-center justify-center rounded-lg disabled:cursor-not-allowed disabled:opacity-40"
 							onClick={togglePlayback}
 							disabled={isUnavailable}
 							aria-label={isPlaying ? "Mettre en pause" : "Lire l’épisode"}
@@ -324,7 +324,7 @@ export function PodcastMp3Player({
 
 						<button
 							type="button"
-							className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-secondary-500/30 text-xs font-semibold text-secondary-800 transition-colors hover:border-secondary-500 hover:bg-secondary-500 hover:text-primary-500 disabled:cursor-not-allowed disabled:opacity-40"
+							className="ff-player-button inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-40"
 							onClick={() => seekTo(currentTime + SKIP_SECONDS)}
 							disabled={isUnavailable || duration === 0}
 							aria-label="Avancer de 15 secondes"
@@ -350,14 +350,14 @@ export function PodcastMp3Player({
 								duration > 0 ? (currentTime / duration) * 100 : 0
 							}%, var(--color-secondary-100) 0%)`,
 						}}
-						className="audio-progress block h-3 w-full cursor-pointer appearance-none rounded-full border border-secondary-500/25 disabled:cursor-not-allowed disabled:opacity-40"
+						className="audio-progress ff-player-progress block h-3 w-full cursor-pointer appearance-none rounded-full disabled:cursor-not-allowed disabled:opacity-40"
 					/>
 					<div className="mt-1 flex justify-between text-xs tabular-nums text-secondary-600">
 						<span>{formatTime(currentTime)}</span>
 						<span>{formatTime(duration)}</span>
 					</div>
 
-					<div className="mt-5 flex flex-col gap-4 border-t border-secondary-500/15 pt-4 sm:flex-row sm:items-center sm:justify-between">
+					<div className="mt-5 flex flex-col gap-4 border-t border-secondary-500/20 pt-4 sm:flex-row sm:items-center sm:justify-between">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<button
 								type="button"
@@ -387,7 +387,7 @@ export function PodcastMp3Player({
 							<select
 								value={playbackRate}
 								onChange={(event) => changePlaybackRate(Number(event.currentTarget.value))}
-								className="cursor-pointer rounded-lg border border-secondary-500/25 bg-primary-500 px-2 py-1.5 text-xs font-semibold text-secondary-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500"
+								className="ff-player-select cursor-pointer rounded-md px-2 py-1.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500"
 							>
 								{PLAYBACK_RATES.map((rate) => (
 									<option key={rate} value={rate}>
@@ -401,7 +401,7 @@ export function PodcastMp3Player({
 			)}
 
 			{preparedTracks.length > 0 ? (
-				<section className="mt-7 border-t border-secondary-500/15 pt-6" aria-labelledby={`${controlId}-playlist-title`}>
+				<section className="mt-7 border-t border-secondary-500/20 pt-6" aria-labelledby={`${controlId}-playlist-title`}>
 					<div className="mb-4 flex items-center gap-2">
 						<Music2 aria-hidden="true" className="size-4 text-secondary-500" />
 						<h3 id={`${controlId}-playlist-title`} className="text-lg! font-semibold text-secondary-900">
@@ -414,10 +414,10 @@ export function PodcastMp3Player({
 							return (
 								<li
 									key={track._key}
-									className={`grid gap-3 rounded-xl border p-3 transition-colors sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center ${
+									className={`ff-playlist-row grid gap-3 rounded-lg p-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center ${
 										isActive
-											? "border-secondary-500/45 bg-secondary-500/10"
-											: "border-secondary-500/15 bg-primary-200/45"
+											? "is-active"
+											: ""
 									}`}
 									aria-current={isActive ? "true" : undefined}
 								>
@@ -425,7 +425,7 @@ export function PodcastMp3Player({
 										type="button"
 										onClick={() => playFrom(track.startSeconds)}
 										disabled={status === "error"}
-										className="w-fit cursor-pointer rounded-full bg-secondary-900 px-3 py-1.5 text-xs font-semibold tabular-nums text-primary-500 transition-colors hover:bg-secondary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 disabled:cursor-not-allowed disabled:opacity-40"
+										className="ff-player-timecode w-fit cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 disabled:cursor-not-allowed disabled:opacity-40"
 										aria-label={`Lire ${track.artist} — ${track.title} à ${track.timecode}`}
 									>
 										{track.timecode}

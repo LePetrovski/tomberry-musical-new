@@ -12,7 +12,7 @@ export function DownloadEpisodeButton({ slug, title }: Props) {
     <a
       href={`/api/podcasts/${slug}/download`}
       download
-      className="inline-flex w-full items-center justify-center rounded-full border border-secondary-500 bg-secondary-500 px-5 py-3 text-sm font-medium text-primary-500 transition-colors hover:bg-secondary-700 hover:border-secondary-700"
+      className="ff-command-button inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
       aria-label={`Télécharger l'épisode ${title}`}
     >
       Télécharger l&apos;épisode (MP3)

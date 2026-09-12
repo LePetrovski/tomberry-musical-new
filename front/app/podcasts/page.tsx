@@ -84,38 +84,23 @@ export default async function PodcastsPage() {
     <PageWrapper background="polka" width="wide">
       <JsonLd data={collectionPageSchema({ name: title, description, path: "/podcasts" })} />
       <Breadcrumbs
-        className="mb-6"
+        className="ff-menu-window ff-archive-window ff-archive-breadcrumb mb-6"
         items={[{ label: "Accueil", href: "/" }, { label: title }]}
       />
 
       <section className="mb-10">
-        <div className="crt-glass grid gap-6 rounded-2xl p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="ff-menu-window ff-archive-window rounded-2xl p-5 sm:p-6">
           <header className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-600">
+            <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.2em]">
               Le Tomberry Musical
             </p>
-            <h1 className="mt-2 mb-0! text-4xl! font-semibold tracking-[-0.04em] text-secondary-900 sm:text-5xl!">
+            <h1 className="ff-archive-title mt-2 mb-0! text-4xl! font-semibold tracking-[-0.04em] sm:text-5xl!">
               {title}
             </h1>
-            <p className="mt-3 max-w-2xl text-base! leading-7 text-secondary-700">
+            <p className="ff-archive-copy mt-3 max-w-2xl text-base! leading-7">
               {description}
             </p>
           </header>
-
-          <dl className="grid grid-cols-3 gap-4 border-t border-secondary-500/20 pt-4 lg:border-t-0 lg:pt-0">
-            <div className="border-l border-secondary-500/25 pl-3 sm:pl-4">
-              <dt className="text-[0.68rem] uppercase tracking-[0.14em] text-secondary-600">Épisodes</dt>
-              <dd className="mt-0.5 text-2xl! font-semibold text-secondary-900">{podcasts.length}</dd>
-            </div>
-            <div className="border-l border-secondary-500/25 pl-3 sm:pl-4">
-              <dt className="text-[0.68rem] uppercase tracking-[0.14em] text-secondary-600">Apparitions</dt>
-              <dd className="mt-0.5 text-2xl! font-semibold text-secondary-900">{guestAppearances.length}</dd>
-            </div>
-            <div className="border-l border-secondary-500/25 pl-3 sm:pl-4">
-              <dt className="text-[0.68rem] uppercase tracking-[0.14em] text-secondary-600">Compilations</dt>
-              <dd className="mt-0.5 text-2xl! font-semibold text-secondary-900">{compilations.length}</dd>
-            </div>
-          </dl>
         </div>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">

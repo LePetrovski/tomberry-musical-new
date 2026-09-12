@@ -70,7 +70,7 @@ export default async function PodcastDetailPage({ params }: Props) {
             <article>
                 <JsonLd data={podcastEpisodeSchema(podcast, ogImage)} />
                 <Breadcrumbs
-                    className="mb-6"
+                    className="ff-menu-window ff-archive-window ff-archive-breadcrumb mb-6"
                     items={[
                     { label: "Accueil", href: "/" },
                     { label: "Podcasts", href: "/podcasts" },
@@ -78,20 +78,20 @@ export default async function PodcastDetailPage({ params }: Props) {
                     ]}
                 />
                 <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,.65fr)] lg:items-start">
-                    <section className="crt-card overflow-hidden rounded-2xl">
-                        <div className="grid md:grid-cols-[minmax(260px,.85fr)_minmax(0,1.15fr)] md:items-stretch">
-                            <div className="relative aspect-square min-h-72 overflow-hidden bg-secondary-100 md:aspect-auto md:min-h-[520px]">
+                    <section className="ff-menu-window ff-archive-window ff-detail-hero overflow-hidden rounded-2xl lg:col-span-2">
+                        <div className="grid md:grid-cols-[minmax(300px,420px)_minmax(0,1fr)] md:items-center">
+                            <div className="ff-detail-cover relative aspect-square min-h-72 overflow-hidden bg-secondary-900">
                                 {podcast.coverImage ? (
                                     <Image
-                                        src={urlFor(podcast.coverImage).width(1000).height(1000).url()}
+                                        src={urlFor(podcast.coverImage).width(1000).url()}
                                         alt={podcast.coverImage.alt ?? podcast.title}
                                         fill
                                         priority
-                                        className="object-cover"
-                                        sizes="(max-width: 768px) 100vw, 38vw"
+                                        className="object-contain"
+                                        sizes="(max-width: 768px) 100vw, 420px"
                                     />
                                 ) : (
-                                    <div className="flex h-full items-center justify-center text-sm font-medium text-secondary-500">Sans visuel</div>
+                                    <div className="flex h-full items-center justify-center text-sm font-medium text-primary-200">Sans visuel</div>
                                 )}
                             </div>
                             <div className="flex items-center p-5 sm:p-7 lg:p-8">
@@ -100,17 +100,17 @@ export default async function PodcastDetailPage({ params }: Props) {
                         </div>
                     </section>
 
-                    <div className="space-y-4 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+                    <div className="space-y-4 lg:sticky lg:top-28 lg:col-start-2 lg:row-start-2">
                         <ListenPanel podcast={podcast} />
                         <PurchaseCTA purchaseLinks={podcast.purchaseLinks} />
                         <ReviewCTA reviewLinks={siteSettings?.reviewLinks} />
                     </div>
 
                     {podcast.body && podcast.body.length > 0 && (
-                        <section className="crt-card rounded-2xl p-5 sm:p-7 lg:col-start-1">
-                            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary-500">Pour aller plus loin</p>
-                            <h2 className="mt-2 text-3xl! font-semibold tracking-tight text-secondary-900">Notes de l&apos;épisode</h2>
-                            <div className="prose prose-zinc mt-6 max-w-[70ch] text-secondary-800">
+                        <section className="ff-menu-window ff-archive-window rounded-2xl p-4 sm:p-6 lg:col-start-1 lg:row-start-2">
+                            <p className="ff-archive-kicker text-sm font-semibold uppercase tracking-[0.18em]">Pour aller plus loin</p>
+                            <h2 className="ff-archive-title mt-2 text-3xl! font-semibold tracking-tight">Notes de l&apos;épisode</h2>
+                            <div className="ff-reading-panel prose prose-zinc mt-6 max-w-none rounded-xl p-5 text-secondary-800 sm:p-7">
                                 <RichText value={podcast.body} />
                             </div>
                         </section>

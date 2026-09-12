@@ -8,7 +8,7 @@ import { urlFor } from "@/lib/sanity/image";
 
 type Props = {
   podcast: PodcastPreview;
-  variant?: "grid" | "list";
+  variant?: "grid" | "list" | "compact";
 };
 
 function formatDate(date: string) {
@@ -21,9 +21,10 @@ function formatDate(date: string) {
 
 export function PodcastCard({ podcast, variant = "grid" }: Props) {
   const isList = variant === "list";
+  const isCompact = variant === "compact";
 
   return (
-    <Card className="crt-card group h-full gap-0 overflow-hidden rounded-2xl py-0 transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(39,62,63,0.14)]">
+    <Card className={`ff-content-card group h-full gap-0 overflow-hidden rounded-2xl py-0 ${isCompact ? "ff-compact-card" : ""}`} data-view={variant}>
       <article className="h-full">
         <CurtainLink
           href={`/podcasts/${podcast.slug}`}
@@ -32,7 +33,7 @@ export function PodcastCard({ podcast, variant = "grid" }: Props) {
           }`}
         >
           <div
-            className={`relative shrink-0 overflow-hidden bg-secondary-100 ${
+            className={`ff-card-image relative shrink-0 overflow-hidden bg-secondary-100 ${
               isList ? "aspect-16/10 sm:aspect-auto sm:min-h-56 sm:w-72 lg:w-80" : "aspect-16/10"
             }`}
           >
@@ -61,8 +62,8 @@ export function PodcastCard({ podcast, variant = "grid" }: Props) {
             ) : null}
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col p-4.5 sm:p-5">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-secondary-600">
+          <div className={`flex min-w-0 flex-1 flex-col ${isCompact ? "p-4" : "p-4.5 sm:p-5"}`}>
+            <div className="ff-card-meta flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-secondary-600">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays aria-hidden="true" className="size-3.5" />
                 {formatDate(podcast.publishedAt)}
@@ -75,7 +76,7 @@ export function PodcastCard({ podcast, variant = "grid" }: Props) {
               ) : null}
             </div>
 
-            {podcast.categories && podcast.categories.length > 0 ? (
+            {!isCompact && podcast.categories && podcast.categories.length > 0 ? (
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {podcast.categories.map((category) => (
                   <Badge
@@ -89,17 +90,28 @@ export function PodcastCard({ podcast, variant = "grid" }: Props) {
               </div>
             ) : null}
 
-            <h2 className="mt-3.5 mb-0! text-xl! font-semibold leading-tight text-secondary-900 transition-colors group-hover:text-secondary-700">
+            {isCompact && podcast.categories?.[0] ? (
+              <div className="mt-3">
+                <span className="ff-compact-theme inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.12em]">
+                  <span aria-hidden="true" className="ff-compact-theme-mark" />
+                  <span className="truncate">Thème · {podcast.categories[0].title}</span>
+                </span>
+              </div>
+            ) : null}
+
+            <h2 className={`${isCompact ? "mt-2.5 text-lg! line-clamp-2" : "mt-3.5 text-xl!"} mb-0! font-semibold leading-tight text-secondary-900 transition-colors group-hover:text-secondary-700`}>
               {podcast.title}
             </h2>
 
-            <p
-              className={`mt-2.5 text-sm! leading-6 text-secondary-600 ${isList ? "" : "line-clamp-3"}`}
-              dangerouslySetInnerHTML={{ __html: podcast.description }}
-            />
+            {!isCompact ? (
+              <p
+                className={`mt-2.5 text-sm! leading-6 text-secondary-600 ${isList ? "" : "line-clamp-3"}`}
+                dangerouslySetInnerHTML={{ __html: podcast.description }}
+              />
+            ) : null}
 
-            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary-800">
-              Découvrir l&apos;épisode
+            <span className={`ff-card-action inline-flex items-center gap-1.5 text-sm font-semibold ${isCompact ? "mt-auto pt-4" : "mt-4"}`}>
+              {isCompact ? "Voir l’épisode" : "Découvrir l’épisode"}
               <ArrowUpRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
             </span>
           </div>
