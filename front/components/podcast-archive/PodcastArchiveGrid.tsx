@@ -15,7 +15,7 @@ export function PodcastArchiveGrid({ podcasts, hasActiveFilters, displayMode }: 
 
   if (podcasts.length === 0) {
     return (
-      <p className="rounded-[1.5rem] border border-dashed border-secondary-500/30 bg-primary-500 p-8 text-secondary-600">
+      <p className="crt-card rounded-2xl border-dashed p-6 text-secondary-600">
         {hasActiveFilters
           ? "Aucun épisode ne correspond à votre recherche."
           : "Aucun podcast publié pour le moment."}
@@ -29,8 +29,8 @@ export function PodcastArchiveGrid({ podcasts, hasActiveFilters, displayMode }: 
         layout
         className={
           displayMode === "grid"
-            ? "grid gap-6 md:grid-cols-2 xl:grid-cols-3"
-            : "grid gap-5"
+            ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+            : "grid gap-4"
         }
       >
         <AnimatePresence initial={false} mode="popLayout">

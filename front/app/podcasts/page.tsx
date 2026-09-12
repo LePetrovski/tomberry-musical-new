@@ -3,23 +3,28 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
+import { PodcastArchive } from "@/components/PodcastArchive";
 import { ElsewhereLinks } from "@/components/podcast-archive/ElsewhereLinks";
+import { LatestCompilationCard } from "@/components/podcast-archive/LatestCompilationCard";
 import { LatestEpisodeCard } from "@/components/podcast-archive/LatestEpisodeCard";
 import { LatestGuestAppearanceCard } from "@/components/podcast-archive/LatestGuestAppearanceCard";
-import { LatestCompilationCard } from "@/components/podcast-archive/LatestCompilationCard";
-import { PodcastArchive } from "@/components/PodcastArchive";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSiteSettings } from "@/lib/sanity/cached";
 import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import {
-  guestAppearancesQuery,
   compilationsQuery,
+  guestAppearancesQuery,
   podcastCategoriesQuery,
   podcastsQuery,
 } from "@/lib/sanity/queries";
 import { sanityTags } from "@/lib/sanity/tags";
-import type { CompilationPreview, GuestAppearance, PodcastCategory, PodcastPreview } from "@/lib/sanity/types";
+import type {
+  CompilationPreview,
+  GuestAppearance,
+  PodcastCategory,
+  PodcastPreview,
+} from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { collectionPageSchema } from "@/lib/seo/schemas";
 
@@ -34,41 +39,42 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function PodcastsPage() {
-  const [podcasts, categories, guestAppearances, compilations, siteSettings] = await Promise.all([
-    withSanityFallback(
-      sanityFetch<PodcastPreview[]>(podcastsQuery, {}, { tags: [sanityTags.podcasts] }),
-      [],
-      "PodcastsPage.podcasts",
-    ),
-    withSanityFallback(
-      sanityFetch<PodcastCategory[]>(
-        podcastCategoriesQuery,
-        {},
-        { tags: [sanityTags.podcasts] },
+  const [podcasts, categories, guestAppearances, compilations, siteSettings] =
+    await Promise.all([
+      withSanityFallback(
+        sanityFetch<PodcastPreview[]>(podcastsQuery, {}, { tags: [sanityTags.podcasts] }),
+        [],
+        "PodcastsPage.podcasts",
       ),
-      [],
-      "PodcastsPage.categories",
-    ),
-    withSanityFallback(
-      sanityFetch<GuestAppearance[]>(
-        guestAppearancesQuery,
-        {},
-        { tags: [sanityTags.guestAppearances] },
+      withSanityFallback(
+        sanityFetch<PodcastCategory[]>(
+          podcastCategoriesQuery,
+          {},
+          { tags: [sanityTags.podcasts] },
+        ),
+        [],
+        "PodcastsPage.categories",
       ),
-      [],
-      "PodcastsPage.guestAppearances",
-    ),
-    withSanityFallback(
-      sanityFetch<CompilationPreview[]>(
-        compilationsQuery,
-        {},
-        { tags: [sanityTags.compilations] },
+      withSanityFallback(
+        sanityFetch<GuestAppearance[]>(
+          guestAppearancesQuery,
+          {},
+          { tags: [sanityTags.guestAppearances] },
+        ),
+        [],
+        "PodcastsPage.guestAppearances",
       ),
-      [],
-      "PodcastsPage.compilations",
-    ),
-    getSiteSettings(),
-  ]);
+      withSanityFallback(
+        sanityFetch<CompilationPreview[]>(
+          compilationsQuery,
+          {},
+          { tags: [sanityTags.compilations] },
+        ),
+        [],
+        "PodcastsPage.compilations",
+      ),
+      getSiteSettings(),
+    ]);
 
   const latestEpisode = podcasts[0];
   const latestGuestAppearance = guestAppearances[0];
@@ -78,44 +84,52 @@ export default async function PodcastsPage() {
     <PageWrapper background="polka" width="wide">
       <JsonLd data={collectionPageSchema({ name: title, description, path: "/podcasts" })} />
       <Breadcrumbs
-        className="mb-8"
+        className="mb-6"
         items={[{ label: "Accueil", href: "/" }, { label: title }]}
       />
-      <section className="mb-14 overflow-hidden rounded-[2rem] bg-secondary-900 p-5 text-primary-500 shadow-[0_24px_80px_rgba(11,22,23,0.18)] sm:p-8 lg:p-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+
+      <section className="mb-10">
+        <div className="crt-glass grid gap-6 rounded-2xl p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <header className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-tertiary-500">Le Tomberry Musical</p>
-            <h1 className="mt-3 text-6xl! font-semibold tracking-[-0.04em] text-primary-500">{title}</h1>
-            <p className="mt-5 text-lg! leading-8 text-secondary-200">{description}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-600">
+              Le Tomberry Musical
+            </p>
+            <h1 className="mt-2 mb-0! text-4xl! font-semibold tracking-[-0.04em] text-secondary-900 sm:text-5xl!">
+              {title}
+            </h1>
+            <p className="mt-3 max-w-2xl text-base! leading-7 text-secondary-700">
+              {description}
+            </p>
           </header>
-          <dl className="grid grid-cols-3 gap-3">
-            <div className="rounded-2xl border border-primary-500/15 bg-primary-500/5 px-5 py-4">
-              <dt className="text-xs uppercase tracking-[0.14em] text-secondary-200">Épisodes</dt>
-              <dd className="mt-1 text-3xl! font-semibold text-primary-500">{podcasts.length}</dd>
+
+          <dl className="grid grid-cols-3 gap-4 border-t border-secondary-500/20 pt-4 lg:border-t-0 lg:pt-0">
+            <div className="border-l border-secondary-500/25 pl-3 sm:pl-4">
+              <dt className="text-[0.68rem] uppercase tracking-[0.14em] text-secondary-600">Épisodes</dt>
+              <dd className="mt-0.5 text-2xl! font-semibold text-secondary-900">{podcasts.length}</dd>
             </div>
-            <div className="rounded-2xl border border-primary-500/15 bg-primary-500/5 px-5 py-4">
-              <dt className="text-xs uppercase tracking-[0.14em] text-secondary-200">Apparitions</dt>
-              <dd className="mt-1 text-3xl! font-semibold text-primary-500">{guestAppearances.length}</dd>
+            <div className="border-l border-secondary-500/25 pl-3 sm:pl-4">
+              <dt className="text-[0.68rem] uppercase tracking-[0.14em] text-secondary-600">Apparitions</dt>
+              <dd className="mt-0.5 text-2xl! font-semibold text-secondary-900">{guestAppearances.length}</dd>
             </div>
-            <div className="rounded-2xl border border-primary-500/15 bg-primary-500/5 px-5 py-4">
-              <dt className="text-xs uppercase tracking-[0.14em] text-secondary-200">Compilations</dt>
-              <dd className="mt-1 text-3xl! font-semibold text-primary-500">{compilations.length}</dd>
+            <div className="border-l border-secondary-500/25 pl-3 sm:pl-4">
+              <dt className="text-[0.68rem] uppercase tracking-[0.14em] text-secondary-600">Compilations</dt>
+              <dd className="mt-0.5 text-2xl! font-semibold text-secondary-900">{compilations.length}</dd>
             </div>
           </dl>
         </div>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,.7fr)]">
-          {latestEpisode && <LatestEpisodeCard podcast={latestEpisode} />}
-          {(latestGuestAppearance || latestCompilation) && (
-            <div className="grid gap-5">
-              {latestGuestAppearance && <LatestGuestAppearanceCard appearance={latestGuestAppearance} />}
-              {latestCompilation && <LatestCompilationCard compilation={latestCompilation} />}
+        <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+          {latestEpisode ? (
+            <div className="xl:col-span-2">
+              <LatestEpisodeCard podcast={latestEpisode} />
             </div>
-          )}
+          ) : null}
+          {latestGuestAppearance ? <LatestGuestAppearanceCard appearance={latestGuestAppearance} /> : null}
+          {latestCompilation ? <LatestCompilationCard compilation={latestCompilation} /> : null}
         </div>
       </section>
 
-      <Suspense fallback={<Skeleton className="h-96 rounded-[2rem] bg-secondary-100" />}>
+      <Suspense fallback={<Skeleton className="h-72 rounded-2xl bg-secondary-100" />}>
         <PodcastArchive
           podcasts={podcasts}
           categories={categories}

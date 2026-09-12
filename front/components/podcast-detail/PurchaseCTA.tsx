@@ -15,7 +15,7 @@ export function PurchaseCTA({ purchaseLinks }: Props) {
   if (links.length === 0) return null;
 
   return (
-    <Card className="gap-0 rounded-[1.5rem] border-0 bg-secondary-900 p-5 text-primary-500 ring-0">
+    <Card className="crt-dark gap-0 rounded-2xl p-4.5 text-primary-500">
       <section>
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-tertiary-500">Autour de l&apos;épisode</p>
       <h2 className="mt-1 text-xl! font-semibold text-primary-500">Acheter</h2>

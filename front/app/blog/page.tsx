@@ -41,10 +41,10 @@ export default async function BlogPage() {
     <PageWrapper background="polka" width="wide">
       <JsonLd data={collectionPageSchema({ name: title, description, path: "/blog" })} />
       <Breadcrumbs
-        className="mb-8"
+        className="mb-6"
         items={[{ label: "Accueil", href: "/" }, { label: title }]}
       />
-      <PageHero title={title} description={description} className="mb-12 max-w-2xl" />
+      <PageHero title={title} description={description} className="mb-8 max-w-3xl" />
 
       <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-zinc-100" />}>
         <BlogArchive posts={posts} categories={categories} />

@@ -27,7 +27,7 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
 
   if (appearances.length === 0) {
     return (
-      <p className="rounded-[1.5rem] border border-dashed border-secondary-500/30 bg-primary-500 p-8 text-secondary-600">
+      <p className="crt-card rounded-2xl border-dashed p-6 text-secondary-600">
         {hasActiveFilters
           ? "Aucune apparition ne correspond à votre recherche."
           : "Aucune apparition publiée pour le moment."}
@@ -39,7 +39,7 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
     <LayoutGroup id="guest-appearances">
       <motion.div
         layout
-        className={displayMode === "grid" ? "grid gap-5 md:grid-cols-2 xl:grid-cols-3" : "grid gap-5"}
+        className={displayMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "grid gap-4"}
       >
         <AnimatePresence initial={false} mode="popLayout">
           {appearances.map((appearance, index) => (
@@ -51,7 +51,7 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
               exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.2, delay: shouldReduceMotion ? 0 : Math.min(index, 8) * 0.025 }}
             >
-              <Card className="group h-full gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-primary-500 py-0 ring-1 ring-secondary-500/15 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(39,62,63,0.14)] hover:ring-secondary-500/45">
+              <Card className="crt-card group h-full gap-0 overflow-hidden rounded-2xl py-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(39,62,63,0.14)]">
                 <a
                   href={appearance.url}
                   target="_blank"
@@ -71,7 +71,7 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
                       <div className="flex h-full items-center justify-center text-sm font-medium text-secondary-500">Podcast</div>
                     )}
                   </div>
-                  <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
+                  <div className="flex min-w-0 flex-1 flex-col p-4.5 sm:p-5">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge className="border-0 bg-secondary-900 text-primary-500">{appearance.showName}</Badge>
                       {appearance.platform ? <Badge variant="secondary" className="border-0 bg-secondary-500/10 text-secondary-900">{appearance.platform}</Badge> : null}

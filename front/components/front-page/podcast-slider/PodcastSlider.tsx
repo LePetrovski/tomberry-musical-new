@@ -157,7 +157,6 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
         </Suspense>
       </Canvas>
 
-      <div className="whiteEdgeGradient" aria-hidden="true" />
       <div
         className="projectTooltip"
         ref={tooltipElRef}

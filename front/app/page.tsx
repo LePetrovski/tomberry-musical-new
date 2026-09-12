@@ -55,7 +55,7 @@ export default async function HomePage() {
 
 	return (
 		<>
-			<section className="h-screen w-full overflow-hidden" aria-label="Épisodes en avant">
+			<section className="fixed inset-0 overflow-hidden" aria-label="Épisodes en avant">
 				<PodcastSlider podcasts={podcasts} />
 			</section>
 

@@ -23,7 +23,7 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
   const isList = variant === "list";
 
   return (
-    <Card className="group h-full gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-primary-500 py-0 ring-1 ring-secondary-500/15 transition-[box-shadow,transform] duration-200 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(39,62,63,0.14)] hover:ring-secondary-500/45">
+    <Card className="crt-card group h-full gap-0 overflow-hidden rounded-2xl py-0 transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(39,62,63,0.14)]">
       <article className="h-full">
         <CurtainLink
           href={`/compilations/${compilation.slug}`}
@@ -52,7 +52,7 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
             </Badge>
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col p-5 sm:p-6">
+          <div className="flex min-w-0 flex-1 flex-col p-4.5 sm:p-5">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-secondary-600">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays aria-hidden="true" className="size-3.5" />
@@ -70,17 +70,17 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
               ) : null}
             </div>
 
-            <h3 className="mt-4 text-2xl! font-semibold leading-tight text-secondary-900 transition-colors group-hover:text-secondary-700">
+            <h3 className="mt-3.5 mb-0! text-xl! font-semibold leading-tight text-secondary-900 transition-colors group-hover:text-secondary-700">
               {compilation.title}
             </h3>
 
             {compilation.introText ? (
-              <p className={`mt-3 text-base! leading-7 text-secondary-600 ${isList ? "" : "line-clamp-3"}`}>
+              <p className={`mt-2.5 text-sm! leading-6 text-secondary-600 ${isList ? "" : "line-clamp-3"}`}>
                 {compilation.introText}
               </p>
             ) : null}
 
-            <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-secondary-800">
+            <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-secondary-800">
               Écouter la compilation
               <ArrowUpRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
             </span>

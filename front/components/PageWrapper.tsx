@@ -42,7 +42,7 @@ export function PageWrapper({
     <div className={joinClasses("h-full w-full min-h-screen", backgroundClasses[background], className)}>
       <div
         className={joinClasses(
-          "mx-auto pt-30 pb-40",
+          "mx-auto pb-32 pt-36 sm:pt-40",
           widthClasses[width],
           contentClassName,
         )}

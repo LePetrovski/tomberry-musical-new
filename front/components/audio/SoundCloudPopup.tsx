@@ -11,7 +11,7 @@ export function SoundCloudPopup() {
             {activePlayer && (
                 <motion.div
                     key={activePlayer.embedUrl}
-                    className="fixed top-[7rem] left-1/2 z-40 w-[92vw] max-w-[668px] -translate-x-1/2 overflow-hidden pr-10"
+                    className="crt-glass fixed top-24 left-1/2 z-40 w-[92vw] max-w-[668px] -translate-x-1/2 overflow-hidden rounded-2xl p-2 pr-10"
                     role="dialog"
                     aria-label={`Lecteur SoundCloud — ${activePlayer.title}`}
                     initial={{ y: "-120%", opacity: 0 }}
@@ -27,7 +27,7 @@ export function SoundCloudPopup() {
                     <header className="flex flex-row items-end justify-end  px-3.5 py-2.5 text-secondary-900 absolute -right-2 -top-2">
                         <button
                             type="button"
-                            className="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full border border-secondary-900 text-lg leading-none bg-primary-500 transition-colors hover:bg-secondary-500 hover:text-primary-500"
+                            className="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-secondary-500/30 bg-primary-500/85 text-lg leading-none transition-colors hover:bg-secondary-500 hover:text-primary-500"
                             aria-label="Fermer le lecteur"
                             onClick={close}
                         >

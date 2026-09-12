@@ -81,7 +81,7 @@ export default async function CompilationDetailPage({ params }: Props) {
       <article>
         <JsonLd data={musicPlaylistSchema(compilation, imageUrl)} />
         <Breadcrumbs
-          className="mb-8"
+          className="mb-6"
           items={[
             { label: "Accueil", href: "/" },
             { label: "Podcasts", href: "/podcasts?vue=compilations" },
@@ -89,8 +89,8 @@ export default async function CompilationDetailPage({ params }: Props) {
           ]}
         />
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(280px,.72fr)_minmax(0,1.28fr)] lg:items-start">
-          <section className="overflow-hidden rounded-[2rem] bg-primary-500 shadow-[0_20px_65px_rgba(39,62,63,0.12)] ring-1 ring-secondary-500/15">
+        <div className="grid gap-6 lg:grid-cols-[minmax(280px,.72fr)_minmax(0,1.28fr)] lg:items-start">
+          <section className="crt-card overflow-hidden rounded-2xl">
             <div className="relative aspect-square overflow-hidden bg-secondary-100">
               <Image
                 src={urlFor(compilation.coverImage).width(1000).height(1000).url()}
@@ -101,7 +101,7 @@ export default async function CompilationDetailPage({ params }: Props) {
                 sizes="(max-width: 1024px) 100vw, 36vw"
               />
             </div>
-            <header className="p-6 sm:p-8">
+            <header className="p-5 sm:p-6">
               <Badge className="border-0 bg-tertiary-500 text-secondary-900">Compilation</Badge>
               <h1 className="mt-5 text-4xl! font-semibold leading-[1.06] tracking-[-0.035em] text-secondary-900 sm:text-5xl!">
                 {compilation.title}
@@ -127,7 +127,7 @@ export default async function CompilationDetailPage({ params }: Props) {
 
           <div className="space-y-6">
             {compilation.introduction && compilation.introduction.length > 0 ? (
-              <section className="rounded-[2rem] bg-primary-500 p-6 shadow-[0_16px_55px_rgba(39,62,63,0.10)] ring-1 ring-secondary-500/15 sm:p-8">
+              <section className="crt-card rounded-2xl p-5 sm:p-6">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary-500">
                   À propos de la sélection
                 </p>

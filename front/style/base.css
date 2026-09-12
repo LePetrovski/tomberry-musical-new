@@ -1,6 +1,11 @@
 :root {
     --container-max-width: 1630px;
     --container-padding-inline: clamp(1rem, 5vw, 2rem);
+    --surface-glass: rgb(247 245 240 / 0.88);
+    --surface-card: rgb(247 245 240 / 0.94);
+    --surface-dark: rgb(22 42 43 / 0.94);
+    --surface-border: rgb(100 159 168 / 0.55);
+    --surface-glow: 0 18px 52px rgb(22 42 43 / 0.18), 0 0 22px rgb(100 159 168 / 0.12);
     scrollbar-color: var(--color-primary) var(--color-secondary);
     position: relative;
 }
@@ -10,7 +15,7 @@ html, body {
 
 body {
     color: var(--color-secondary-500);
-    background-color: #05010a;
+    background-color: #FAFAFA;
     font-family: var(--font-primary);
     overflow-y: auto;
 }

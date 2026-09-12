@@ -11,22 +11,22 @@ export function LatestEpisodeCard({ podcast }: Props) {
   return (
     <CurtainLink
       href={`/podcasts/${podcast.slug}`}
-      className="group grid min-h-full overflow-hidden rounded-[1.75rem] bg-primary-500 text-secondary-900 shadow-[0_20px_60px_rgba(11,22,23,0.2)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tertiary-500 sm:grid-cols-[minmax(0,1.25fr)_minmax(180px,.75fr)]"
+      className="crt-card group grid h-full min-h-56 overflow-hidden rounded-2xl text-secondary-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 sm:grid-cols-[minmax(0,1.2fr)_minmax(160px,.8fr)]"
     >
-      <div className="flex min-w-0 flex-col p-6 sm:p-8">
+      <div className="flex min-w-0 flex-col p-5 sm:p-6">
         <div className="flex flex-wrap gap-2">
           <Badge className="border-0 bg-tertiary-500 text-secondary-900">Dernier épisode</Badge>
           {podcast.episodeNumber ? <Badge variant="secondary" className="border-0 bg-secondary-100 text-secondary-900">Épisode {podcast.episodeNumber}</Badge> : null}
           {podcast.duration ? <Badge variant="secondary" className="border-0 bg-secondary-100 text-secondary-900">{podcast.duration}</Badge> : null}
         </div>
-        <h2 className="mt-5 text-3xl! font-semibold leading-tight tracking-tight">{podcast.title}</h2>
-        <p className="mt-4 text-base! leading-7 text-secondary-600" dangerouslySetInnerHTML={{ __html: podcast.description }} />
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-secondary-800">
+        <h2 className="mt-4 mb-0! line-clamp-2 text-2xl! font-semibold leading-tight tracking-tight">{podcast.title}</h2>
+        <p className="mt-3 line-clamp-2 text-sm! leading-6 text-secondary-600" dangerouslySetInnerHTML={{ __html: podcast.description }} />
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-secondary-800">
           Écouter le dernier épisode
           <ArrowUpRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
       </div>
-      <div className="relative min-h-64 overflow-hidden bg-secondary-100 sm:min-h-full">
+      <div className="relative min-h-52 overflow-hidden bg-secondary-100 sm:min-h-full">
         {podcast.coverImage ? (
           <Image
             src={urlFor(podcast.coverImage).width(900).height(900).url()}

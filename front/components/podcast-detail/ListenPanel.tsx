@@ -142,15 +142,15 @@ export function ListenPanel({ podcast }: Props) {
 
   if (!hasContent) {
     return (
-      <div className="rounded-[1.5rem] border border-secondary-500/15 bg-primary-500 p-6 text-sm text-secondary-600">
+      <div className="crt-card rounded-2xl p-5 text-sm text-secondary-600">
         Aucun mode d&apos;écoute disponible pour cet épisode.
       </div>
     );
   }
 
   return (
-    <Card className="min-w-0 gap-0 overflow-hidden rounded-[1.5rem] border-0 bg-primary-500 p-6 ring-1 ring-secondary-500/15">
-      <aside className="space-y-7">
+    <Card className="crt-card min-w-0 gap-0 overflow-hidden rounded-2xl p-5">
+      <aside className="space-y-6">
       {inlinePlayers.length > 0 && activePlayer && (
         <section>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary-500">Votre écoute</p>

@@ -11,18 +11,149 @@
     cursor: default;
 }
 
-.whiteEdgeGradient {
+.crt-glass {
+    border: 1px solid var(--surface-border);
+    background: var(--surface-glass);
+    backdrop-filter: blur(24px) saturate(0.86);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.8),
+        inset 0 0 0 1px rgb(22 42 43 / 0.04),
+        var(--surface-glow);
+}
+
+.crt-card {
+    border: 1px solid var(--surface-border);
+    background: var(--surface-card);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.82),
+        0 14px 40px rgb(22 42 43 / 0.14),
+        0 0 16px rgb(100 159 168 / 0.08);
+    backdrop-filter: blur(18px) saturate(0.9);
+}
+
+.crt-dark {
+    border: 1px solid rgb(100 159 168 / 0.56);
+    background: var(--surface-dark);
+    box-shadow:
+        inset 0 1px 0 rgb(247 245 240 / 0.14),
+        0 16px 46px rgb(11 22 23 / 0.24),
+        0 0 18px rgb(100 159 168 / 0.1);
+    backdrop-filter: blur(22px) saturate(0.82);
+}
+
+.ff-menu-window {
+    position: relative;
+    border: 2px solid rgb(229 239 239 / 0.92);
+    border-radius: 1.35rem;
+    background: rgb(24 61 80 / 0.86);
+    color: var(--color-primary-200);
+    box-shadow:
+        inset 0 0 0 2px rgb(11 22 23 / 0.58),
+        inset 0 0 0 4px rgb(195 216 217 / 0.18),
+        inset 0 1px 0 4px rgb(255 255 255 / 0.28),
+        0 14px 36px rgb(11 22 23 / 0.24),
+        0 0 22px rgb(100 159 168 / 0.14);
+    backdrop-filter: blur(20px) saturate(0.92);
+}
+
+.ff-menu-window::before,
+.ff-menu-window::after {
+    content: "";
     position: absolute;
-    inset: 0;
-    z-index: 10;
+    z-index: 1;
+    width: 0.72rem;
+    height: 0.72rem;
     pointer-events: none;
-    background: linear-gradient(
-        to right,
-        rgb(5 1 10 / 0.82) 0%,
-        transparent 12%,
-        transparent 88%,
-        rgb(5 1 10 / 0.82) 100%
-    );
+}
+
+.ff-menu-window::before {
+    top: 0.35rem;
+    left: 0.35rem;
+    border-top: 1px solid rgb(255 255 255 / 0.72);
+    border-left: 1px solid rgb(255 255 255 / 0.72);
+    border-radius: 0.35rem 0 0;
+}
+
+.ff-menu-window::after {
+    right: 0.35rem;
+    bottom: 0.35rem;
+    border-right: 1px solid rgb(195 216 217 / 0.72);
+    border-bottom: 1px solid rgb(195 216 217 / 0.72);
+    border-radius: 0 0 0.35rem;
+}
+
+.ff-menu-choice {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding-inline: 2.15rem 0.65rem;
+    color: var(--color-secondary-100);
+    text-shadow: 0 1px 2px rgb(11 22 23 / 0.7);
+    transition: color 150ms ease, background-color 150ms ease;
+}
+
+.ff-menu-choice::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 2rem;
+    height: 2rem;
+    /* CC0 menu cursor by andreyin: https://opengameart.org/content/hand-cursor */
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAB3RJTUUH4goVCxoEATp+BgAAABd0RVh0U29mdHdhcmUAR0xEUE5HIHZlciAzLjRxhaThAAAACHRwTkdHTEQzAAAAAEqAKR8AAAAEZ0FNQQAAsY8L/GEFAAAABmJLR0QAwADAAMAanQdUAAAABnRSTlMAwADAAMCNeLu6AAAAuklEQVR4nO3UTQ6FIAwEYA7kXb0Si57IE2hC0kwobSngQsOsXl50PvlN+eWkDWzgb8DhZQTA908vklEBLCWiqy/MNAAcpvzYHuN5RgWwkX+XUoL0tKsAP6dNC1aE14CBMo/axxZjZBdVgDEPOFfNxi8A+I9rOEBVtxiQdSQyBcjttGwEpaUJVKsSBuRp4tLmYQ4A1WlEQEtgm+aOy25gAbJ9XUsg2m4BPCa5Htq1EwaQsW+0KWAyG3BzA6SGqfd+0z7EAAAAAElFTkSuQmCC") center / 2rem 2rem no-repeat;
+    opacity: 0;
+    transform: translate(-0.3rem, -50%);
+    filter: drop-shadow(0 0 5px rgb(195 216 217 / 0.9));
+    transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.ff-menu-choice:hover,
+.ff-menu-choice:focus-visible,
+.ff-menu-choice[aria-current="page"] {
+    color: var(--color-primary-200);
+    text-shadow: 0 0 8px rgb(195 216 217 / 0.42), 0 1px 2px rgb(11 22 23 / 0.7);
+}
+
+.ff-menu-choice:focus-visible {
+    outline: 2px solid var(--color-primary-200);
+    outline-offset: 2px;
+}
+
+.ff-menu-choice:hover::before,
+.ff-menu-choice:focus-visible::before,
+.ff-menu-choice[aria-current="page"]::before {
+    opacity: 1;
+    transform: translate(0, -50%);
+}
+
+.ff-menu-social-icon {
+    filter: brightness(0) saturate(100%) invert(100%) drop-shadow(0 1px 2px rgb(11 22 23 / 0.8));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ff-menu-choice,
+    .ff-menu-choice::before {
+        transition: none;
+    }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .crt-glass {
+        background: rgb(247 245 240 / 0.97);
+    }
+
+    .crt-card {
+        background: rgb(247 245 240 / 0.98);
+    }
+
+    .crt-dark {
+        background: rgb(22 42 43 / 0.98);
+    }
+
+    .ff-menu-window {
+        background: rgb(24 61 80 / 0.98);
+    }
 }
 
 .projectTooltip {

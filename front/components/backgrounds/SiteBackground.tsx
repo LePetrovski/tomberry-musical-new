@@ -5,7 +5,7 @@ import { useReducedMotion } from "motion/react";
 
 const CRTWarp = dynamic(() => import("./CRTWarp"), {
   ssr: false,
-  loading: () => <div className="h-full w-full bg-[#05010a]" />,
+  loading: () => <div className="h-full w-full bg-[#FAFAFA]" />,
 });
 
 export function SiteBackground() {
@@ -13,7 +13,7 @@ export function SiteBackground() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-0 bg-[#05010a]"
+      className="pointer-events-none fixed inset-0 z-0 bg-[#FAFAFA]"
       aria-hidden="true"
     >
       <CRTWarp

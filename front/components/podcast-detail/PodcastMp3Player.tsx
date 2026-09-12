@@ -271,7 +271,7 @@ export function PodcastMp3Player({
 	const isUnavailable = status === "loading" || status === "error";
 
 	return (
-		<div className="rounded-2xl border border-secondary-500/20 bg-primary-500 p-4 shadow-sm sm:p-5">
+		<div className="crt-card rounded-2xl p-4 sm:p-5">
 			<div className="mb-5 flex min-w-0 items-start justify-between gap-4">
 				<div className="min-w-0">
 					<p className="text-xs font-semibold tracking-[0.14em] text-secondary-500 uppercase">

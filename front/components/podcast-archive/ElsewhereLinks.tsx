@@ -24,13 +24,13 @@ export function ElsewhereLinks({ links = [] }: Props) {
     );
 
     return (
-        <section className="mt-16 rounded-2xl border border-zinc-200 bg-primary-500 p-6">
+        <section className="crt-card mt-12 rounded-2xl p-5 sm:p-6">
         <h2 className="text-2xl font-semibold tracking-tight text-secondary-900">Ailleurs</h2>
         <p className="mt-2 text-secondary-600">
             Articles, réseaux et projets autour du Tomberry Musical.
         </p>
 
-        <div className="mt-8 grid gap-8 md:grid-cols-3">
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
             {(Object.keys(grouped) as FeaturedLinkGroup[]).map((group) => {
             const groupLinks = grouped[group];
             if (!groupLinks.length) return null;

@@ -11,7 +11,7 @@ export function ReviewCTA({ reviewLinks = [] }: Props) {
   if (!reviewLinks.length) return null;
 
   return (
-    <Card className="gap-0 rounded-[1.5rem] border-0 bg-primary-500 p-5 ring-1 ring-secondary-500/15">
+    <Card className="crt-card gap-0 rounded-2xl p-4.5">
       <section>
       <Heart aria-hidden="true" className="size-5 text-tertiary-500" />
       <h2 className="mt-3 text-xl! font-semibold text-secondary-900">Aider le podcast à grandir</h2>

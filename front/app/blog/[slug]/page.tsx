@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }: Props) {
       <article>
         <JsonLd data={articleSchema(post, ogImage)} />
         <Breadcrumbs
-          className="mb-8"
+          className="mb-6"
           items={[
             { label: "Accueil", href: "/" },
             { label: "Blog", href: "/blog" },
@@ -103,13 +103,15 @@ export default async function BlogPostPage({ params }: Props) {
           ) : null}
         </PageHero>
 
-        {post.content && post.content.length > 0 ? (
-          <PostContent blocks={post.content} />
-        ) : post.body ? (
-          <div className="prose prose-zinc max-w-none">
-            <RichText value={post.body} />
-          </div>
-        ) : null}
+        <div className="crt-card rounded-2xl p-5 sm:p-7">
+          {post.content && post.content.length > 0 ? (
+            <PostContent blocks={post.content} />
+          ) : post.body ? (
+            <div className="prose prose-zinc max-w-none">
+              <RichText value={post.body} />
+            </div>
+          ) : null}
+        </div>
       </article>
     </PageWrapper>
   );

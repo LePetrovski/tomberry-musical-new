@@ -5,12 +5,14 @@ type Props = {
   categories: PodcastCategory[];
   selectedCategory: string;
   onSelectCategory: (slug: string | null) => void;
+  showPlaylistLink?: boolean;
 };
 
 export function PodcastCategoryFilters({
   categories,
   selectedCategory,
   onSelectCategory,
+  showPlaylistLink = true,
 }: Props) {
   if (categories.length === 0) {
     return null;
@@ -45,7 +47,7 @@ export function PodcastCategoryFilters({
         ))}
       </div>
 
-      {activeCategory?.youtubePlaylistUrl && (
+      {showPlaylistLink && activeCategory?.youtubePlaylistUrl && (
         <a
           href={activeCategory.youtubePlaylistUrl}
           target="_blank"

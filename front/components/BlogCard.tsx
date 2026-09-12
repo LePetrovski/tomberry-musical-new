@@ -17,7 +17,7 @@ function formatDate(date: string) {
 
 export function BlogCard({ post }: Props) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <article className="crt-card group flex flex-col overflow-hidden rounded-2xl transition hover:-translate-y-0.5 hover:shadow-[0_16px_42px_rgba(39,62,63,0.14)]">
       <CurtainLink href={`/blog/${post.slug}`} className="flex flex-1 flex-col">
         <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
           {post.coverImage ? (
@@ -34,7 +34,7 @@ export function BlogCard({ post }: Props) {
             </div>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-3 p-5">
+        <div className="flex flex-1 flex-col gap-2.5 p-4.5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs font-medium uppercase tracking-wide text-secondary-500">
               {post.author ? `Par ${post.author}` : "Article"}

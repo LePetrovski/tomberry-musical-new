@@ -10,7 +10,7 @@ type Props = {
 export function BlogArchiveGrid({ posts, hasActiveFilters }: Props) {
     if (posts.length === 0) {
         return (
-        <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-secondary-600">
+        <p className="crt-card rounded-2xl border-dashed p-6 text-secondary-600">
             {hasActiveFilters
             ? "Aucun article ne correspond à votre recherche."
             : "Aucun article publié pour le moment."}
@@ -35,7 +35,7 @@ export function BlogArchiveGrid({ posts, hasActiveFilters }: Props) {
     }
 
     return (
-        <motion.div variants={container} initial="hidden" animate="show" exit="hidden" className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div variants={container} initial="hidden" animate="show" exit="hidden" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
             <motion.div key={post._id} variants={item}>
                 <BlogCard post={post} />

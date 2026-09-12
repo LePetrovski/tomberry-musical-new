@@ -37,7 +37,7 @@ export function AsideInfoDrawer({ children, label }: AsideInfoDrawerProps) {
 			<button
 				ref={toggleRef}
 				type="button"
-				className="absolute top-1/2 right-full flex h-36 w-12 -translate-y-1/2 cursor-pointer flex-col items-center justify-center gap-3 rounded-l-2xl border border-r-0 border-secondary-500/50 bg-primary-500 text-secondary-700 shadow-[-8px_4px_24px_rgba(39,62,63,0.12)] transition-colors hover:bg-secondary-500 hover:text-primary-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500"
+				className="absolute top-1/2 right-full flex h-32 w-11 -translate-y-1/2 cursor-pointer flex-col items-center justify-center gap-3 rounded-l-xl border border-r-0 border-secondary-500/40 bg-primary-500/85 text-secondary-700 shadow-[-8px_4px_24px_rgba(39,62,63,0.12)] backdrop-blur-xl transition-colors hover:bg-secondary-500 hover:text-primary-500 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500"
 				aria-expanded={isOpen}
 				aria-controls="aside-info-panel"
 				aria-label={isOpen ? `Fermer le volet ${label}` : `Ouvrir le volet ${label}`}
@@ -53,7 +53,7 @@ export function AsideInfoDrawer({ children, label }: AsideInfoDrawerProps) {
 
 			<div
 				id="aside-info-panel"
-				className="max-h-[calc(100svh-2rem)] w-full overflow-y-auto overscroll-contain border border-r-0 border-secondary-500/35 bg-primary-500 shadow-[-16px_8px_40px_rgba(39,62,63,0.16)] rounded-l-2xl"
+				className="crt-glass max-h-[calc(100svh-2rem)] w-full overflow-y-auto overscroll-contain rounded-l-2xl border-r-0"
 				aria-hidden={!isOpen}
 				inert={!isOpen}
 			>
