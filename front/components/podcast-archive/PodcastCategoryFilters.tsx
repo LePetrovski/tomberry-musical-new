@@ -1,23 +1,18 @@
 import type { PodcastCategory } from "@/lib/sanity/types";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   categories: PodcastCategory[];
   selectedCategory: string;
   onSelectCategory: (slug: string | null) => void;
+  showPlaylistLink?: boolean;
 };
-
-function filterButtonClass(isActive: boolean) {
-  return `rounded-full px-4 py-1.5 text-sm font-medium transition cursor-pointer ${
-    isActive
-      ? "bg-secondary-500 text-white"
-      : "border border-zinc-300 bg-white text-secondary-700 hover:border-zinc-400"
-  }`;
-}
 
 export function PodcastCategoryFilters({
   categories,
   selectedCategory,
   onSelectCategory,
+  showPlaylistLink = true,
 }: Props) {
   if (categories.length === 0) {
     return null;
@@ -28,34 +23,40 @@ export function PodcastCategoryFilters({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
           type="button"
           onClick={() => onSelectCategory(null)}
-          className={filterButtonClass(!selectedCategory)}
+          variant="ghost"
+          size="sm"
+          className="ff-command-button"
+          aria-pressed={!selectedCategory}
         >
           Tous
-        </button>
+        </Button>
         {categories.map((category) => (
-          <button
+          <Button
             key={category._id}
             type="button"
             onClick={() =>
               onSelectCategory(selectedCategory === category.slug ? null : category.slug)
             }
-            className={filterButtonClass(selectedCategory === category.slug)}
+            variant="ghost"
+            size="sm"
+            className="ff-command-button"
+            aria-pressed={selectedCategory === category.slug}
           >
             {category.title}
             {category.featured ? " ★" : ""}
-          </button>
+          </Button>
         ))}
       </div>
 
-      {activeCategory?.youtubePlaylistUrl && (
+      {showPlaylistLink && activeCategory?.youtubePlaylistUrl && (
         <a
           href={activeCategory.youtubePlaylistUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex text-sm font-medium text-secondary-700 transition-colors hover:text-secondary-900"
+          className="ff-menu-list-link text-sm font-medium"
         >
           Voir la playlist YouTube « {activeCategory.title} » →
         </a>

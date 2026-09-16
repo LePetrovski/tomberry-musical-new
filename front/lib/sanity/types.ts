@@ -3,6 +3,12 @@ import type { PortableTextBlock } from "@portabletext/types";
 export type SanityImage = {
   asset: { _ref: string };
   alt?: string;
+  hotspot?: {
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+  };
 };
 
 export type PodcastCategory = {
@@ -25,6 +31,11 @@ export type ListeningPlatformId =
 export type ListeningPlatform = {
   platform: ListeningPlatformId;
   url: string;
+};
+
+export type PodcastPurchaseLinks = {
+  gameUrl?: string;
+  soundtrackUrl?: string;
 };
 
 export type SanityFileAsset = {
@@ -77,6 +88,7 @@ export type Podcast = {
     asset: SanityFileAsset;
   };
   listeningPlatforms?: ListeningPlatform[];
+  purchaseLinks?: PodcastPurchaseLinks;
   youtube?: string;
   embedYoutube?: string;
   soundcloud?: string;
@@ -119,6 +131,10 @@ export type PodcastPreview = Pick<
   | "embedSoundcloud"
   | "categories"
 >;
+
+export type PodcastDetail = Podcast & {
+  relatedPodcasts: PodcastPreview[];
+};
 
 export type PostPreview = Pick<
   Post,
@@ -173,8 +189,62 @@ export type GuestAppearance = {
   publishedAt?: string;
 };
 
+export type CompilationTrack = {
+  _key: string;
+  timecode: string;
+  artist: string;
+  title: string;
+  externalLink?: {
+    label: string;
+    url: string;
+  };
+};
+
+export type Compilation = {
+  _id: string;
+  title: string;
+  slug: string;
+  coverImage: SanityImage;
+  introduction?: PortableTextBlock[];
+  introText: string;
+  curatorName?: string;
+  audioFile: {
+    asset: SanityFileAsset;
+  };
+  tracks: CompilationTrack[];
+  publishedAt: string;
+  _updatedAt?: string;
+};
+
+export type CompilationPreview = Pick<
+  Compilation,
+  | "_id"
+  | "title"
+  | "slug"
+  | "coverImage"
+  | "introText"
+  | "curatorName"
+  | "tracks"
+  | "publishedAt"
+>;
+
 export type SiteSettings = {
   socialLinks?: SocialLink[];
   reviewLinks?: ReviewLink[];
   featuredLinks?: FeaturedLink[];
+};
+
+export type HomepageLink = {
+  label: string;
+  href: string;
+};
+
+export type Homepage = {
+  asideLabel: string;
+  asideEyebrow: string;
+  asideTitle: string;
+  asideTagline: string;
+  asideDescription: string;
+  asidePrimaryLink: HomepageLink;
+  asideSecondaryLink: HomepageLink;
 };

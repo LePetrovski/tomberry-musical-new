@@ -1,0 +1,41 @@
+import type { PodcastPurchaseLinks } from "@/lib/sanity/types";
+import { ExternalLink, Gamepad2, Music2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+
+type Props = {
+  purchaseLinks?: PodcastPurchaseLinks;
+};
+
+export function PurchaseCTA({ purchaseLinks }: Props) {
+  const links = [
+    { label: "Acheter le jeu", url: purchaseLinks?.gameUrl, icon: Gamepad2 },
+    { label: "Acheter l'OST", url: purchaseLinks?.soundtrackUrl, icon: Music2 },
+  ].filter((link): link is { label: string; url: string; icon: typeof Gamepad2 } => Boolean(link.url));
+
+  if (links.length === 0) return null;
+
+  return (
+    <Card className="ff-menu-window ff-archive-window gap-0 rounded-2xl p-4.5 text-primary-200">
+      <section>
+      <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.16em]">Autour de l&apos;épisode</p>
+      <h2 className="ff-archive-title mt-1 text-xl! font-semibold">Acheter</h2>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        {links.map((link) => (
+          <a
+            key={link.label}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${link.label} (nouvel onglet)`}
+            className="ff-command-button inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-4 py-2 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
+          >
+            <link.icon aria-hidden="true" className="size-4" />
+            {link.label}
+            <ExternalLink aria-hidden="true" className="size-3.5 opacity-70" />
+          </a>
+        ))}
+      </div>
+      </section>
+    </Card>
+  );
+}

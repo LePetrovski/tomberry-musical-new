@@ -1,6 +1,8 @@
+"use client";
+
 import { BlogCard } from "@/components/BlogCard";
 import type { PostPreview } from "@/lib/sanity/types";
-import { motion, stagger } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 type Props = {
   posts: PostPreview[];
@@ -8,39 +10,34 @@ type Props = {
 };
 
 export function BlogArchiveGrid({ posts, hasActiveFilters }: Props) {
-    if (posts.length === 0) {
-        return (
-        <p className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-secondary-600">
-            {hasActiveFilters
-            ? "Aucun article ne correspond à votre recherche."
-            : "Aucun article publié pour le moment."}
-        </p>
-        );
-    }
+  const shouldReduceMotion = useReducedMotion();
 
-    const container = {
-        hidden: { opacity: 0, y: 10 },
-        show: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            delayChildren: stagger(0.1)
-        }
-        }
-    }
-
-    const item = {
-        hidden: { opacity: 0, y: 10 },
-        show: { opacity: 1, y: 0 }
-    }
-
+  if (posts.length === 0) {
     return (
-        <motion.div variants={container} initial="hidden" animate="show" exit="hidden" className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-            <motion.div key={post._id} variants={item}>
-                <BlogCard post={post} />
-            </motion.div>
-        ))}
-        </motion.div>
+      <p className="ff-menu-window ff-archive-window ff-empty-state p-8 text-[16px]! leading-7 sm:p-10">
+        {hasActiveFilters
+          ? "Aucun article ne correspond à votre recherche."
+          : "Aucun article publié pour le moment."}
+      </p>
     );
+  }
+
+  return (
+    <ul aria-label="Articles du blog" className="m-0 grid list-none gap-6 p-0 lg:gap-8">
+      {posts.map((post, index) => (
+        <motion.li
+          key={post._id}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.2,
+            delay: shouldReduceMotion ? 0 : Math.min(index, 5) * 0.025,
+          }}
+          className="min-w-0"
+        >
+          <BlogCard post={post} />
+        </motion.li>
+      ))}
+    </ul>
+  );
 }
