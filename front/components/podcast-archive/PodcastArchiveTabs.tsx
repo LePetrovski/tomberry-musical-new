@@ -1,3 +1,5 @@
+import { ListMusic, Mic2, Radio } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ArchiveView } from "./hooks/usePodcastFilters";
 
 type Props = {
@@ -5,44 +7,38 @@ type Props = {
   onSelectView: (view: ArchiveView) => void;
   episodesCount: number;
   appearancesCount: number;
+  compilationsCount: number;
 };
 
-function tabButtonClass(isActive: boolean) {
-  return `rounded-full px-4 py-1.5 text-sm font-medium transition cursor-pointer ${
-    isActive
-      ? "bg-secondary-500 text-white"
-      : "border border-zinc-300 bg-white text-secondary-700 hover:border-zinc-400"
-  }`;
-}
-
-export function PodcastArchiveTabs({
-  selectedView,
-  onSelectView,
-  episodesCount,
-  appearancesCount,
-}: Props) {
+export function PodcastArchiveTabs({ selectedView, onSelectView, episodesCount, appearancesCount, compilationsCount }: Props) {
   return (
-    <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Vue de l’archive">
-      <button
-        type="button"
-        role="tab"
-        aria-selected={selectedView === "episodes"}
-        onClick={() => onSelectView("episodes")}
-        className={tabButtonClass(selectedView === "episodes")}
+    <Tabs className="max-w-full" value={selectedView} onValueChange={(value) => onSelectView(value as ArchiveView)}>
+      <TabsList
+        aria-label="Vue de l’archive"
+        className="ff-archive-tabs h-auto max-w-full justify-start overflow-x-auto rounded-xl p-1 sm:w-auto"
       >
-        Mes épisodes
-        <span className="ml-1.5 opacity-70">({episodesCount})</span>
-      </button>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={selectedView === "apparitions"}
-        onClick={() => onSelectView("apparitions")}
-        className={tabButtonClass(selectedView === "apparitions")}
-      >
-        Apparitions
-        <span className="ml-1.5 opacity-70">({appearancesCount})</span>
-      </button>
-    </div>
+        <TabsTrigger
+          value="episodes"
+          className="ff-archive-tab h-9 rounded-lg border border-transparent bg-transparent px-3 data-active:shadow-none"
+        >
+          <Mic2 aria-hidden="true" />
+          Mes épisodes <span className="opacity-70">({episodesCount})</span>
+        </TabsTrigger>
+        <TabsTrigger
+          value="apparitions"
+          className="ff-archive-tab h-9 rounded-lg border border-transparent bg-transparent px-3 data-active:shadow-none"
+        >
+          <Radio aria-hidden="true" />
+          Apparitions <span className="opacity-70">({appearancesCount})</span>
+        </TabsTrigger>
+        <TabsTrigger
+          value="compilations"
+          className="ff-archive-tab h-9 rounded-lg border border-transparent bg-transparent px-3 data-active:shadow-none"
+        >
+          <ListMusic aria-hidden="true" />
+          Compilations <span className="opacity-70">({compilationsCount})</span>
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 }

@@ -107,6 +107,32 @@ export const podcast = defineType({
       ],
     }),
     defineField({
+      name: "purchaseLinks",
+      title: "Liens d'achat",
+      type: "object",
+      description: "Liens pour acheter le jeu et sa bande originale.",
+      fields: [
+        defineField({
+          name: "gameUrl",
+          title: "Acheter le jeu",
+          type: "url",
+          validation: (rule) =>
+            rule.uri({
+              scheme: ["http", "https"],
+            }),
+        }),
+        defineField({
+          name: "soundtrackUrl",
+          title: "Acheter l'OST",
+          type: "url",
+          validation: (rule) =>
+            rule.uri({
+              scheme: ["http", "https"],
+            }),
+        }),
+      ],
+    }),
+    defineField({
       name: "youtube",
       title: "YouTube",
       type: "url",

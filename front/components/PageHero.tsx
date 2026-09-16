@@ -26,12 +26,12 @@ export function PageHero({
   className,
 }: Props) {
   return (
-    <header className={joinClasses("mb-10", className)}>
-      <div className="rounded-2xl bg-primary-500 p-6 sm:p-8">
+    <header className={joinClasses("mb-8", className)}>
+      <div className="crt-card rounded-2xl p-5 sm:p-6">
         {children}
         <h1 className="text-4xl font-semibold tracking-tight text-secondary-900">{title}</h1>
         {description ? (
-          <p className="mt-4 text-lg leading-8 text-secondary-600">{description}</p>
+          <p className="mt-3 text-base! leading-7 text-secondary-600 sm:text-lg!">{description}</p>
         ) : null}
       </div>
 
