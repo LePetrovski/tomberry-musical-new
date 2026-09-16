@@ -2,6 +2,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Image from "next/image";
 import type { PortableTextBlock } from "@portabletext/types";
 import { urlFor } from "@/lib/sanity/image";
+import type { HeadingIds } from "@/lib/blog/reading";
 
 const components: PortableTextComponents = {
   types: {
@@ -58,8 +59,26 @@ const components: PortableTextComponents = {
 
 type Props = {
   value: PortableTextBlock[];
+  headingIds?: HeadingIds;
 };
 
-export function RichText({ value }: Props) {
-  return <PortableText value={value} components={components} />;
+export function RichText({ value, headingIds }: Props) {
+  // Portable Text groups lists before rendering, which can change renderer indices.
+  // Give keyless blocks their original index before that transformation.
+  const blocks = headingIds
+    ? value.map((block, index) => block._key ? block : { ...block, _key: `index:${index}` })
+    : value;
+  const articleComponents: PortableTextComponents = headingIds ? {
+    ...components,
+    block: {
+      ...(typeof components.block === "object" ? components.block : {}),
+      h2: ({ children, value: block, index }) => (
+        <h2 id={headingIds[block._key ?? `index:${index}`]} tabIndex={-1} className="mt-10 mb-4 text-2xl font-semibold tracking-tight">{children}</h2>
+      ),
+      h3: ({ children, value: block, index }) => (
+        <h3 id={headingIds[block._key ?? `index:${index}`]} tabIndex={-1} className="mt-8 mb-3 text-xl font-semibold tracking-tight">{children}</h3>
+      ),
+    },
+  } : components;
+  return <PortableText value={blocks} components={articleComponents} />;
 }

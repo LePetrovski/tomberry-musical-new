@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Lexend, Ubuntu_Sans } from "next/font/google";
 import { Footer } from "@/components/Footer";
+import { SiteBackground } from "@/components/backgrounds/SiteBackground";
 import { GlobalJsonLd } from "@/components/GlobalJsonLd";
 import { getSiteSettings } from "@/lib/sanity/cached";
 import { getSiteUrl, siteConfig, uniqueSameAs } from "@/lib/seo/site";
@@ -75,13 +76,16 @@ export default async function RootLayout({
 		className={`${lexend.variable} ${ubuntuSans.variable} h-full antialiased`}
 		suppressHydrationWarning
 		>
-			<body className="min-h-full flex flex-col" suppressHydrationWarning>
-				<GlobalJsonLd sameAs={sameAs} />
-				<App>
-					<main className="flex-1 h-full">{children}</main>
-				</App>
-				<Footer socialLinks={socialLinks} />
-				<Analytics />
+			<body className="min-h-full" suppressHydrationWarning>
+				<SiteBackground />
+				<div className="relative z-10 flex min-h-screen flex-col">
+					<GlobalJsonLd sameAs={sameAs} />
+					<App>
+						<main className="h-full flex-1">{children}</main>
+					</App>
+					<Footer socialLinks={socialLinks} />
+					<Analytics />
+				</div>
 			</body>
 		</html>
 	);

@@ -13,12 +13,12 @@ type Props = {
 };
 
 const backgroundClasses: Record<PageBackground, string> = {
-  cross: "bg-cross",
-  polka: "bg-polka",
-  zigzag: "bg-zigzag",
-  rosette: "bg-tiled-rosette",
-  "grid-thin": "bg-grid-thin",
-  none: "bg-primary-500",
+  cross: "bg-transparent",
+  polka: "bg-transparent",
+  zigzag: "bg-transparent",
+  rosette: "bg-transparent",
+  "grid-thin": "bg-transparent",
+  none: "bg-transparent",
 };
 
 const widthClasses: Record<PageWidth, string> = {
@@ -42,7 +42,7 @@ export function PageWrapper({
     <div className={joinClasses("h-full w-full min-h-screen", backgroundClasses[background], className)}>
       <div
         className={joinClasses(
-          "mx-auto pt-30 pb-40",
+          "mx-auto pb-32 pt-36 sm:pt-40",
           widthClasses[width],
           contentClassName,
         )}

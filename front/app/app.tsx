@@ -7,6 +7,7 @@ import { SoundCloudPopup } from "@/components/audio/SoundCloudPopup";
 import { Header } from "@/components/Header";
 import { InitialLoaderProvider } from "@/components/initial-loader/InitialLoaderProvider";
 import { PageCurtainsProvider } from "@/components/navigation/PageCurtainsProvider";
+import { Suspense } from "react";
 
 export default function App({ children }: { children: React.ReactNode }) {
     return (
@@ -14,7 +15,9 @@ export default function App({ children }: { children: React.ReactNode }) {
             <InitialLoaderProvider>
             <PageCurtainsProvider>
                 <SoundCloudPlayerProvider>
-                    <Header />
+                    <Suspense fallback={null}>
+                        <Header />
+                    </Suspense>
                     <SoundCloudPopup />
                     <HomeAudioPlayer />
                     {children}

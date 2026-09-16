@@ -1,17 +1,19 @@
 "use client";
 
-import { Howl } from "howler";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { ExternalLink, Music2 } from "lucide-react";
+import { useId } from "react";
+import { useAudioPlayer } from "@/components/audio/useAudioPlayer";
+import type { CompilationTrack } from "@/lib/sanity/types";
+import { parseTimecode } from "@/lib/audio/timecode";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2] as const;
-const INITIAL_VOLUME = 0.8;
 const SKIP_SECONDS = 15;
-
-type PlayerStatus = "loading" | "ready" | "playing" | "paused" | "ended" | "error";
 
 type Props = {
 	audioUrl: string;
 	title: string;
+	tracks?: CompilationTrack[];
+	contentLabel?: string;
 };
 
 function formatTime(value: number) {
@@ -41,206 +43,49 @@ function PlayPauseIcon({ isPlaying }: { isPlaying: boolean }) {
 	);
 }
 
-export function PodcastMp3Player({ audioUrl, title }: Props) {
+export function PodcastMp3Player({
+	audioUrl,
+	title,
+	tracks = [],
+	contentLabel = "Lecture MP3",
+}: Props) {
 	const controlId = useId();
 	const progressId = `${controlId}-progress`;
 	const volumeId = `${controlId}-volume`;
-	const howlRef = useRef<Howl | null>(null);
-	const soundIdRef = useRef<number | null>(null);
-	const animationFrameRef = useRef<number | null>(null);
-	const pendingSeekRef = useRef(0);
-	const lastProgressUpdateRef = useRef(0);
-	const [status, setStatus] = useState<PlayerStatus>("loading");
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const [duration, setDuration] = useState(0);
-	const [currentTime, setCurrentTime] = useState(0);
-	const [volume, setVolume] = useState(INITIAL_VOLUME);
-	const [isMuted, setIsMuted] = useState(false);
-	const [playbackRate, setPlaybackRate] = useState(1);
-
-	const cancelProgressSync = useCallback(() => {
-		if (animationFrameRef.current === null) return;
-		window.cancelAnimationFrame(animationFrameRef.current);
-		animationFrameRef.current = null;
-	}, []);
-
-	const syncProgress = useCallback(function updateProgress() {
-		const howl = howlRef.current;
-		const soundId = soundIdRef.current;
-
-		if (!howl || soundId === null || !howl.playing(soundId)) {
-			animationFrameRef.current = null;
-			return;
-		}
-
-		const position = howl.seek(soundId);
-		if (
-			typeof position === "number" &&
-			Number.isFinite(position) &&
-			Math.abs(position - lastProgressUpdateRef.current) >= 0.2
-		) {
-			lastProgressUpdateRef.current = position;
-			setCurrentTime(position);
-		}
-
-		animationFrameRef.current = window.requestAnimationFrame(updateProgress);
-	}, []);
-
-	useEffect(() => {
-		let disposed = false;
-		const howl = new Howl({
-			src: [audioUrl],
-			format: ["mp3"],
-			html5: true,
-			preload: "metadata",
-			autoplay: false,
-			volume: INITIAL_VOLUME,
-			rate: 1,
-		});
-
-		howlRef.current = howl;
-
-		const handleLoad = () => {
-			if (disposed) return;
-			const loadedDuration = howl.duration();
-			setDuration(Number.isFinite(loadedDuration) ? loadedDuration : 0);
-			setErrorMessage(null);
-			setStatus("ready");
-		};
-
-		const handlePlay = (soundId: number) => {
-			if (disposed) return;
-			soundIdRef.current = soundId;
-			setStatus("playing");
-			cancelProgressSync();
-			animationFrameRef.current = window.requestAnimationFrame(syncProgress);
-		};
-
-		const handlePause = (soundId: number) => {
-			if (disposed) return;
-			const position = howl.seek(soundId);
-			if (typeof position === "number") {
-				lastProgressUpdateRef.current = position;
-				setCurrentTime(position);
-			}
-			setStatus("paused");
-			cancelProgressSync();
-		};
-
-		const handleEnd = () => {
-			if (disposed) return;
-			setCurrentTime(howl.duration());
-			lastProgressUpdateRef.current = howl.duration();
-			setStatus("ended");
-			soundIdRef.current = null;
-			pendingSeekRef.current = 0;
-			cancelProgressSync();
-		};
-
-		const handleError = (_soundId: number, error: unknown) => {
-			if (disposed) return;
-			setErrorMessage(
-				typeof error === "string" && error.length > 0
-					? `Lecture impossible : ${error}`
-					: "Impossible de charger ce fichier audio.",
-			);
-			setStatus("error");
-			cancelProgressSync();
-		};
-
-		howl.on("load", handleLoad);
-		howl.on("play", handlePlay);
-		howl.on("pause", handlePause);
-		howl.on("end", handleEnd);
-		howl.on("loaderror", handleError);
-		howl.on("playerror", handleError);
-
-		return () => {
-			disposed = true;
-			cancelProgressSync();
-			howl.off();
-			howl.unload();
-			howlRef.current = null;
-			soundIdRef.current = null;
-		};
-	}, [audioUrl, cancelProgressSync, syncProgress]);
-
-	const seekTo = useCallback(
-		(value: number) => {
-			const clampedValue = Math.min(Math.max(value, 0), duration || 0);
-			const howl = howlRef.current;
-			const soundId = soundIdRef.current;
-
-			setCurrentTime(clampedValue);
-			lastProgressUpdateRef.current = clampedValue;
-			pendingSeekRef.current = clampedValue;
-
-			if (howl && soundId !== null) {
-				howl.seek(clampedValue, soundId);
-				pendingSeekRef.current = 0;
-			}
-		},
-		[duration],
+	const {
+		status,
+		errorMessage,
+		duration,
+		currentTime,
+		volume,
+		isMuted,
+		playbackRate,
+		isPlaying,
+		isUnavailable,
+		seekTo,
+		togglePlayback,
+		playFrom,
+		changeVolume,
+		toggleMute,
+		changePlaybackRate,
+		retry,
+	} = useAudioPlayer(audioUrl);
+	const preparedTracks = tracks
+		.map((track) => ({ ...track, startSeconds: parseTimecode(track.timecode) }))
+		.filter(
+			(track): track is CompilationTrack & { startSeconds: number } =>
+				track.startSeconds !== null,
+		);
+	const activeTrackIndex = preparedTracks.findLastIndex(
+		(track) => currentTime >= track.startSeconds,
 	);
 
-	const togglePlayback = () => {
-		const howl = howlRef.current;
-		if (!howl || status === "loading" || status === "error") return;
-
-		const soundId = soundIdRef.current;
-		if (soundId !== null && howl.playing(soundId)) {
-			howl.pause(soundId);
-			return;
-		}
-
-		const nextSoundId = soundId === null ? howl.play() : howl.play(soundId);
-		soundIdRef.current = nextSoundId;
-
-		if (pendingSeekRef.current > 0) {
-			howl.seek(pendingSeekRef.current, nextSoundId);
-			pendingSeekRef.current = 0;
-		}
-	};
-
-	const changeVolume = (value: number) => {
-		const nextVolume = Math.min(Math.max(value, 0), 1);
-		setVolume(nextVolume);
-		howlRef.current?.volume(nextVolume);
-
-		if (isMuted && nextVolume > 0) {
-			setIsMuted(false);
-			howlRef.current?.mute(false);
-		}
-	};
-
-	const toggleMute = () => {
-		const nextMuted = !isMuted;
-		setIsMuted(nextMuted);
-		howlRef.current?.mute(nextMuted);
-	};
-
-	const changePlaybackRate = (value: number) => {
-		setPlaybackRate(value);
-		howlRef.current?.rate(value, soundIdRef.current ?? undefined);
-	};
-
-	const retry = () => {
-		const howl = howlRef.current;
-		if (!howl) return;
-		setErrorMessage(null);
-		setStatus("loading");
-		howl.load();
-	};
-
-	const isPlaying = status === "playing";
-	const isUnavailable = status === "loading" || status === "error";
-
 	return (
-		<div className="rounded-2xl border border-secondary-500/20 bg-primary-500 p-4 shadow-sm sm:p-5">
+		<div className="ff-player-console rounded-xl p-4 sm:p-5">
 			<div className="mb-5 flex min-w-0 items-start justify-between gap-4">
 				<div className="min-w-0">
 					<p className="text-xs font-semibold tracking-[0.14em] text-secondary-500 uppercase">
-						Lecture MP3
+						{contentLabel}
 					</p>
 					<p className="mt-1 truncate text-sm font-medium text-secondary-900" title={title}>
 						{title}
@@ -252,7 +97,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 			</div>
 
 			{status === "error" ? (
-				<div className="rounded-xl border border-secondary-500/25 bg-secondary-500/5 p-4" role="alert">
+				<div className="ff-player-error rounded-lg p-4" role="alert">
 					<p className="text-sm leading-6 text-secondary-800">
 						{errorMessage ?? "Impossible de charger ce fichier audio."}
 					</p>
@@ -269,7 +114,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 					<div className="mb-5 flex items-center justify-center gap-4">
 						<button
 							type="button"
-							className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-secondary-500/30 text-xs font-semibold text-secondary-800 transition-colors hover:border-secondary-500 hover:bg-secondary-500 hover:text-primary-500 disabled:cursor-not-allowed disabled:opacity-40"
+							className="ff-player-button inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-40"
 							onClick={() => seekTo(currentTime - SKIP_SECONDS)}
 							disabled={isUnavailable || duration === 0}
 							aria-label="Reculer de 15 secondes"
@@ -279,7 +124,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 
 						<button
 							type="button"
-							className="inline-flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-secondary-500 text-primary-500 shadow-sm transition-transform hover:scale-105 hover:bg-secondary-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+							className="ff-player-button-primary inline-flex h-14 w-14 cursor-pointer items-center justify-center rounded-lg disabled:cursor-not-allowed disabled:opacity-40"
 							onClick={togglePlayback}
 							disabled={isUnavailable}
 							aria-label={isPlaying ? "Mettre en pause" : "Lire l’épisode"}
@@ -289,7 +134,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 
 						<button
 							type="button"
-							className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-secondary-500/30 text-xs font-semibold text-secondary-800 transition-colors hover:border-secondary-500 hover:bg-secondary-500 hover:text-primary-500 disabled:cursor-not-allowed disabled:opacity-40"
+							className="ff-player-button inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-40"
 							onClick={() => seekTo(currentTime + SKIP_SECONDS)}
 							disabled={isUnavailable || duration === 0}
 							aria-label="Avancer de 15 secondes"
@@ -310,14 +155,19 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 						value={Math.min(currentTime, duration || 0)}
 						onChange={(event) => seekTo(Number(event.currentTarget.value))}
 						disabled={isUnavailable || duration === 0}
-						className="block h-2 w-full cursor-pointer accent-secondary-500 disabled:cursor-not-allowed disabled:opacity-40"
+						style={{
+							background: `linear-gradient(to right, var(--color-secondary-500) ${
+								duration > 0 ? (currentTime / duration) * 100 : 0
+							}%, var(--color-secondary-100) 0%)`,
+						}}
+						className="audio-progress ff-player-progress block h-3 w-full cursor-pointer appearance-none rounded-full disabled:cursor-not-allowed disabled:opacity-40"
 					/>
 					<div className="mt-1 flex justify-between text-xs tabular-nums text-secondary-600">
 						<span>{formatTime(currentTime)}</span>
 						<span>{formatTime(duration)}</span>
 					</div>
 
-					<div className="mt-5 flex flex-col gap-4 border-t border-secondary-500/15 pt-4 sm:flex-row sm:items-center sm:justify-between">
+					<div className="mt-5 flex flex-col gap-4 border-t border-secondary-500/20 pt-4 sm:flex-row sm:items-center sm:justify-between">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<button
 								type="button"
@@ -347,7 +197,7 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 							<select
 								value={playbackRate}
 								onChange={(event) => changePlaybackRate(Number(event.currentTarget.value))}
-								className="cursor-pointer rounded-lg border border-secondary-500/25 bg-primary-500 px-2 py-1.5 text-xs font-semibold text-secondary-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500"
+								className="ff-player-select cursor-pointer rounded-md px-2 py-1.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500"
 							>
 								{PLAYBACK_RATES.map((rate) => (
 									<option key={rate} value={rate}>
@@ -359,6 +209,58 @@ export function PodcastMp3Player({ audioUrl, title }: Props) {
 					</div>
 				</>
 			)}
+
+			{preparedTracks.length > 0 ? (
+				<section className="mt-7 border-t border-secondary-500/20 pt-6" aria-labelledby={`${controlId}-playlist-title`}>
+					<div className="mb-4 flex items-center gap-2">
+						<Music2 aria-hidden="true" className="size-4 text-secondary-500" />
+						<h3 id={`${controlId}-playlist-title`} className="text-lg! font-semibold text-secondary-900">
+							Playlist
+						</h3>
+					</div>
+					<ol className="space-y-2">
+						{preparedTracks.map((track, index) => {
+							const isActive = index === activeTrackIndex;
+							return (
+								<li
+									key={track._key}
+									className={`ff-playlist-row grid gap-3 rounded-lg p-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center ${
+										isActive
+											? "is-active"
+											: ""
+									}`}
+									aria-current={isActive ? "true" : undefined}
+								>
+									<button
+										type="button"
+										onClick={() => playFrom(track.startSeconds)}
+										disabled={status === "error"}
+										className="ff-player-timecode w-fit cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 disabled:cursor-not-allowed disabled:opacity-40"
+										aria-label={`Lire ${track.artist} — ${track.title} à ${track.timecode}`}
+									>
+										{track.timecode}
+									</button>
+									<div className="min-w-0">
+										<p className="truncate text-sm font-semibold text-secondary-900">{track.title}</p>
+										<p className="truncate text-xs text-secondary-600">{track.artist}</p>
+									</div>
+									{track.externalLink ? (
+										<a
+											href={track.externalLink.url}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold text-secondary-700 underline-offset-4 hover:text-secondary-900 hover:underline"
+										>
+											{track.externalLink.label}
+											<ExternalLink aria-hidden="true" className="size-3.5" />
+										</a>
+									) : null}
+								</li>
+							);
+						})}
+					</ol>
+				</section>
+			) : null}
 		</div>
 	);
 }

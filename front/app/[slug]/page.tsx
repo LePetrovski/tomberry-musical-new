@@ -58,7 +58,7 @@ export default async function CmsPage({ params }: Props) {
       <article>
         <JsonLd data={webPageSchema(page, ogImage)} />
         <Breadcrumbs
-          className="mb-8"
+          className="mb-6"
           items={[{ label: "Accueil", href: "/" }, { label: page.title }]}
         />
         <PageHero
@@ -67,7 +67,7 @@ export default async function CmsPage({ params }: Props) {
           image={page.coverImage}
           imageAlt={page.coverImage?.alt ?? page.title}
         />
-        <div className="prose prose-zinc max-w-none">
+        <div className="crt-card prose prose-zinc max-w-none rounded-2xl p-5 sm:p-7">
           <RichText value={page.body} />
         </div>
       </article>

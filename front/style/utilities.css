@@ -11,18 +11,629 @@
     cursor: default;
 }
 
-.whiteEdgeGradient {
+.crt-glass {
+    border: 1px solid var(--surface-border);
+    background: var(--surface-glass);
+    backdrop-filter: blur(24px) saturate(0.86);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.8),
+        inset 0 0 0 1px rgb(22 42 43 / 0.04),
+        var(--surface-glow);
+}
+
+.crt-card {
+    border: 1px solid var(--surface-border);
+    background: var(--surface-card);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.82),
+        0 14px 40px rgb(22 42 43 / 0.14),
+        0 0 16px rgb(100 159 168 / 0.08);
+    backdrop-filter: blur(18px) saturate(0.9);
+}
+
+.crt-section-panel {
+    border: 1px solid var(--surface-border);
+    background: rgb(247 245 240 / 0.9);
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.86),
+        inset 0 0 0 1px rgb(22 42 43 / 0.035),
+        0 16px 46px rgb(22 42 43 / 0.15),
+        0 0 18px rgb(100 159 168 / 0.1);
+    backdrop-filter: blur(22px) saturate(0.88);
+}
+
+.crt-dark {
+    border: 1px solid rgb(100 159 168 / 0.56);
+    background: var(--surface-dark);
+    box-shadow:
+        inset 0 1px 0 rgb(247 245 240 / 0.14),
+        0 16px 46px rgb(11 22 23 / 0.24),
+        0 0 18px rgb(100 159 168 / 0.1);
+    backdrop-filter: blur(22px) saturate(0.82);
+}
+
+.ff-menu-window {
+    position: relative;
+    border: 2px solid rgb(229 239 239 / 0.92);
+    border-radius: 1.35rem;
+    background: rgb(24 61 80 / 0.86);
+    color: var(--color-primary-200);
+    box-shadow:
+        inset 0 0 0 2px rgb(11 22 23 / 0.58),
+        inset 0 0 0 4px rgb(195 216 217 / 0.18),
+        inset 0 1px 0 4px rgb(255 255 255 / 0.28),
+        0 14px 36px rgb(11 22 23 / 0.24),
+        0 0 22px rgb(100 159 168 / 0.14);
+    backdrop-filter: blur(20px) saturate(0.92);
+}
+
+.ff-menu-choice {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding-inline: 2.15rem 0.65rem;
+    color: var(--color-secondary-100);
+    text-shadow: 0 1px 2px rgb(11 22 23 / 0.7);
+    transition: color 150ms ease, background-color 150ms ease;
+}
+
+.ff-menu-choice::before {
+    content: "";
     position: absolute;
-    inset: 0;
-    z-index: 10;
-    pointer-events: none;
-    background: linear-gradient(
-        to right,
-        var(--color-primary-200) 0%,
-        transparent 12%,
-        transparent 88%,
-        var(--color-primary-200) 100%
-    );
+    left: 0;
+    top: 50%;
+    width: 2rem;
+    height: 2rem;
+    /* CC0 menu cursor by andreyin: https://opengameart.org/content/hand-cursor */
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAB3RJTUUH4goVCxoEATp+BgAAABd0RVh0U29mdHdhcmUAR0xEUE5HIHZlciAzLjRxhaThAAAACHRwTkdHTEQzAAAAAEqAKR8AAAAEZ0FNQQAAsY8L/GEFAAAABmJLR0QAwADAAMAanQdUAAAABnRSTlMAwADAAMCNeLu6AAAAuklEQVR4nO3UTQ6FIAwEYA7kXb0Si57IE2hC0kwobSngQsOsXl50PvlN+eWkDWzgb8DhZQTA908vklEBLCWiqy/MNAAcpvzYHuN5RgWwkX+XUoL0tKsAP6dNC1aE14CBMo/axxZjZBdVgDEPOFfNxi8A+I9rOEBVtxiQdSQyBcjttGwEpaUJVKsSBuRp4tLmYQ4A1WlEQEtgm+aOy25gAbJ9XUsg2m4BPCa5Htq1EwaQsW+0KWAyG3BzA6SGqfd+0z7EAAAAAElFTkSuQmCC") center / 2rem 2rem no-repeat;
+    opacity: 0;
+    transform: translate(-0.3rem, -50%);
+    filter: drop-shadow(0 0 5px rgb(195 216 217 / 0.9));
+    transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.ff-menu-choice:hover,
+.ff-menu-choice:focus-visible,
+.ff-menu-choice[aria-current="page"] {
+    color: var(--color-primary-200);
+    text-shadow: 0 0 8px rgb(195 216 217 / 0.42), 0 1px 2px rgb(11 22 23 / 0.7);
+}
+
+.ff-menu-choice:focus-visible {
+    outline: 2px solid var(--color-primary-200);
+    outline-offset: 2px;
+}
+
+.ff-menu-choice:hover::before,
+.ff-menu-choice:focus-visible::before,
+.ff-menu-choice[aria-current="page"]::before {
+    opacity: 1;
+    transform: translate(0, -50%);
+}
+
+.ff-menu-social-icon {
+    filter: brightness(0) saturate(100%) invert(100%) drop-shadow(0 1px 2px rgb(11 22 23 / 0.8));
+}
+
+.ff-archive-window {
+    background:
+        linear-gradient(145deg, rgb(37 82 104 / 0.94), rgb(16 48 69 / 0.94) 58%, rgb(10 37 57 / 0.96));
+    box-shadow:
+        inset 0 0 0 2px rgb(7 26 42 / 0.68),
+        inset 0 0 0 4px rgb(187 218 224 / 0.16),
+        inset 0 1px 0 4px rgb(255 255 255 / 0.24),
+        0 18px 48px rgb(5 17 29 / 0.32),
+        0 0 26px rgb(100 159 168 / 0.14);
+}
+
+.ff-archive-kicker {
+    color: var(--color-primary-200);
+    text-shadow: 0 1px 2px rgb(5 17 29 / 0.88);
+}
+
+.ff-archive-title {
+    color: var(--color-primary-200);
+    text-shadow: 0 2px 3px rgb(5 17 29 / 0.88), 0 0 14px rgb(195 216 217 / 0.18);
+}
+
+.ff-archive-copy {
+    color: rgb(247 245 240);
+    text-shadow: 0 1px 2px rgb(5 17 29 / 0.78);
+}
+
+.ff-archive-breadcrumb {
+    color: var(--color-primary-200);
+}
+
+.ff-archive-breadcrumb ol,
+.ff-archive-breadcrumb a,
+.ff-archive-breadcrumb span[aria-current="page"] {
+    color: inherit;
+}
+
+.ff-archive-breadcrumb a:hover,
+.ff-archive-breadcrumb a:focus-visible,
+.ff-archive-breadcrumb span[aria-current="page"] {
+    color: var(--color-primary-200);
+}
+
+.ff-archive-breadcrumb li > span[aria-hidden="true"] {
+    color: rgb(195 216 217 / 0.46);
+}
+
+.ff-feature-card {
+    position: relative;
+    border: 2px solid rgb(229 239 239 / 0.82);
+    background: linear-gradient(145deg, rgb(31 73 94 / 0.93), rgb(11 39 59 / 0.96));
+    color: var(--color-primary-200);
+    box-shadow:
+        inset 0 0 0 2px rgb(7 26 42 / 0.7),
+        inset 0 0 0 4px rgb(187 218 224 / 0.12),
+        0 14px 38px rgb(5 17 29 / 0.26);
+    backdrop-filter: blur(18px) saturate(0.9);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.ff-feature-card:hover {
+    border-color: rgb(247 245 240 / 0.98);
+    box-shadow:
+        inset 0 0 0 2px rgb(7 26 42 / 0.72),
+        inset 0 0 0 4px rgb(187 218 224 / 0.17),
+        0 17px 42px rgb(5 17 29 / 0.34),
+        0 0 20px rgb(195 216 217 / 0.12);
+    transform: translateY(-2px);
+}
+
+.ff-feature-card:focus-visible {
+    outline: 2px solid var(--color-primary-200);
+    outline-offset: 3px;
+}
+
+.ff-feature-image {
+    border-color: rgb(229 239 239 / 0.36);
+    background: rgb(7 26 42 / 0.72);
+}
+
+.ff-archive-tabs {
+    border: 1px solid rgb(229 239 239 / 0.38);
+    background: rgb(5 23 39 / 0.34);
+    box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.66);
+}
+
+.ff-archive-tab {
+    color: rgb(229 239 239 / 0.68);
+    text-shadow: 0 1px 2px rgb(5 17 29 / 0.78);
+    transition: color 150ms ease, box-shadow 150ms ease;
+}
+
+.ff-archive-tab:hover,
+.ff-archive-tab:focus-visible {
+    color: var(--color-primary-200);
+}
+
+.ff-archive-tab[data-active] {
+    border-color: rgb(229 239 239 / 0.48);
+    background: rgb(137 185 193 / 0.16);
+    color: var(--color-primary-200);
+    box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.42), 0 0 12px rgb(195 216 217 / 0.1);
+}
+
+.ff-command-bar {
+    background: linear-gradient(160deg, rgb(23 62 82 / 0.96), rgb(10 38 58 / 0.97));
+}
+
+.ff-command-field {
+    border: 1px solid rgb(229 239 239 / 0.36);
+    border-radius: 0.7rem;
+    background: rgb(5 23 39 / 0.52);
+    color: var(--color-primary-200);
+    box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.68), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+.ff-command-field::placeholder {
+    color: rgb(195 216 217 / 0.6);
+}
+
+.ff-command-field:hover {
+    border-color: rgb(229 239 239 / 0.54);
+}
+
+.ff-command-field:focus-visible {
+    border-color: rgb(247 245 240 / 0.9);
+    outline: 1px solid rgb(195 216 217 / 0.7);
+    outline-offset: 1px;
+    box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.68), 0 0 12px rgb(195 216 217 / 0.14);
+}
+
+.ff-command-field svg,
+.ff-command-field + svg {
+    color: rgb(195 216 217 / 0.76);
+}
+
+.ff-select-popup {
+    border: 2px solid rgb(229 239 239 / 0.88);
+    border-radius: 0.85rem;
+    background: rgb(13 45 65 / 0.98);
+    color: var(--color-primary-200);
+    box-shadow:
+        inset 0 0 0 2px rgb(5 23 39 / 0.72),
+        inset 0 0 0 4px rgb(187 218 224 / 0.13),
+        0 16px 34px rgb(5 17 29 / 0.4);
+}
+
+.ff-select-item {
+    color: rgb(229 239 239 / 0.82);
+}
+
+.ff-select-item:focus,
+.ff-select-item[data-selected] {
+    background: rgb(137 185 193 / 0.18);
+    color: var(--color-primary-200);
+}
+
+.ff-command-button {
+    border: 1px solid rgb(229 239 239 / 0.32);
+    border-radius: 0.65rem;
+    background: rgb(5 23 39 / 0.32);
+    color: rgb(247 245 240 / 0.9);
+    box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.52);
+    transition: color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ff-command-button:hover,
+.ff-command-button:focus-visible,
+.ff-command-button[aria-pressed="true"],
+.ff-command-button[aria-selected="true"] {
+    border-color: rgb(229 239 239 / 0.68);
+    background: rgb(137 185 193 / 0.14);
+    color: var(--color-primary-200);
+    box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.52), 0 0 10px rgb(195 216 217 / 0.1);
+}
+
+.ff-podcast-hero-media {
+    border: 2px solid rgb(229 239 239 / 0.72);
+    background: rgb(10 37 57);
+    box-shadow:
+        inset 0 0 0 2px rgb(7 26 42 / 0.68),
+        0 22px 58px rgb(5 17 29 / 0.38),
+        0 0 30px rgb(100 159 168 / 0.14);
+}
+
+.ff-podcast-hero-shade {
+    background:
+        linear-gradient(to bottom, transparent 52%, rgb(5 23 39 / 0.18) 72%, rgb(5 23 39 / 0.68) 100%),
+        linear-gradient(90deg, rgb(5 23 39 / 0.12), transparent 28%, transparent 72%, rgb(5 23 39 / 0.12));
+}
+
+.ff-podcast-hero-panel {
+    box-shadow:
+        inset 0 0 0 2px rgb(7 26 42 / 0.72),
+        inset 0 0 0 4px rgb(187 218 224 / 0.18),
+        0 24px 55px rgb(5 17 29 / 0.42),
+        0 0 30px rgb(100 159 168 / 0.16);
+}
+
+.ff-podcast-hero-empty {
+    background:
+        repeating-linear-gradient(0deg, transparent 0 5px, rgb(229 239 239 / 0.035) 5px 6px),
+        radial-gradient(circle at 22% 18%, rgb(100 159 168 / 0.24), transparent 38%),
+        linear-gradient(145deg, rgb(31 73 94), rgb(10 37 57));
+    color: rgb(229 239 239 / 0.78);
+}
+
+.ff-reading-panel {
+    border: 2px solid rgb(229 239 239 / 0.88);
+    background:
+        repeating-linear-gradient(0deg, transparent 0 5px, rgb(20 55 73 / 0.025) 5px 6px),
+        radial-gradient(circle at 18% 12%, rgb(255 255 255 / 0.82), transparent 34%),
+        linear-gradient(145deg, rgb(247 245 240 / 0.98), rgb(229 239 239 / 0.96));
+    box-shadow:
+        inset 0 0 0 2px rgb(20 55 73 / 0.62),
+        inset 0 0 0 4px rgb(100 159 168 / 0.1),
+        0 12px 28px rgb(5 17 29 / 0.22);
+}
+
+.ff-media-well {
+    border: 2px solid rgb(229 239 239 / 0.76);
+    box-shadow:
+        inset 0 0 0 2px rgb(5 23 39 / 0.72),
+        0 8px 22px rgb(5 17 29 / 0.28);
+}
+
+.ff-player-console {
+    border: 2px solid rgb(229 239 239 / 0.88);
+    background:
+        repeating-linear-gradient(0deg, transparent 0 5px, rgb(20 55 73 / 0.025) 5px 6px),
+        radial-gradient(circle at 18% 12%, rgb(255 255 255 / 0.82), transparent 34%),
+        linear-gradient(145deg, rgb(247 245 240 / 0.98), rgb(229 239 239 / 0.96));
+    color: var(--color-secondary-900);
+    box-shadow:
+        inset 0 0 0 2px rgb(20 55 73 / 0.68),
+        inset 0 0 0 4px rgb(100 159 168 / 0.1),
+        0 10px 26px rgb(5 17 29 / 0.24);
+}
+
+.ff-player-error {
+    border: 1px solid rgb(20 55 73 / 0.3);
+    background: rgb(100 159 168 / 0.1);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.52);
+}
+
+.ff-player-button {
+    border: 1px solid rgb(20 55 73 / 0.42);
+    background: rgb(255 255 255 / 0.42);
+    color: var(--color-secondary-800);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.58);
+    transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.ff-player-button:hover,
+.ff-player-button:focus-visible {
+    border-color: rgb(20 55 73 / 0.72);
+    background: rgb(20 55 73 / 0.1);
+    color: var(--color-secondary-900);
+}
+
+.ff-player-button-primary {
+    border: 2px solid rgb(247 245 240 / 0.96);
+    background: linear-gradient(145deg, rgb(47 96 119), rgb(13 48 70));
+    color: var(--color-primary-200);
+    box-shadow:
+        inset 0 0 0 2px rgb(5 23 39 / 0.76),
+        0 8px 18px rgb(5 17 29 / 0.3),
+        0 0 14px rgb(100 159 168 / 0.16);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.ff-player-button-primary:hover,
+.ff-player-button-primary:focus-visible {
+    box-shadow:
+        inset 0 0 0 2px rgb(5 23 39 / 0.8),
+        0 10px 22px rgb(5 17 29 / 0.36),
+        0 0 18px rgb(100 159 168 / 0.24);
+    transform: translateY(-1px);
+}
+
+.ff-player-progress {
+    border: 1px solid rgb(20 55 73 / 0.34);
+    box-shadow: inset 0 1px 3px rgb(5 17 29 / 0.18);
+}
+
+.ff-player-select {
+    border: 1px solid rgb(20 55 73 / 0.36);
+    background: rgb(247 245 240 / 0.9);
+    color: var(--color-secondary-900);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.58);
+}
+
+.ff-playlist-row {
+    border: 1px solid rgb(20 55 73 / 0.18);
+    background: rgb(255 255 255 / 0.36);
+    transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ff-playlist-row.is-active {
+    border-color: rgb(20 55 73 / 0.5);
+    background: rgb(100 159 168 / 0.14);
+    box-shadow: inset 3px 0 0 rgb(47 96 119 / 0.76);
+}
+
+.ff-player-timecode {
+    border: 1px solid rgb(229 239 239 / 0.86);
+    background: rgb(20 55 73);
+    color: var(--color-primary-200);
+    box-shadow: inset 0 0 0 1px rgb(5 23 39 / 0.7);
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.ff-player-timecode:hover,
+.ff-player-timecode:focus-visible {
+    background: rgb(47 96 119);
+    box-shadow: inset 0 0 0 1px rgb(5 23 39 / 0.7), 0 0 10px rgb(100 159 168 / 0.18);
+}
+
+.ff-load-more {
+    border: 2px solid rgb(247 245 240 / 0.96);
+    background: linear-gradient(145deg, rgb(47 96 119 / 0.98), rgb(13 48 70 / 0.99));
+    color: var(--color-primary-200);
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgb(5 17 29 / 0.9);
+    box-shadow:
+        inset 0 0 0 2px rgb(5 23 39 / 0.78),
+        inset 0 0 0 4px rgb(195 216 217 / 0.2),
+        0 15px 36px rgb(5 17 29 / 0.46),
+        0 0 24px rgb(100 159 168 / 0.2);
+    transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.ff-load-more:hover,
+.ff-load-more:focus-visible {
+    background: linear-gradient(145deg, rgb(58 111 135 / 1), rgb(18 60 84 / 1));
+    color: white;
+    box-shadow:
+        inset 0 0 0 2px rgb(5 23 39 / 0.82),
+        inset 0 0 0 4px rgb(229 239 239 / 0.24),
+        0 18px 40px rgb(5 17 29 / 0.52),
+        0 0 28px rgb(195 216 217 / 0.25);
+    transform: translateY(-2px);
+}
+
+.ff-command-status {
+    border-left: 1px solid rgb(229 239 239 / 0.22);
+    color: rgb(229 239 239 / 0.78);
+}
+
+.ff-content-card {
+    position: relative;
+    border: 2px solid rgb(229 239 239 / 0.88);
+    background:
+        repeating-linear-gradient(0deg, transparent 0 5px, rgb(20 55 73 / 0.025) 5px 6px),
+        radial-gradient(circle at 18% 12%, rgb(255 255 255 / 0.78), transparent 34%),
+        linear-gradient(145deg, rgb(247 245 240 / 0.96), rgb(229 239 239 / 0.93));
+    box-shadow:
+        inset 0 0 0 2px rgb(20 55 73 / 0.72),
+        inset 0 0 0 4px rgb(100 159 168 / 0.12),
+        0 14px 38px rgb(5 17 29 / 0.27);
+    backdrop-filter: blur(18px) saturate(0.86);
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.ff-content-card:hover {
+    border-color: rgb(255 255 255 / 0.98);
+    box-shadow:
+        inset 0 0 0 2px rgb(20 55 73 / 0.78),
+        inset 0 0 0 4px rgb(100 159 168 / 0.16),
+        0 18px 44px rgb(5 17 29 / 0.34),
+        0 0 18px rgb(195 216 217 / 0.12);
+    transform: translateY(-2px);
+}
+
+.ff-compact-card .ff-card-meta {
+    gap: 0.6rem 0.9rem;
+    padding-bottom: 0.55rem;
+}
+
+.ff-compact-card .ff-card-image {
+    aspect-ratio: 16 / 9;
+}
+
+.ff-compact-theme {
+    border: 1px solid rgb(20 55 73 / 0.2);
+    background:
+        linear-gradient(90deg, rgb(100 159 168 / 0.18), rgb(229 239 239 / 0.48));
+    color: rgb(20 55 73 / 0.86);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.68);
+}
+
+.ff-compact-theme-mark {
+    width: 0.38rem;
+    height: 0.38rem;
+    flex: 0 0 auto;
+    transform: rotate(45deg);
+    background: rgb(49 112 126);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.8);
+}
+
+.ff-card-image {
+    border-bottom: 2px solid rgb(20 55 73 / 0.5);
+    box-shadow: 0 2px 0 rgb(229 239 239 / 0.72);
+}
+
+.ff-card-meta {
+    border-bottom: 1px solid rgb(20 55 73 / 0.14);
+    padding-bottom: 0.65rem;
+}
+
+.ff-card-action {
+    color: rgb(20 55 73);
+}
+
+.ff-card-action::before {
+    content: "◆";
+    color: rgb(100 159 168);
+    font-size: 0.58rem;
+}
+
+.ff-empty-state {
+    border-style: dashed;
+    color: rgb(229 239 239 / 0.82);
+}
+
+.ff-mobile-sheet {
+    border-left: 2px solid rgb(229 239 239 / 0.88);
+    background: linear-gradient(155deg, rgb(29 70 91 / 0.99), rgb(9 35 55 / 0.99));
+    color: var(--color-primary-200);
+    box-shadow: inset 2px 0 0 rgb(7 26 42 / 0.72), -12px 0 38px rgb(5 17 29 / 0.4);
+}
+
+.ff-menu-list-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: rgb(229 239 239 / 0.82);
+    transition: color 150ms ease, transform 150ms ease;
+}
+
+.ff-menu-list-link::before {
+    content: "◆";
+    color: rgb(195 216 217 / 0.56);
+    font-size: 0.56rem;
+}
+
+.ff-menu-list-link:hover,
+.ff-menu-list-link:focus-visible {
+    color: var(--color-primary-200);
+    transform: translateX(2px);
+}
+
+@media (min-width: 640px) {
+    .ff-content-card[data-view="list"] .ff-card-image {
+        border-right: 2px solid rgb(20 55 73 / 0.5);
+        border-bottom: 0;
+        box-shadow: 2px 0 0 rgb(229 239 239 / 0.72);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ff-menu-choice,
+    .ff-menu-choice::before,
+    .ff-feature-card,
+    .ff-content-card,
+    .ff-load-more,
+    .ff-player-button,
+    .ff-player-button-primary,
+    .ff-playlist-row,
+    .ff-player-timecode,
+    .ff-menu-list-link {
+        transition: none;
+    }
+
+    .ff-feature-card:hover,
+    .ff-content-card:hover,
+    .ff-load-more:hover,
+    .ff-player-button-primary:hover,
+    .ff-menu-list-link:hover {
+        transform: none;
+    }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .crt-glass {
+        background: rgb(247 245 240 / 0.97);
+    }
+
+    .crt-card {
+        background: rgb(247 245 240 / 0.98);
+    }
+
+    .crt-section-panel {
+        background: rgb(247 245 240 / 0.98);
+    }
+
+    .crt-dark {
+        background: rgb(22 42 43 / 0.98);
+    }
+
+    .ff-menu-window {
+        background: rgb(24 61 80 / 0.98);
+    }
+
+    .ff-feature-card,
+    .ff-command-bar,
+    .ff-mobile-sheet {
+        background: rgb(13 45 65 / 0.99);
+    }
+
+    .ff-content-card {
+        background: rgb(247 245 240 / 0.99);
+    }
+
+    .ff-player-console,
+    .ff-reading-panel {
+        background: rgb(247 245 240 / 0.99);
+    }
 }
 
 .projectTooltip {
@@ -115,4 +726,28 @@
     background-image:  radial-gradient(var(--color-secondary-500) 17%, var(--color-primary-500) 18% 35%, transparent 36.5%), radial-gradient(var(--color-secondary-500) 17%, var(--color-primary-500) 18% 35%, transparent 36.5%), radial-gradient(var(--color-primary-500) 34%, var(--color-secondary-500) 36% 68%, transparent 70%), repeating-linear-gradient(45deg, var(--color-secondary-500) -12.5% 12.5%, var(--color-primary-500) 0 37.5%);
     background-position: -20px -20px, 20px 20px, 0 0, 0 0;
     background-size: 80px 80px, 80px 80px, 40px 40px, 80px 80px;
+}
+
+.audio-progress::-webkit-slider-thumb {
+	height: 1.4rem;
+	width: 1.4rem;
+	appearance: none;
+	border: 3px solid var(--color-primary-500);
+	border-radius: 9999px;
+	background: var(--color-secondary-500);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-secondary-500) 45%, transparent);
+}
+
+.audio-progress::-moz-range-thumb {
+	height: 1.1rem;
+	width: 1.1rem;
+	border: 3px solid var(--color-primary-500);
+	border-radius: 9999px;
+	background: var(--color-secondary-500);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-secondary-500) 45%, transparent);
+}
+
+.audio-progress:focus-visible {
+	outline: 2px solid var(--color-secondary-500);
+	outline-offset: 4px;
 }

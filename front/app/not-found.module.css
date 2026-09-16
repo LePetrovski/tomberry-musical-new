@@ -1,0 +1,117 @@
+.panel {
+  display: grid;
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 32px 24px;
+}
+
+.codeColumn {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgb(229 239 239 / 0.24);
+  padding-bottom: 28px;
+}
+
+.code {
+  margin: 0;
+  color: var(--color-primary-500);
+  font-size: clamp(6rem, 12vw, 10rem);
+  font-weight: 500;
+  letter-spacing: -0.07em;
+  line-height: 1;
+}
+
+.content {
+  min-width: 0;
+  padding-top: 32px;
+}
+
+.title {
+  margin: 0;
+  color: var(--color-primary-500);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.description {
+  max-width: 32ch;
+  margin-top: 16px;
+  color: var(--color-secondary-200);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.navigation {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.homeLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 1px solid var(--color-primary-500);
+  border-radius: 8px;
+  padding: 12px 20px;
+  background: var(--color-primary-500);
+  color: var(--color-secondary-900);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.homeLink:hover {
+  background: var(--color-secondary-100);
+}
+
+.secondaryLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-secondary-200);
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-decoration-color: rgb(195 216 217 / 0.45);
+  text-underline-offset: 5px;
+}
+
+.secondaryLink:hover {
+  color: var(--color-primary-200);
+  text-decoration-color: currentColor;
+}
+
+.homeLink:focus-visible,
+.secondaryLink:focus-visible {
+  outline: 2px solid var(--color-primary-200);
+  outline-offset: 5px;
+}
+
+@media (min-width: 768px) {
+  .panel {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 40px;
+    padding: 56px 40px;
+  }
+
+  .codeColumn {
+    justify-content: center;
+    border-right: 1px solid rgb(229 239 239 / 0.24);
+    border-bottom: 0;
+    padding: 0 40px 0 0;
+  }
+
+  .content {
+    padding-top: 0;
+  }
+}

@@ -15,7 +15,7 @@ export function Breadcrumbs({ items, className }: Props) {
   return (
     <>
         <JsonLd data={breadcrumbListSchema(items)} />
-        <nav aria-label="Fil d'Ariane" className={className + " bg-primary-500! w-fit px-4 py-2 rounded-full"}>
+        <nav aria-label="Fil d'Ariane" className={className + " crt-glass w-fit rounded-xl px-3 py-1.5"}>
             <ol className="flex flex-wrap items-center gap-1.5 text-sm text-secondary-600">
             {items.map((item, index) => {
                 const isLast = index === items.length - 1;
