@@ -6,7 +6,7 @@ export function BlogResultsCount({ count }: Props) {
   const plural = count !== 1;
 
   return (
-    <p className="whitespace-nowrap text-xs font-medium text-secondary-700">
+    <p role="status" aria-live="polite" aria-atomic="true" className="text-sm! font-medium text-secondary-100">
       {count} article{plural ? "s" : ""} trouvé{plural ? "s" : ""}
     </p>
   );

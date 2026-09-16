@@ -3,11 +3,11 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
 import { EpisodeMeta } from "@/components/podcast-detail/EpisodeMeta";
 import { ListenPanel } from "@/components/podcast-detail/ListenPanel";
+import { PodcastHero } from "@/components/podcast-detail/PodcastHero";
 import { PurchaseCTA } from "@/components/podcast-detail/PurchaseCTA";
 import { ReviewCTA } from "@/components/podcast-detail/ReviewCTA";
 import { RelatedPodcastsCarousel } from "@/components/podcast-detail/RelatedPodcastsCarousel";
 import { RichText } from "@/components/RichText";
-import Image from "next/image";
 import { getPodcastBySlug, getSiteSettings } from "@/lib/sanity/cached";
 import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
@@ -64,6 +64,12 @@ export default async function PodcastDetailPage({ params }: Props) {
     }
 
     const ogImage = getOgImageUrl(podcast.coverImage);
+    const heroImage = podcast.coverImage
+        ? urlFor(podcast.coverImage).width(1800).url()
+        : undefined;
+    const heroImagePosition = podcast.coverImage?.hotspot
+        ? `${podcast.coverImage.hotspot.x * 100}% ${podcast.coverImage.hotspot.y * 100}%`
+        : "50% 50%";
 
     return (
         <PageWrapper background="cross" width="wide">
@@ -77,29 +83,15 @@ export default async function PodcastDetailPage({ params }: Props) {
                     { label: podcast.title },
                     ]}
                 />
-                <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,.65fr)] lg:items-start">
-                    <section className="ff-menu-window ff-archive-window ff-detail-hero overflow-hidden rounded-2xl lg:col-span-2">
-                        <div className="grid md:grid-cols-[minmax(300px,420px)_minmax(0,1fr)] md:items-center">
-                            <div className="ff-detail-cover relative aspect-square min-h-72 overflow-hidden bg-secondary-900">
-                                {podcast.coverImage ? (
-                                    <Image
-                                        src={urlFor(podcast.coverImage).width(1000).url()}
-                                        alt={podcast.coverImage.alt ?? podcast.title}
-                                        fill
-                                        priority
-                                        className="object-contain"
-                                        sizes="(max-width: 768px) 100vw, 420px"
-                                    />
-                                ) : (
-                                    <div className="flex h-full items-center justify-center text-sm font-medium text-primary-200">Sans visuel</div>
-                                )}
-                            </div>
-                            <div className="flex items-center p-5 sm:p-7 lg:p-8">
-                                <EpisodeMeta podcast={podcast} />
-                            </div>
-                        </div>
-                    </section>
+                <PodcastHero
+                    imageUrl={heroImage}
+                    imageAlt={podcast.coverImage?.alt ?? podcast.title}
+                    imagePosition={heroImagePosition}
+                >
+                    <EpisodeMeta podcast={podcast} />
+                </PodcastHero>
 
+                <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,.65fr)] lg:items-start">
                     <div className="space-y-4 lg:sticky lg:top-28 lg:col-start-2 lg:row-start-2">
                         <ListenPanel podcast={podcast} />
                         <PurchaseCTA purchaseLinks={podcast.purchaseLinks} />

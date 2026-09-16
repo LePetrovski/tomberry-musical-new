@@ -3,6 +3,12 @@ import type { PortableTextBlock } from "@portabletext/types";
 export type SanityImage = {
   asset: { _ref: string };
   alt?: string;
+  hotspot?: {
+    x: number;
+    y: number;
+    height: number;
+    width: number;
+  };
 };
 
 export type PodcastCategory = {

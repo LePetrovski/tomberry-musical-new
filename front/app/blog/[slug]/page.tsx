@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
-import { PageHero } from "@/components/PageHero";
+import { ArrowLeft, ArrowUp } from "lucide-react";
+import { BlogPostHero } from "@/components/blog-post/BlogPostHero";
+import { CurtainLink } from "@/components/navigation/CurtainLink";
+import styles from "@/components/blog-post/BlogPost.module.css";
 import { PageWrapper } from "@/components/PageWrapper";
 import { PostContent } from "@/components/PostContent";
 import { RichText } from "@/components/RichText";
@@ -14,19 +17,15 @@ import { sanityTags } from "@/lib/sanity/tags";
 import { getOgImageUrl } from "@/lib/seo/images";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { articleSchema } from "@/lib/seo/schemas";
-import { siteConfig } from "@/lib/seo/site";
+import { absoluteUrl, siteConfig } from "@/lib/seo/site";
+import { analyzeArticle } from "@/lib/blog/reading";
+import { ArticleContents } from "@/components/blog-post/ArticleContents";
+import { ArticleProgress } from "@/components/blog-post/ArticleProgress";
+import { ArticleAnchor } from "@/components/blog-post/ArticleAnchor";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
-
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(date));
-}
 
 export async function generateStaticParams() {
   const slugs = await withSanityFallback(
@@ -66,52 +65,52 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const ogImage = getOgImageUrl(post.coverImage);
+  const reading = analyzeArticle(post);
 
   return (
-    <PageWrapper background="grid-thin" width="narrow">
+    <PageWrapper background="grid-thin" width="wide">
       <article>
         <JsonLd data={articleSchema(post, ogImage)} />
         <Breadcrumbs
-          className="mb-6"
+          className="ff-menu-window ff-archive-window ff-archive-breadcrumb mb-8 max-w-full wrap-anywhere"
           items={[
             { label: "Accueil", href: "/" },
             { label: "Blog", href: "/blog" },
             { label: post.title },
           ]}
         />
-        <PageHero
-          title={post.title}
-          description={post.excerpt}
-          image={post.coverImage}
-          imageAlt={post.coverImage?.alt ?? post.title}
-        >
-          <div className="mb-4 text-sm text-secondary-500">
-            <span>Par {post.author || siteConfig.host.name} · </span>
-            <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-          </div>
-          {post.categories && post.categories.length > 0 ? (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {post.categories.map((category) => (
-                <span
-                  key={category._id}
-                  className="rounded-full bg-secondary-500/10 px-3 py-1 text-xs font-medium text-secondary-900"
-                >
-                  {category.title}
-                </span>
-              ))}
-            </div>
-          ) : null}
-        </PageHero>
+        <BlogPostHero post={post} readingMinutes={reading.readingMinutes} canonicalUrl={absoluteUrl(`/blog/${post.slug}`)} />
 
-        <div className="crt-card rounded-2xl p-5 sm:p-7">
-          {post.content && post.content.length > 0 ? (
-            <PostContent blocks={post.content} />
-          ) : post.body ? (
-            <div className="prose prose-zinc max-w-none">
-              <RichText value={post.body} />
+        {reading.hasContent ? (
+          <div className={`ff-reading-panel ${styles.readingPanel}`}>
+            <ArticleContents headings={reading.headings} />
+            <div id="article-body">
+              {post.content && post.content.length > 0 ? (
+                <PostContent blocks={post.content} headingIds={reading.contentHeadingIds} />
+              ) : post.body?.length ? (
+                <div className={styles.richText}>
+                  <RichText value={post.body} headingIds={reading.bodyHeadingIds} />
+                </div>
+              ) : null}
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
+
+        {reading.hasContent ? <ArticleProgress key={post.slug} targetId="article-body" /> : null}
+
+        <footer className="mt-8 flex flex-wrap justify-center gap-4 sm:mt-12">
+          <CurtainLink
+            href="/blog"
+            className="ff-menu-window ff-archive-window inline-flex min-h-12 items-center gap-3 px-6 py-4 text-sm font-semibold text-primary-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500"
+          >
+            <ArrowLeft aria-hidden="true" className="size-4" />
+            Retour au blog
+          </CurtainLink>
+          <ArticleAnchor id="article-title" className="ff-menu-window ff-archive-window inline-flex min-h-12 items-center gap-3 px-6 py-4 text-sm font-semibold text-primary-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500">
+            <ArrowUp aria-hidden="true" className="size-4" />
+            Retour en haut
+          </ArticleAnchor>
+        </footer>
       </article>
     </PageWrapper>
   );

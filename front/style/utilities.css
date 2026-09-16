@@ -291,17 +291,35 @@
     box-shadow: inset 0 0 0 1px rgb(7 26 42 / 0.52), 0 0 10px rgb(195 216 217 / 0.1);
 }
 
-.ff-detail-hero {
+.ff-podcast-hero-media {
+    border: 2px solid rgb(229 239 239 / 0.72);
+    background: rgb(10 37 57);
     box-shadow:
         inset 0 0 0 2px rgb(7 26 42 / 0.68),
-        inset 0 0 0 4px rgb(187 218 224 / 0.16),
-        0 20px 52px rgb(5 17 29 / 0.36),
-        0 0 28px rgb(100 159 168 / 0.14);
+        0 22px 58px rgb(5 17 29 / 0.38),
+        0 0 30px rgb(100 159 168 / 0.14);
 }
 
-.ff-detail-cover {
-    border-bottom: 2px solid rgb(229 239 239 / 0.62);
-    box-shadow: 0 2px 0 rgb(7 26 42 / 0.78);
+.ff-podcast-hero-shade {
+    background:
+        linear-gradient(to bottom, transparent 52%, rgb(5 23 39 / 0.18) 72%, rgb(5 23 39 / 0.68) 100%),
+        linear-gradient(90deg, rgb(5 23 39 / 0.12), transparent 28%, transparent 72%, rgb(5 23 39 / 0.12));
+}
+
+.ff-podcast-hero-panel {
+    box-shadow:
+        inset 0 0 0 2px rgb(7 26 42 / 0.72),
+        inset 0 0 0 4px rgb(187 218 224 / 0.18),
+        0 24px 55px rgb(5 17 29 / 0.42),
+        0 0 30px rgb(100 159 168 / 0.16);
+}
+
+.ff-podcast-hero-empty {
+    background:
+        repeating-linear-gradient(0deg, transparent 0 5px, rgb(229 239 239 / 0.035) 5px 6px),
+        radial-gradient(circle at 22% 18%, rgb(100 159 168 / 0.24), transparent 38%),
+        linear-gradient(145deg, rgb(31 73 94), rgb(10 37 57));
+    color: rgb(229 239 239 / 0.78);
 }
 
 .ff-reading-panel {
@@ -413,14 +431,6 @@
 .ff-player-timecode:focus-visible {
     background: rgb(47 96 119);
     box-shadow: inset 0 0 0 1px rgb(5 23 39 / 0.7), 0 0 10px rgb(100 159 168 / 0.18);
-}
-
-@media (min-width: 768px) {
-    .ff-detail-cover {
-        border-right: 2px solid rgb(229 239 239 / 0.62);
-        border-bottom: 0;
-        box-shadow: 2px 0 0 rgb(7 26 42 / 0.78);
-    }
 }
 
 .ff-load-more {

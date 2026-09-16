@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { CalendarDays, ListMusic, UserRound } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { PageWrapper } from "@/components/PageWrapper";
-import { PodcastMp3Player } from "@/components/podcast-detail/PodcastMp3Player";
+import { CompilationTurntablePlayer } from "@/components/compilation/CompilationTurntablePlayer";
 import { RichText } from "@/components/RichText";
 import { Badge } from "@/components/ui/badge";
 import { getCompilationBySlug } from "@/lib/sanity/cached";
@@ -75,78 +74,64 @@ export default async function CompilationDetailPage({ params }: Props) {
   if (!compilation) notFound();
 
   const imageUrl = getOgImageUrl(compilation.coverImage);
+  const coverImageUrl = urlFor(compilation.coverImage).width(1000).height(1000).url();
 
   return (
     <PageWrapper background="cross" width="wide">
       <article>
         <JsonLd data={musicPlaylistSchema(compilation, imageUrl)} />
         <Breadcrumbs
-          className="mb-6"
+          className="ff-archive-breadcrumb mb-6"
           items={[
             { label: "Accueil", href: "/" },
-            { label: "Podcasts", href: "/podcasts?vue=compilations" },
+            { label: "Compilations", href: "/podcasts?vue=compilations" },
             { label: compilation.title },
           ]}
         />
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(280px,.72fr)_minmax(0,1.28fr)] lg:items-start">
-          <section className="crt-card overflow-hidden rounded-2xl">
-            <div className="relative aspect-square overflow-hidden bg-secondary-100">
-              <Image
-                src={urlFor(compilation.coverImage).width(1000).height(1000).url()}
-                alt={compilation.coverImage.alt ?? compilation.title}
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 36vw"
-              />
-            </div>
-            <header className="p-5 sm:p-6">
-              <Badge className="border-0 bg-tertiary-500 text-secondary-900">Compilation</Badge>
-              <h1 className="mt-5 text-4xl! font-semibold leading-[1.06] tracking-[-0.035em] text-secondary-900 sm:text-5xl!">
-                {compilation.title}
-              </h1>
-              <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium text-secondary-600">
-                <span className="inline-flex items-center gap-1.5">
-                  <CalendarDays aria-hidden="true" className="size-4" />
-                  <time dateTime={compilation.publishedAt}>{formatDate(compilation.publishedAt)}</time>
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <ListMusic aria-hidden="true" className="size-4" />
-                  {compilation.tracks.length} piste{compilation.tracks.length === 1 ? "" : "s"}
-                </span>
-              </div>
-              {compilation.curatorName ? (
-                <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-secondary-800">
-                  <UserRound aria-hidden="true" className="size-4" />
-                  Sélection de {compilation.curatorName}
-                </p>
-              ) : null}
-            </header>
-          </section>
-
-          <div className="space-y-6">
-            {compilation.introduction && compilation.introduction.length > 0 ? (
-              <section className="crt-card rounded-2xl p-5 sm:p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary-500">
-                  À propos de la sélection
-                </p>
-                <div className="prose prose-zinc mt-5 max-w-[70ch] text-secondary-800">
-                  <RichText value={compilation.introduction} />
-                </div>
-              </section>
-            ) : null}
-
-            <section aria-label="Écouter la compilation">
-              <PodcastMp3Player
-                audioUrl={compilation.audioFile.asset.url}
-                title={compilation.title}
-                tracks={compilation.tracks}
-                contentLabel="Compilation MP3"
-              />
-            </section>
+        <header className="ff-menu-window ff-archive-window mb-6 rounded-2xl p-5 sm:p-7 lg:flex lg:items-end lg:justify-between lg:gap-8">
+          <div className="min-w-0">
+            <Badge className="border-0 bg-tertiary-500 text-secondary-900">Compilation</Badge>
+            <h1 className="ff-archive-title mt-4 mb-0! max-w-5xl text-4xl! font-semibold leading-[1.04] tracking-[-0.04em] sm:text-5xl! lg:text-6xl!">
+              {compilation.title}
+            </h1>
           </div>
-        </div>
+          <div className="mt-5 flex shrink-0 flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-secondary-200 lg:mt-0 lg:justify-end">
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays aria-hidden="true" className="size-4" />
+              <time dateTime={compilation.publishedAt}>{formatDate(compilation.publishedAt)}</time>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <ListMusic aria-hidden="true" className="size-4" />
+              {compilation.tracks.length} piste{compilation.tracks.length === 1 ? "" : "s"}
+            </span>
+            {compilation.curatorName ? (
+              <span className="inline-flex items-center gap-1.5">
+                <UserRound aria-hidden="true" className="size-4" />
+                Sélection de {compilation.curatorName}
+              </span>
+            ) : null}
+          </div>
+        </header>
+
+        <CompilationTurntablePlayer
+          audioUrl={compilation.audioFile.asset.url}
+          title={compilation.title}
+          coverImageUrl={coverImageUrl}
+          coverImageAlt={compilation.coverImage.alt ?? compilation.title}
+          tracks={compilation.tracks}
+        />
+
+        {compilation.introduction && compilation.introduction.length > 0 ? (
+          <section className="ff-reading-panel mx-auto mt-8 max-w-5xl rounded-2xl p-5 sm:p-7 lg:p-9">
+            <p className="text-xs! font-semibold uppercase tracking-[0.18em] text-secondary-500">
+              À propos de la sélection
+            </p>
+            <div className="prose prose-zinc mt-5 max-w-[72ch] text-secondary-800">
+              <RichText value={compilation.introduction} />
+            </div>
+          </section>
+        ) : null}
       </article>
     </PageWrapper>
   );

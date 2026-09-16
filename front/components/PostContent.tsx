@@ -2,16 +2,13 @@ import Image from "next/image";
 import { RichText } from "@/components/RichText";
 import type { PostContentBlock, SanityImage } from "@/lib/sanity/types";
 import { urlFor } from "@/lib/sanity/image";
+import styles from "./blog-post/BlogPost.module.css";
+import type { HeadingIds } from "@/lib/blog/reading";
 
 type Props = {
   blocks: PostContentBlock[];
+  headingIds?: HeadingIds[];
 };
-
-function fullBleedClass(fullWidth?: boolean) {
-  return fullWidth
-    ? "relative left-1/2 w-screen max-w-[1500px] -translate-x-1/2 px-6 lg:px-10"
-    : undefined;
-}
 
 function PostImage({
   image,
@@ -25,33 +22,35 @@ function PostImage({
   caption?: string;
 }) {
   return (
-    <figure className={fullBleedClass(fullWidth)}>
-      <div className={`overflow-hidden bg-zinc-100 ${fullWidth ? "rounded-none lg:rounded-2xl" : "rounded-2xl"}`}>
+    <figure className={`${styles.figure} ${fullWidth ? styles.fullWidth : ""}`}>
+      <div className={`ff-media-well ${styles.imageFrame}`}>
         <Image
           src={urlFor(image).width(1600).url()}
           alt={alt}
           width={1600}
           height={900}
           className="h-auto w-full object-cover"
-          sizes={fullWidth ? "100vw" : "(max-width: 768px) 100vw, 768px"}
+          sizes={
+            fullWidth
+              ? "(max-width: 639px) calc(100vw - 104px), (max-width: 1023px) calc(100vw - 136px), (max-width: 1179px) calc(100vw - 184px), 996px"
+              : "(max-width: 639px) calc(100vw - 100px), (max-width: 899px) calc(100vw - 132px), 768px"
+          }
         />
       </div>
-      {caption && (
-        <figcaption className="mt-3 text-center text-sm text-secondary-500">{caption}</figcaption>
-      )}
+      {caption && <figcaption>{caption}</figcaption>}
     </figure>
   );
 }
 
-export function PostContent({ blocks }: Props) {
+export function PostContent({ blocks, headingIds }: Props) {
   return (
-    <div className="space-y-10">
-      {blocks.map((block) => {
+    <div className={styles.blocks}>
+      {blocks.map((block, index) => {
         switch (block._type) {
           case "postTextBlock":
             return (
-              <div key={block._key} className="prose prose-zinc max-w-none">
-                <RichText value={block.content} />
+              <div key={block._key} className={styles.richText}>
+                <RichText value={block.content} headingIds={headingIds?.[index]} />
               </div>
             );
 
@@ -72,21 +71,19 @@ export function PostContent({ blocks }: Props) {
             return (
               <div
                 key={block._key}
-                className={`grid items-center gap-8 ${imageFirst ? "md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]" : "md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]"}`}
+                className={`${styles.textImage} ${imageFirst ? "" : styles.imageRight}`}
               >
-                <div className={imageFirst ? "md:order-1" : "md:order-2"}>
-                  <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-zinc-100">
-                    <Image
-                      src={urlFor(block.image).width(900).height(675).url()}
-                      alt={block.image.alt ?? ""}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 45vw"
-                    />
-                  </div>
+                <div className={`ff-media-well ${styles.imageFrame} ${styles.textImageMedia}`}>
+                  <Image
+                    src={urlFor(block.image).width(900).height(675).url()}
+                    alt={block.image.alt ?? ""}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 639px) calc(100vw - 104px), (max-width: 899px) calc(100vw - 136px), (max-width: 1023px) 768px, 430px"
+                  />
                 </div>
-                <div className={`prose prose-zinc max-w-none ${imageFirst ? "md:order-2" : "md:order-1"}`}>
-                  <RichText value={block.content} />
+                <div className={styles.richText}>
+                  <RichText value={block.content} headingIds={headingIds?.[index]} />
                 </div>
               </div>
             );
