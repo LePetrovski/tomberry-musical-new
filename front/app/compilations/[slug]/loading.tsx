@@ -11,7 +11,7 @@ export default function CompilationDetailLoading() {
         <Skeleton className="h-12 w-3/4 bg-primary-200/20" />
         <Skeleton className="h-5 w-96 max-w-full bg-primary-200/15" />
       </div>
-      <div className="grid overflow-hidden rounded-2xl border-2 border-secondary-200/80 bg-secondary-900 shadow-xl lg:grid-cols-[minmax(360px,.88fr)_minmax(0,1.12fr)]">
+      <div className="grid overflow-hidden rounded-2xl border-2 border-secondary-200/80 bg-secondary-900 shadow-xl xl:grid-cols-[minmax(560px,.88fr)_minmax(0,1.12fr)]">
         <div className="bg-secondary-800 p-5 sm:p-8">
           <Skeleton className="mb-4 h-4 w-32 bg-primary-200/15" />
           <Skeleton className="mx-auto aspect-square w-full max-w-[520px] rounded-2xl bg-primary-200/12" />
