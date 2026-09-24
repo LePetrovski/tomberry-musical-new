@@ -81,7 +81,7 @@ export default async function CompilationDetailPage({ params }: Props) {
       <article>
         <JsonLd data={musicPlaylistSchema(compilation, imageUrl)} />
         <Breadcrumbs
-          className="ff-archive-breadcrumb mb-6"
+          className="ff-menu-window ff-archive-window ff-archive-breadcrumb mb-6"
           items={[
             { label: "Accueil", href: "/" },
             { label: "Compilations", href: "/podcasts?vue=compilations" },

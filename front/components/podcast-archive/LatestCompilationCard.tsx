@@ -38,7 +38,7 @@ export function LatestCompilationCard({ compilation }: Props) {
           alt={compilation.coverImage.alt ?? compilation.title}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          sizes="(max-width: 640px) 100vw, 160px"
+          sizes="(max-width: 639px) calc(100vw - 48px), (max-width: 1023px) 120px, (max-width: 1279px) calc(50vw - 48px), 110px"
         />
       </div>
     </CurtainLink>

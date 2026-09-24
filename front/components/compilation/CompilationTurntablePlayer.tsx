@@ -11,6 +11,7 @@ import styles from "./CompilationTurntablePlayer.module.css";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2] as const;
 const SKIP_SECONDS = 15;
+const TRACK_TRANSITION_MS = 450;
 
 type Props = {
   audioUrl: string;
@@ -93,7 +94,7 @@ export function CompilationTurntablePlayer({
     >
       <div className={styles.turntableColumn}>
         <div className={styles.deckHeader}>
-          <span>Platine</span>
+          <span></span>
           <span className={styles.deckStatus} role="status" aria-live="polite">
             {player.status === "loading"
               ? "Chargement"
@@ -203,78 +204,6 @@ export function CompilationTurntablePlayer({
           </div>
         ) : null}
 
-        <div className={styles.playlistHeading}>
-          <div>
-            <span>Face A</span>
-            <h2 id={`${playerId}-playlist-title`}>Playlist</h2>
-          </div>
-          <span>{timedTracks.length} titres</span>
-        </div>
-
-        {timedTracks.length > 0 ? (
-          <ol className={styles.trackList} aria-labelledby={`${playerId}-playlist-title`}>
-            {timedTracks.map((track, index) => {
-              const isActive = index === activeTrackIndex;
-              const isPast = index < activeTrackIndex;
-              const elapsed = player.currentTime - track.startSeconds;
-              const trackProgress = isPast
-                ? 100
-                : isActive && track.trackDuration > 0
-                  ? clampPercentage((elapsed / track.trackDuration) * 100)
-                  : 0;
-              const durationWidth =
-                player.duration > 0 && track.trackDuration > 0
-                  ? Math.max((track.trackDuration / longestTrack) * 100, 18)
-                  : 100;
-
-              return (
-                <li
-                  key={track._key}
-                  className={styles.track}
-                  data-active={isActive || undefined}
-                  data-played={isPast || undefined}
-                  aria-current={isActive ? "true" : undefined}
-                >
-                  <button
-                    type="button"
-                    className={styles.trackButton}
-                    onClick={() => player.playFrom(track.startSeconds)}
-                    disabled={player.status === "error"}
-                    aria-label={`Lire ${track.artist} — ${track.title} à ${track.timecode}`}
-                  >
-                    <span className={styles.trackIndex}>{String(index + 1).padStart(2, "0")}</span>
-                    <span className={styles.trackCopy}>
-                      <strong>{track.title}</strong>
-                      <span>{track.artist}</span>
-                    </span>
-                    <span className={styles.trackTime}>
-                      {track.trackDuration > 0 ? formatTime(track.trackDuration) : track.timecode}
-                    </span>
-                    <span className={styles.trackBarArea}>
-                      <span className={styles.trackBar} style={{ width: `${durationWidth}%` }}>
-                        <span style={{ width: `${trackProgress}%` }} />
-                      </span>
-                    </span>
-                  </button>
-                  {track.externalLink ? (
-                    <a
-                      href={track.externalLink.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.externalLink}
-                      aria-label={`${track.externalLink.label} — ${track.title}`}
-                    >
-                      <ExternalLink aria-hidden="true" />
-                    </a>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ol>
-        ) : (
-          <p className={styles.emptyPlaylist}>La liste des morceaux n’est pas disponible.</p>
-        )}
-
         <div className={styles.settings}>
           <div className={styles.volumeControl}>
             <button
@@ -312,6 +241,76 @@ export function CompilationTurntablePlayer({
             </select>
           </label>
         </div>
+
+        <div className={styles.playlistHeading}>
+          <h2 id={`${playerId}-playlist-title`}>Playlist</h2>
+          <span>{timedTracks.length} titres</span>
+        </div>
+
+        {timedTracks.length > 0 ? (
+          <ol className={styles.trackList} aria-labelledby={`${playerId}-playlist-title`}>
+            {timedTracks.map((track, index) => {
+              const isActive = index === activeTrackIndex;
+              const isPast = index < activeTrackIndex;
+              const elapsed = player.currentTime - track.startSeconds;
+              const trackProgress = isPast
+                ? 100
+                : isActive && track.trackDuration > 0
+                  ? clampPercentage((elapsed / track.trackDuration) * 100)
+                  : 0;
+              const durationWidth =
+                player.duration > 0 && track.trackDuration > 0
+                  ? Math.max((track.trackDuration / longestTrack) * 100, 18)
+                  : 100;
+
+              return (
+                <li
+                  key={track._key}
+                  className={styles.track}
+                  data-active={isActive || undefined}
+                  data-played={isPast || undefined}
+                  aria-current={isActive ? "true" : undefined}
+                >
+                  <button
+                    type="button"
+                    className={styles.trackButton}
+                    onClick={() => player.transitionTo(track.startSeconds, TRACK_TRANSITION_MS)}
+                    disabled={player.isUnavailable}
+                    aria-label={`Lire ${track.artist} — ${track.title} à ${track.timecode}`}
+                  >
+                    <span className={styles.trackIndex}>{String(index + 1).padStart(2, "0")}</span>
+                    <span className={styles.trackCopy}>
+                      <strong>{track.title}</strong>
+                      <span>{track.artist}</span>
+                    </span>
+                    <span className={styles.trackTime}>
+                      {track.trackDuration > 0 ? formatTime(track.trackDuration) : track.timecode}
+                    </span>
+                    <span className={styles.trackBarArea}>
+                      <span className={styles.trackBar} style={{ width: `${durationWidth}%` }}>
+                        <span style={{ width: `${trackProgress}%` }} />
+                      </span>
+                    </span>
+                  </button>
+                  {track.externalLink ? (
+                    <a
+                      href={track.externalLink.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.externalLink}
+                      aria-label={`${track.externalLink.label} — ${track.title}`}
+                    >
+                      <ExternalLink aria-hidden="true" />
+                    </a>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <p className={styles.emptyPlaylist}>La liste des morceaux n’est pas disponible.</p>
+        )}
+
       </div>
     </section>
   );
