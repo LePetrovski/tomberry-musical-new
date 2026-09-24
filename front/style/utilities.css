@@ -460,8 +460,15 @@
 }
 
 .ff-command-status {
-    border-left: 1px solid rgb(229 239 239 / 0.22);
+    border-top: 1px solid rgb(229 239 239 / 0.22);
     color: rgb(229 239 239 / 0.78);
+}
+
+@media (min-width: 1024px) {
+    .ff-command-status {
+        border-top: 0;
+        border-left: 1px solid rgb(229 239 239 / 0.22);
+    }
 }
 
 .ff-content-card {
