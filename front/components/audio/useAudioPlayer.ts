@@ -4,6 +4,7 @@ import { Howl } from "howler";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const INITIAL_VOLUME = 0.8;
+const SEEK_SETTLE_MS = 50;
 
 export type AudioPlayerStatus =
   | "loading"
@@ -17,8 +18,11 @@ export function useAudioPlayer(audioUrl: string) {
   const howlRef = useRef<Howl | null>(null);
   const soundIdRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const transitionTimeoutRef = useRef<number | null>(null);
+  const transitionTokenRef = useRef(0);
   const pendingSeekRef = useRef(0);
   const lastProgressUpdateRef = useRef(0);
+  const targetVolumeRef = useRef(INITIAL_VOLUME);
   const [status, setStatus] = useState<AudioPlayerStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
@@ -31,6 +35,19 @@ export function useAudioPlayer(audioUrl: string) {
     if (animationFrameRef.current === null) return;
     window.cancelAnimationFrame(animationFrameRef.current);
     animationFrameRef.current = null;
+  }, []);
+
+  const clearTrackTransition = useCallback((restoreVolume = true) => {
+    transitionTokenRef.current += 1;
+
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
+
+    if (restoreVolume) {
+      howlRef.current?.volume(targetVolumeRef.current);
+    }
   }, []);
 
   const syncProgress = useCallback(function updateProgress() {
@@ -80,6 +97,15 @@ export function useAudioPlayer(audioUrl: string) {
     const handlePlay = (soundId: number) => {
       if (disposed) return;
       soundIdRef.current = soundId;
+
+      if (pendingSeekRef.current > 0) {
+        const pendingSeek = pendingSeekRef.current;
+        pendingSeekRef.current = 0;
+        howl.seek(pendingSeek, soundId);
+        lastProgressUpdateRef.current = pendingSeek;
+        setCurrentTime(pendingSeek);
+      }
+
       setStatus("playing");
       cancelProgressSync();
       animationFrameRef.current = window.requestAnimationFrame(syncProgress);
@@ -98,6 +124,7 @@ export function useAudioPlayer(audioUrl: string) {
 
     const handleEnd = () => {
       if (disposed) return;
+      clearTrackTransition();
       const loadedDuration = howl.duration();
       setCurrentTime(loadedDuration);
       lastProgressUpdateRef.current = loadedDuration;
@@ -109,6 +136,7 @@ export function useAudioPlayer(audioUrl: string) {
 
     const handleError = (_soundId: number, error: unknown) => {
       if (disposed) return;
+      clearTrackTransition();
       setErrorMessage(
         typeof error === "string" && error.length > 0
           ? `Lecture impossible : ${error}`
@@ -127,15 +155,16 @@ export function useAudioPlayer(audioUrl: string) {
 
     return () => {
       disposed = true;
+      clearTrackTransition(false);
       cancelProgressSync();
       howl.off();
       howl.unload();
       howlRef.current = null;
       soundIdRef.current = null;
     };
-  }, [audioUrl, cancelProgressSync, syncProgress]);
+  }, [audioUrl, cancelProgressSync, clearTrackTransition, syncProgress]);
 
-  const seekTo = useCallback(
+  const applySeek = useCallback(
     (value: number) => {
       const clampedValue =
         duration > 0 ? Math.min(Math.max(value, 0), duration) : Math.max(value, 0);
@@ -154,7 +183,16 @@ export function useAudioPlayer(audioUrl: string) {
     [duration],
   );
 
+  const seekTo = useCallback(
+    (value: number) => {
+      clearTrackTransition();
+      applySeek(value);
+    },
+    [applySeek, clearTrackTransition],
+  );
+
   const togglePlayback = useCallback(() => {
+    clearTrackTransition();
     const howl = howlRef.current;
     if (!howl || status === "loading" || status === "error") return;
 
@@ -166,44 +204,112 @@ export function useAudioPlayer(audioUrl: string) {
 
     const nextSoundId = soundId === null ? howl.play() : howl.play(soundId);
     soundIdRef.current = nextSoundId;
+  }, [clearTrackTransition, status]);
 
-    if (pendingSeekRef.current > 0) {
-      howl.seek(pendingSeekRef.current, nextSoundId);
-      pendingSeekRef.current = 0;
-    }
-  }, [status]);
-
-  const playFrom = useCallback(
+  const playFromImmediately = useCallback(
     (value: number) => {
-      seekTo(value);
-
       const howl = howlRef.current;
       if (!howl || status === "loading" || status === "error") return;
 
+      const clampedValue =
+        duration > 0 ? Math.min(Math.max(value, 0), duration) : Math.max(value, 0);
       const soundId = soundIdRef.current;
-      if (soundId !== null && howl.playing(soundId)) {
-        howl.seek(value, soundId);
+
+      setCurrentTime(clampedValue);
+      lastProgressUpdateRef.current = clampedValue;
+
+      if (soundId !== null) {
+        howl.seek(clampedValue, soundId);
+        pendingSeekRef.current = 0;
+
+        if (!howl.playing(soundId)) {
+          soundIdRef.current = howl.play(soundId);
+        }
         return;
       }
 
-      const nextSoundId = soundId === null ? howl.play() : howl.play(soundId);
-      soundIdRef.current = nextSoundId;
-      howl.seek(value, nextSoundId);
-      pendingSeekRef.current = 0;
+      pendingSeekRef.current = clampedValue;
+      soundIdRef.current = howl.play();
     },
-    [seekTo, status],
+    [duration, status],
+  );
+
+  const playFrom = useCallback(
+    (value: number) => {
+      clearTrackTransition();
+      playFromImmediately(value);
+    },
+    [clearTrackTransition, playFromImmediately],
+  );
+
+  const transitionTo = useCallback(
+    (value: number, durationMs = 450) => {
+      const howl = howlRef.current;
+      if (!howl || status === "loading" || status === "error") return;
+
+      const safeDuration = Number.isFinite(durationMs) ? Math.max(durationMs, 0) : 0;
+      if (safeDuration === 0) {
+        playFrom(value);
+        return;
+      }
+
+      const fadeDuration = Math.max(Math.round(safeDuration / 2), 1);
+      const clampedValue =
+        duration > 0 ? Math.min(Math.max(value, 0), duration) : Math.max(value, 0);
+
+      clearTrackTransition(false);
+      const transitionToken = transitionTokenRef.current;
+      const soundId = soundIdRef.current;
+      const isCurrentlyPlaying = soundId !== null && howl.playing(soundId);
+
+      if (!isCurrentlyPlaying) {
+        clearTrackTransition();
+        playFromImmediately(clampedValue);
+        return;
+      }
+
+      const currentVolume = howl.volume();
+      const fadeFrom = typeof currentVolume === "number" ? currentVolume : targetVolumeRef.current;
+      if (fadeFrom > 0) {
+        howl.fade(fadeFrom, 0, fadeDuration);
+      } else {
+        howl.volume(0);
+      }
+
+      transitionTimeoutRef.current = window.setTimeout(() => {
+        if (transitionToken !== transitionTokenRef.current) return;
+
+        howl.volume(0);
+        playFromImmediately(clampedValue);
+
+        transitionTimeoutRef.current = window.setTimeout(() => {
+          if (transitionToken !== transitionTokenRef.current) return;
+          transitionTimeoutRef.current = null;
+
+          const targetVolume = targetVolumeRef.current;
+          if (targetVolume > 0) {
+            howl.fade(0, targetVolume, fadeDuration);
+          } else {
+            howl.volume(0);
+          }
+        }, SEEK_SETTLE_MS);
+      }, fadeDuration);
+    },
+    [clearTrackTransition, duration, playFrom, playFromImmediately, status],
   );
 
   const changeVolume = useCallback(
     (value: number) => {
       const nextVolume = Math.min(Math.max(value, 0), 1);
+      targetVolumeRef.current = nextVolume;
       setVolume(nextVolume);
-      howlRef.current?.volume(nextVolume);
 
       if (isMuted && nextVolume > 0) {
         setIsMuted(false);
         howlRef.current?.mute(false);
       }
+
+      howlRef.current?.volume(nextVolume);
     },
     [isMuted],
   );
@@ -211,7 +317,9 @@ export function useAudioPlayer(audioUrl: string) {
   const toggleMute = useCallback(() => {
     setIsMuted((muted) => {
       const nextMuted = !muted;
-      howlRef.current?.mute(nextMuted);
+      const howl = howlRef.current;
+      howl?.mute(nextMuted);
+      if (!nextMuted) howl?.volume(targetVolumeRef.current);
       return nextMuted;
     });
   }, []);
@@ -224,12 +332,13 @@ export function useAudioPlayer(audioUrl: string) {
   }, []);
 
   const retry = useCallback(() => {
+    clearTrackTransition();
     const howl = howlRef.current;
     if (!howl) return;
     setErrorMessage(null);
     setStatus("loading");
     howl.load();
-  }, []);
+  }, [clearTrackTransition]);
 
   return {
     status,
@@ -244,6 +353,7 @@ export function useAudioPlayer(audioUrl: string) {
     seekTo,
     togglePlayback,
     playFrom,
+    transitionTo,
     changeVolume,
     toggleMute,
     changePlaybackRate,
