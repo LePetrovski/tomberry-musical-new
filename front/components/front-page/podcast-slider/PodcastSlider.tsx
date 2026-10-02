@@ -2,21 +2,17 @@
 
 import { Bvh, Environment } from "@react-three/drei";
 import {
+  SceneFailureFallback,
   SceneLoadReporter,
   SceneReveal,
 } from "@/components/initial-loader/SceneLoading";
 import { SceneLoadProvider } from "@/components/initial-loader/SceneLoadProvider";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useSoundCloudPlayer } from "@/components/audio/SoundCloudPlayerContext";
-import { textureProxyUrlFor } from "@/lib/sanity/image";
-import { useTexture } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { PerspectiveCamera } from "three";
-import { useLoader } from "@react-three/fiber";
 import { CrystalScene } from "./CrystalScene";
 import {
-  EPISODE_BADGE_FONT,
   SLIDER_ENV_INTENSITY,
   TUBE_COLS,
   TUBE_REPEAT_COUNT,
@@ -38,6 +34,8 @@ function ResponsiveCamera({ config }: { config: SliderResponsiveConfig }) {
     if (!(camera instanceof PerspectiveCamera)) return;
 
     camera.position.set(...config.cameraPosition);
+    // React Three Fiber owns the camera, which is intentionally mutable.
+    // eslint-disable-next-line react-hooks/immutability
     camera.fov = config.cameraFov;
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
@@ -50,24 +48,6 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { play } = useSoundCloudPlayer();
   const { config } = useSliderResponsive();
-
-  const coverUrls = useMemo(
-    () =>
-      podcasts.map((podcast) =>
-        podcast.coverImage ? textureProxyUrlFor(podcast.coverImage) : null,
-      ).filter((url): url is string => Boolean(url)),
-    [podcasts],
-  );
-
-  useEffect(() => {
-    if (coverUrls.length > 0) {
-      useTexture.preload(coverUrls);
-    }
-  }, [coverUrls]);
-
-  useEffect(() => {
-    useLoader.preload(FontLoader, EPISODE_BADGE_FONT);
-  }, []);
 
   const initialTubeScroll = useMemo(
     () => getLatestRowScrollOffset(TUBE_ROWS, TUBE_Y_SPACING, TUBE_REPEAT_COUNT),
@@ -101,9 +81,9 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
     onWheel,
   } = useSliderInteractions({
     containerRef,
-    tubeScrollTarget,
-    tubeSpinVelocity,
-    tubeNaturalDir,
+    tubeScrollTargetRef: tubeScrollTarget,
+    tubeSpinVelocityRef: tubeSpinVelocity,
+    tubeNaturalDirRef: tubeNaturalDir,
     rotationSpeedScaleTargetRef,
     hoverSlowdownEnabledRef,
     hoverSlowdownScaleRef,
@@ -166,6 +146,7 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
       />
 
     </SceneReveal>
+    <SceneFailureFallback isEmpty={podcasts.length === 0} />
     </SceneLoadProvider>
     </TileSoundProvider>
   );

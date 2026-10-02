@@ -1,7 +1,7 @@
 "use client";
 
 import { useCurtains } from "motion-plus/react";
-import { wipe, blinds, staggerWipe } from "motion-plus/curtains";
+import { staggerWipe } from "motion-plus/curtains";
 import { usePathname, useRouter } from "next/navigation";
 import {
     createContext,

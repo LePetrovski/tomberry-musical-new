@@ -1,6 +1,7 @@
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "./client";
+import { HOME_TILE_TEXTURE_HEIGHT, HOME_TILE_TEXTURE_WIDTH } from "../home-scene";
 
 const builder = imageUrlBuilder(client);
 
@@ -10,7 +11,15 @@ export function urlFor(source: SanityImageSource) {
 
 /** URL adaptée au chargement WebGL (crop centré, sans hotspot). */
 export function textureUrlFor(source: SanityImageSource) {
-  return builder.image(source).width(800).height(500).fit("crop").crop("center").url();
+  return builder
+    .image(source)
+    .width(HOME_TILE_TEXTURE_WIDTH)
+    .height(HOME_TILE_TEXTURE_HEIGHT)
+    .fit("crop")
+    .crop("center")
+    .format("webp")
+    .quality(85)
+    .url();
 }
 
 const SANITY_CDN_PREFIX = "https://cdn.sanity.io/";

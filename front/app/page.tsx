@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { CurtainLink } from "@/components/navigation/CurtainLink";
 import { withSanityFallback } from "@/lib/sanity/fallback";
 import { sanityFetch } from "@/lib/sanity/fetch";
-import { homepageQuery, podcastsQuery } from "@/lib/sanity/queries";
+import { homePodcastsQuery, homepageQuery } from "@/lib/sanity/queries";
 import { sanityTags } from "@/lib/sanity/tags";
-import type { Homepage, PodcastPreview } from "@/lib/sanity/types";
+import type { HomePodcast, Homepage, Podcast } from "@/lib/sanity/types";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/seo/site";
+import { getSoundCloudEmbedUrl } from "@/lib/soundcloud";
 import { PodcastSlider } from "@/components/front-page/PodcastSlider";
 import { AsideInfoDrawer } from "@/components/front-page/AsideInfoDrawer";
 
@@ -21,10 +22,15 @@ export const metadata: Metadata = {
 	},
 };
 
+type HomePodcastSource = Pick<
+    Podcast,
+    "title" | "slug" | "coverImage" | "episodeNumber" | "soundcloud" | "embedSoundcloud"
+>;
+
 export default async function HomePage() {
-	const [podcasts, homepage] = await Promise.all([
+	const [podcastSources, homepage] = await Promise.all([
 		withSanityFallback(
-			sanityFetch<PodcastPreview[]>(podcastsQuery, {}, { tags: [sanityTags.podcasts] }),
+			sanityFetch<HomePodcastSource[]>(homePodcastsQuery, {}, { tags: [sanityTags.podcasts] }),
 			[],
 			"HomePage.podcasts",
 		),
@@ -34,6 +40,11 @@ export default async function HomePage() {
 			"HomePage.homepage",
 		),
 	]);
+
+	const podcasts: HomePodcast[] = podcastSources.map(({ soundcloud, embedSoundcloud, ...podcast }) => ({
+		...podcast,
+		embedUrl: getSoundCloudEmbedUrl(soundcloud, embedSoundcloud),
+	}));
 
 	const aside = {
 		label: homepage?.asideLabel ?? "À propos",

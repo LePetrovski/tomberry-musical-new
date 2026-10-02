@@ -4,9 +4,9 @@ import type { TileButtonHover } from "../types";
 
 type Options = {
   containerRef: React.RefObject<HTMLDivElement | null>;
-  tubeScrollTarget: React.MutableRefObject<number>;
-  tubeSpinVelocity: React.MutableRefObject<number>;
-  tubeNaturalDir: React.MutableRefObject<number>;
+  tubeScrollTargetRef: React.MutableRefObject<number>;
+  tubeSpinVelocityRef: React.MutableRefObject<number>;
+  tubeNaturalDirRef: React.MutableRefObject<number>;
   rotationSpeedScaleTargetRef: React.MutableRefObject<number>;
   hoverSlowdownEnabledRef: React.MutableRefObject<boolean>;
   hoverSlowdownScaleRef: React.MutableRefObject<number>;
@@ -18,9 +18,9 @@ const HOVER_END_DELAY_MS = 80;
 
 export function useSliderInteractions({
   containerRef,
-  tubeScrollTarget,
-  tubeSpinVelocity,
-  tubeNaturalDir,
+  tubeScrollTargetRef,
+  tubeSpinVelocityRef,
+  tubeNaturalDirRef,
   rotationSpeedScaleTargetRef,
   hoverSlowdownEnabledRef,
   hoverSlowdownScaleRef,
@@ -84,7 +84,7 @@ export function useSliderInteractions({
 
       syncTooltipPosition(clientX, clientY);
 
-      if (hoverSlowdownEnabledRef.current && Math.abs(tubeSpinVelocity.current) < 0.35) {
+      if (hoverSlowdownEnabledRef.current && Math.abs(tubeSpinVelocityRef.current) < 0.35) {
         rotationSpeedScaleTargetRef.current = hoverSlowdownScaleRef.current;
       }
     },
@@ -93,7 +93,7 @@ export function useSliderInteractions({
       hoverSlowdownScaleRef,
       rotationSpeedScaleTargetRef,
       syncTooltipPosition,
-      tubeSpinVelocity,
+      tubeSpinVelocityRef,
     ],
   );
 
@@ -169,16 +169,16 @@ export function useSliderInteractions({
   const applyScrollDelta = useCallback(
     (deltaY: number, touchMultiplier = 1) => {
       const amount = deltaY * scrollWheelMultiplierRef.current * touchMultiplier;
-      tubeScrollTarget.current += amount;
-      tubeSpinVelocity.current += amount * 1.56;
+      tubeScrollTargetRef.current += amount;
+      tubeSpinVelocityRef.current += amount * 1.56;
 
-      if (deltaY < 0) tubeNaturalDir.current = -1;
-      else if (deltaY > 0) tubeNaturalDir.current = 1;
+      if (deltaY < 0) tubeNaturalDirRef.current = -1;
+      else if (deltaY > 0) tubeNaturalDirRef.current = 1;
 
       rotationSpeedScaleTargetRef.current = 1;
       hideTooltip();
     },
-    [hideTooltip, rotationSpeedScaleTargetRef, scrollWheelMultiplierRef, tubeNaturalDir, tubeScrollTarget, tubeSpinVelocity],
+    [hideTooltip, rotationSpeedScaleTargetRef, scrollWheelMultiplierRef, tubeNaturalDirRef, tubeScrollTargetRef, tubeSpinVelocityRef],
   );
 
   const onWheel = useCallback(

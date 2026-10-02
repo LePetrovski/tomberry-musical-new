@@ -1,11 +1,17 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Music2 } from "lucide-react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 
 const HOME_TRACKS = ["/audio/ff4.mp3", "/audio/ff6.mp3", "/audio/ff14.mp3"] as const;
+const HomeAudioEnabledContext = createContext(false);
 
-export function HomeAudioPlayer() {
+export function useHomeAudioEnabled() {
+    return useContext(HomeAudioEnabledContext);
+}
+
+export function HomeAudioProvider({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const isHome = pathname === "/";
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -15,9 +21,10 @@ export function HomeAudioPlayer() {
     );
 
     useEffect(() => {
-        const audio = new Audio(trackUrl);
+        const audio = new Audio();
         audio.loop = true;
-        audio.preload = "auto";
+        audio.preload = "none";
+        audio.src = trackUrl;
         audio.volume = 0.45;
         audioRef.current = audio;
 
@@ -70,17 +77,20 @@ export function HomeAudioPlayer() {
         await startPlayback();
     };
 
-    if (!isHome) return null;
-
     return (
-        <button
-            type="button"
-            className="audioToggle"
-            onClick={togglePlayback}
-            aria-pressed={isPlaying}
-            aria-label={isPlaying ? "Couper la musique" : "Activer la musique"}
-        >
-            {isPlaying ? "Couper" : "Musique"}
-        </button>
+        <HomeAudioEnabledContext.Provider value={isHome && isPlaying}>
+            {isHome && (
+                <button
+                    type="button"
+                    className="audioToggle"
+                    onClick={togglePlayback}
+                    aria-pressed={isPlaying}
+                    aria-label={isPlaying ? "Couper la musique" : "Activer la musique"}
+                >
+                    <Music2 aria-hidden="true" size={20} strokeWidth={2.25} />
+                </button>
+            )}
+            {children}
+        </HomeAudioEnabledContext.Provider>
     );
 }
