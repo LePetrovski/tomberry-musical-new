@@ -132,6 +132,16 @@ export type PodcastPreview = Pick<
   | "categories"
 >;
 
+export type HomePodcast = Pick<
+  Podcast,
+  | "title"
+  | "slug"
+  | "coverImage"
+  | "episodeNumber"
+> & {
+  embedUrl: string | null;
+};
+
 export type PodcastDetail = Podcast & {
   relatedPodcasts: PodcastPreview[];
 };

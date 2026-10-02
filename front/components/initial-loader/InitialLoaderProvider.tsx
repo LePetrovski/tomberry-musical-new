@@ -21,6 +21,7 @@ type InitialLoaderContextValue = {
     isInitialLoading: boolean;
     isLoaderVisible: boolean;
     isSceneReady: boolean;
+    hasSceneTimedOut: boolean;
     reportSceneReady: () => void;
 };
 
@@ -49,6 +50,7 @@ export function InitialLoaderProvider({ children }: { children: ReactNode }) {
     const [showLoader, setShowLoader] = useState(true);
     const [isComplete, setIsComplete] = useState(false);
     const [isSceneReady, setIsSceneReady] = useState(!requiresScene);
+    const [hasSceneTimedOut, setHasSceneTimedOut] = useState(false);
     const sceneReadyRef = useRef(!requiresScene);
     const sceneReadyResolversRef = useRef<(() => void)[]>([]);
 
@@ -59,6 +61,7 @@ export function InitialLoaderProvider({ children }: { children: ReactNode }) {
 
         sceneReadyRef.current = true;
         setIsSceneReady(true);
+        setHasSceneTimedOut(false);
         sceneReadyResolversRef.current.forEach((resolve) => resolve());
         sceneReadyResolversRef.current = [];
     }, []);
@@ -75,7 +78,10 @@ export function InitialLoaderProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         sceneReadyRef.current = !requiresScene;
+        // Route transitions reset the readiness gate owned by the WebGL scene.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsSceneReady(!requiresScene);
+        setHasSceneTimedOut(false);
         sceneReadyResolversRef.current = [];
     }, [requiresScene]);
 
@@ -85,23 +91,34 @@ export function InitialLoaderProvider({ children }: { children: ReactNode }) {
         }
 
         let cancelled = false;
+        let sceneTimeout: number | undefined;
 
         const run = async () => {
             const sceneGate = requiresScene
                 ? Promise.race([
                       waitForScene(),
                       new Promise<void>((resolve) => {
-                          window.setTimeout(resolve, SCENE_TIMEOUT_MS);
+                          sceneTimeout = window.setTimeout(() => {
+                              if (!sceneReadyRef.current && !cancelled) {
+                                  setHasSceneTimedOut(true);
+                              }
+                              resolve();
+                          }, SCENE_TIMEOUT_MS);
                       }),
                   ])
                 : Promise.resolve();
 
-            await Promise.all([
-                document.fonts.ready,
-                waitForWindowLoad(),
-                waitForMinimumDuration(),
-                sceneGate,
-            ]);
+            if (requiresScene) {
+                await sceneGate;
+            } else {
+                await Promise.all([
+                    document.fonts.ready,
+                    waitForWindowLoad(),
+                    waitForMinimumDuration(),
+                ]);
+            }
+
+            if (sceneTimeout !== undefined) window.clearTimeout(sceneTimeout);
 
             if (!cancelled) {
                 setShowLoader(false);
@@ -112,6 +129,7 @@ export function InitialLoaderProvider({ children }: { children: ReactNode }) {
 
         return () => {
             cancelled = true;
+            if (sceneTimeout !== undefined) window.clearTimeout(sceneTimeout);
         };
     }, [requiresScene, showLoader, waitForScene]);
 
@@ -133,9 +151,10 @@ export function InitialLoaderProvider({ children }: { children: ReactNode }) {
             isInitialLoading: !isComplete,
             isLoaderVisible: showLoader,
             isSceneReady,
+            hasSceneTimedOut,
             reportSceneReady,
         }),
-        [isComplete, isSceneReady, reportSceneReady, showLoader],
+        [hasSceneTimedOut, isComplete, isSceneReady, reportSceneReady, showLoader],
     );
 
     return (

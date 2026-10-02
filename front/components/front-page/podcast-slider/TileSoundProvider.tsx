@@ -2,6 +2,7 @@
 
 import { useSound } from "@web-kits/audio/react";
 import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { useHomeAudioEnabled } from "@/components/audio/HomeAudioPlayer";
 import { deckUiNavigationSound, showModalSound } from "@/lib/audio/tile-ui-sounds";
 
 type TileSoundContextValue = {
@@ -12,19 +13,20 @@ type TileSoundContextValue = {
 const TileSoundContext = createContext<TileSoundContextValue | null>(null);
 
 export function TileSoundProvider({ children }: { children: ReactNode }) {
+  const homeAudioEnabled = useHomeAudioEnabled();
   const playHover = useSound(deckUiNavigationSound);
   const playClick = useSound(showModalSound);
 
   const value = useMemo(
     () => ({
       playHover: () => {
-        playHover();
+        if (homeAudioEnabled) playHover();
       },
       playClick: () => {
         playClick();
       },
     }),
-    [playClick, playHover],
+    [homeAudioEnabled, playClick, playHover],
   );
 
   return (

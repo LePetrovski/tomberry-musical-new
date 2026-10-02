@@ -1,7 +1,6 @@
 import type { ThreeEvent } from "@react-three/fiber";
-import { memo, useCallback, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-import { DoubleSide, MeshBasicMaterial } from "three";
+import { memo, useCallback, useEffect, useRef } from "react";
+import { DoubleSide, MeshBasicMaterial, type PlaneGeometry } from "three";
 import {
     TILE_BUTTON_BAR_HEIGHT,
     TILE_BUTTON_Z,
@@ -11,11 +10,13 @@ import {
 } from "./constants";
 import { useTileSounds } from "./TileSoundProvider";
 import { buildTileButtonTexture } from "./utils/tile-button-texture";
+import { useTileFrameScheduler } from "./TileFrameScheduler";
 import type { TileButtonHover } from "./types";
 
 const BUTTON_HOVER_LERP_SPEED = 10;
 
 type Props = {
+    planeGeometry: PlaneGeometry;
     kind: "play" | "detail";
     enabled: boolean;
     position: [number, number, number];
@@ -25,6 +26,7 @@ type Props = {
 };
 
 function TileButtonComponent({
+    planeGeometry,
     kind,
     enabled,
     position,
@@ -32,51 +34,57 @@ function TileButtonComponent({
     onClick,
     onHover,
 }: Props) {
+    const tileFrameScheduler = useTileFrameScheduler();
     const { playHover, playClick } = useTileSounds();
     const materialRef = useRef<MeshBasicMaterial>(null);
     const hoverMixTarget = useRef(0);
     const hoverMixCurrent = useRef(0);
     const isHoveredRef = useRef(false);
 
-    useFrame((_, delta) => {
+    const updateHover = useCallback((delta: number) => {
         const step = Math.min(1, BUTTON_HOVER_LERP_SPEED * delta);
         const next = hoverMixCurrent.current + (hoverMixTarget.current - hoverMixCurrent.current) * step;
 
         if (Math.abs(next - hoverMixCurrent.current) <= 0.002) {
-            if (hoverMixCurrent.current === hoverMixTarget.current) return;
+            if (hoverMixCurrent.current === hoverMixTarget.current) return false;
             hoverMixCurrent.current = hoverMixTarget.current;
         } else {
             hoverMixCurrent.current = next;
         }
 
         const material = materialRef.current;
-        if (!material) return;
+        if (!material) return false;
         material.map = buildTileButtonTexture(kind, enabled, hoverMixCurrent.current);
         material.needsUpdate = true;
-    });
+        return hoverMixCurrent.current !== hoverMixTarget.current;
+    }, [enabled, kind]);
+
+    useEffect(() => () => tileFrameScheduler.cancel(updateHover), [tileFrameScheduler, updateHover]);
 
     const handlePointerOver = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
             if (!enabled) return;
             hoverMixTarget.current = 1;
+            tileFrameScheduler.request(updateHover);
             if (!isHoveredRef.current) {
                 isHoveredRef.current = true;
                 playHover();
             }
             onHover(kind, event);
         },
-        [enabled, kind, onHover, playHover],
+        [enabled, kind, onHover, playHover, tileFrameScheduler, updateHover],
     );
 
     const handlePointerOut = useCallback(
         (event: ThreeEvent<PointerEvent>) => {
             event.stopPropagation();
             hoverMixTarget.current = 0;
+            tileFrameScheduler.request(updateHover);
             isHoveredRef.current = false;
             onHover(null, event);
         },
-        [onHover],
+        [onHover, tileFrameScheduler, updateHover],
     );
 
     const handleClick = useCallback(
@@ -91,6 +99,7 @@ function TileButtonComponent({
 
     return (
         <mesh
+            geometry={planeGeometry}
             position={position}
             rotation={TILE_OVERLAY_ROTATION}
             scale={[size[0], size[1], 1]}
@@ -100,7 +109,6 @@ function TileButtonComponent({
             onPointerMove={handlePointerOver}
             onPointerOut={handlePointerOut}
         >
-            <planeGeometry args={[1, 1]} />
             <meshBasicMaterial
                 ref={materialRef}
                 map={buildTileButtonTexture(kind, enabled, 0)}

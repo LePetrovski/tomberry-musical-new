@@ -10,6 +10,7 @@ import type {
   Compilation,
   CompilationPreview,
 } from "./types";
+import { HOME_PODCAST_LIMIT } from "../home-scene";
 
 const podcastPreviewFields = `
   _id,
@@ -96,6 +97,15 @@ const postFields = `
 
 export const podcastsQuery = `*[_type == "podcast"] | order(episodeNumber desc) {
   ${podcastPreviewFields}
+}`;
+
+export const homePodcastsQuery = `*[_type == "podcast"] | order(episodeNumber desc)[0...${HOME_PODCAST_LIMIT}] {
+  title,
+  "slug": slug.current,
+  coverImage,
+  episodeNumber,
+  soundcloud,
+  embedSoundcloud
 }`;
 
 export const podcastCategoriesQuery = `*[_type == "podcastCategory"] | order(featured desc, title asc) {

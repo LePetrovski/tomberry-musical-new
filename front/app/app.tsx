@@ -1,7 +1,7 @@
 "use client";
 
 import { SoundProvider } from "@web-kits/audio/react";
-import { HomeAudioPlayer } from "@/components/audio/HomeAudioPlayer";
+import { HomeAudioProvider } from "@/components/audio/HomeAudioPlayer";
 import { SoundCloudPlayerProvider } from "@/components/audio/SoundCloudPlayerContext";
 import { SoundCloudPopup } from "@/components/audio/SoundCloudPopup";
 import { Header } from "@/components/Header";
@@ -19,8 +19,7 @@ export default function App({ children }: { children: React.ReactNode }) {
                         <Header />
                     </Suspense>
                     <SoundCloudPopup />
-                    <HomeAudioPlayer />
-                    {children}
+                    <HomeAudioProvider>{children}</HomeAudioProvider>
                 </SoundCloudPlayerProvider>
             </PageCurtainsProvider>
             </InitialLoaderProvider>

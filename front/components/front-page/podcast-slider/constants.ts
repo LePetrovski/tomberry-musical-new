@@ -1,10 +1,16 @@
 import { Color } from "three";
+import {
+  HOME_TILE_TEXTURE_HEIGHT,
+  HOME_TILE_TEXTURE_WIDTH,
+  HOME_TUBE_COLS,
+  HOME_TUBE_ROWS,
+} from "@/lib/home-scene";
 
 export const PLACEHOLDER_TEXTURE =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
 
-export const TILE_TEXTURE_WIDTH = 500;
-export const TILE_TEXTURE_HEIGHT = 320;
+export const TILE_TEXTURE_WIDTH = HOME_TILE_TEXTURE_WIDTH;
+export const TILE_TEXTURE_HEIGHT = HOME_TILE_TEXTURE_HEIGHT;
 export const TILE_BORDER_RADIUS = 14;
 export const TILE_BUTTON_BAR_HEIGHT = 100;
 export const TILE_BUTTON_BAR_UV = TILE_BUTTON_BAR_HEIGHT / TILE_TEXTURE_HEIGHT;
@@ -53,8 +59,8 @@ export const SLIDER_ENV_INTENSITY = 0.4;
 export const TUBE_RADIUS = 4;
 export const TUBE_Y_SPACING = 2.7;
 export const TUBE_REPEAT_COUNT = 3;
-export const TUBE_ROWS = 5;
-export const TUBE_COLS = 12;
+export const TUBE_ROWS = HOME_TUBE_ROWS;
+export const TUBE_COLS = HOME_TUBE_COLS;
 
 export const CAMERA_POSITION: [number, number, number] = [0, 0, 6.5];
 export const CAMERA_FOV = 50;
