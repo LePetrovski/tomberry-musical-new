@@ -63,20 +63,10 @@ export function Header() {
 	return (
 		<header className="fixed top-3 left-1/2 z-50 w-[calc(100%-1.5rem)] -translate-x-1/2 sm:w-[94vw] lg:w-[80vw] lg:max-w-[800px]">
 			<div className="ff-menu-window px-3 sm:px-6">
-				<nav className="grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 lg:grid-cols-[1fr_auto_1fr] lg:gap-5" aria-label="Navigation principale">
-					<div className="hidden min-w-0 items-center justify-start lg:flex">
-						<CurtainLink
-							href={menuLinks[0].href}
-							aria-current={isActive(menuLinks[0].id) ? "page" : undefined}
-							className="ff-menu-choice text-podcast-slider-menu-item hidden font-semibold lg:inline-flex"
-						>
-							{menuLinks[0].label}
-						</CurtainLink>
-					</div>
-
+				<nav className="grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 lg:flex lg:justify-between lg:gap-3" aria-label="Navigation principale">
 					<CurtainLink
 						href="/"
-						className="min-w-0 text-[clamp(0.875rem,4vw,1.25rem)] font-black tracking-tight text-primary-200 uppercase [text-shadow:0_2px_3px_rgb(11_22_23_/_0.75)] sm:text-podcast-slider-title lg:whitespace-nowrap lg:text-center"
+						className="min-w-0 text-[clamp(0.875rem,4vw,1.25rem)] font-black tracking-tight text-primary-200 uppercase [text-shadow:0_2px_3px_rgb(11_22_23_/_0.75)] sm:text-podcast-slider-title lg:whitespace-nowrap lg:text-xl"
 						onClick={closeMenu}
 					>
 						Le Tomberry Musical
@@ -92,14 +82,17 @@ export function Header() {
 					>
 						<BurgerIcon open={menuOpen} />
 					</button>
-					<div className="hidden min-w-0 items-center justify-end lg:flex">
-						<CurtainLink
-							href={menuLinks[1].href}
-							aria-current={isActive(menuLinks[1].id) ? "page" : undefined}
-							className="ff-menu-choice text-podcast-slider-menu-item hidden font-semibold lg:inline-flex"
-						>
-							{menuLinks[1].label}
-						</CurtainLink>
+					<div className="hidden shrink-0 items-center justify-end gap-0.5 lg:flex">
+						{menuLinks.map((link) => (
+							<CurtainLink
+								key={link.id}
+								href={link.href}
+								aria-current={isActive(link.id) ? "page" : undefined}
+								className="ff-menu-choice whitespace-nowrap text-base font-semibold"
+							>
+								{link.label}
+							</CurtainLink>
+						))}
 					</div>
 				</nav>
 
