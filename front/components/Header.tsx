@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 const menuLinks = [
 	{ href: "/podcasts", label: "podcasts", id: "podcasts" },
 	{ href: "/podcasts?vue=compilations", label: "compilations", id: "compilations" },
+	{ href: "/blog", label: "blog", id: "blog" },
 ] as const;
 
 function BurgerIcon({ open }: { open: boolean }) {
@@ -42,7 +43,9 @@ export function Header() {
 		pathname.startsWith("/compilations") || searchParams.get("vue") === "compilations";
 
 	const isActive = (id: (typeof menuLinks)[number]["id"]) =>
-		id === "compilations"
+		id === "blog"
+			? pathname.startsWith("/blog")
+			: id === "compilations"
 			? compilationView
 			: pathname.startsWith("/podcasts") && !compilationView;
 
@@ -58,20 +61,10 @@ export function Header() {
 	}, []);
 
 	return (
-		<header className="fixed top-3 left-1/2 z-50 w-[94vw] -translate-x-1/2 md:w-[80vw] lg:max-w-[800px]">
-			<div className="ff-menu-window px-4 sm:px-6">
-				<nav className="grid min-h-16 grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-5">
-					<div className="flex min-w-0 items-center justify-start">
-						<button
-							type="button"
-							className="inline-flex size-10 cursor-pointer items-center justify-center rounded-lg border border-secondary-200/45 bg-secondary-0/18 text-primary-200 transition-colors hover:bg-secondary-100/12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 lg:hidden"
-							aria-expanded={menuOpen}
-							aria-controls="mobile-nav"
-							aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-							onClick={toggleMenu}
-						>
-							<BurgerIcon open={menuOpen} />
-						</button>
+		<header className="fixed top-3 left-1/2 z-50 w-[calc(100%-1.5rem)] -translate-x-1/2 sm:w-[94vw] lg:w-[80vw] lg:max-w-[800px]">
+			<div className="ff-menu-window px-3 sm:px-6">
+				<nav className="grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 lg:grid-cols-[1fr_auto_1fr] lg:gap-5" aria-label="Navigation principale">
+					<div className="hidden min-w-0 items-center justify-start lg:flex">
 						<CurtainLink
 							href={menuLinks[0].href}
 							aria-current={isActive(menuLinks[0].id) ? "page" : undefined}
@@ -83,13 +76,23 @@ export function Header() {
 
 					<CurtainLink
 						href="/"
-						className="text-podcast-slider-title whitespace-nowrap text-center font-black tracking-tight text-primary-200 uppercase [text-shadow:0_2px_3px_rgb(11_22_23_/_0.75)]"
+						className="min-w-0 text-[clamp(0.875rem,4vw,1.25rem)] font-black tracking-tight text-primary-200 uppercase [text-shadow:0_2px_3px_rgb(11_22_23_/_0.75)] sm:text-podcast-slider-title lg:whitespace-nowrap lg:text-center"
 						onClick={closeMenu}
 					>
 						Le Tomberry Musical
 					</CurtainLink>
 
-					<div className="flex min-w-0 items-center justify-end">
+					<button
+						type="button"
+						className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-primary-200 transition-colors hover:bg-secondary-100/12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 lg:hidden"
+						aria-expanded={menuOpen}
+						aria-controls="mobile-nav"
+						aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+						onClick={toggleMenu}
+					>
+						<BurgerIcon open={menuOpen} />
+					</button>
+					<div className="hidden min-w-0 items-center justify-end lg:flex">
 						<CurtainLink
 							href={menuLinks[1].href}
 							aria-current={isActive(menuLinks[1].id) ? "page" : undefined}
@@ -104,7 +107,7 @@ export function Header() {
 					{menuOpen && (
 						<motion.nav
 							id="mobile-nav"
-							className="ff-menu-window absolute top-full left-1/2 mt-2 flex w-[min(22rem,94vw)] -translate-x-1/2 flex-col items-stretch p-2"
+							className="flex flex-col items-stretch pb-2 lg:hidden"
 							initial={{ opacity: 0, y: -8, scale: 0.96 }}
 							animate={{ opacity: 1, y: 0, scale: 1 }}
 							exit={{ opacity: 0, y: -6, scale: 0.98 }}

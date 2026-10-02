@@ -61,7 +61,6 @@ function drawBottomOverlay(
 
 export function buildPodcastTileTexture(
     coverTexture: Texture,
-    _canPlay: boolean,
 ): Texture {
     const canvas = document.createElement("canvas");
     canvas.width = TILE_TEXTURE_WIDTH;

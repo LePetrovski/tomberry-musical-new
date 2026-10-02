@@ -1,12 +1,10 @@
-import { Center, RoundedBox, Text3D } from "@react-three/drei";
+import { Center, Text3D } from "@react-three/drei";
 import { memo, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Mesh } from "three";
 import {
-    EPISODE_BADGE_BG_COLOR,
     EPISODE_BADGE_BG_DEPTH,
     EPISODE_BADGE_BG_PAD_X,
     EPISODE_BADGE_BG_PAD_Y,
-    EPISODE_BADGE_BG_RADIUS,
     EPISODE_BADGE_FONT,
     EPISODE_BADGE_HEIGHT,
     EPISODE_BADGE_PADDING_X,
@@ -80,8 +78,6 @@ function EpisodeBadgeComponent({ episodeNumber, tileScale }: Props) {
     }, [badgeH, bgSize, safeTileScale]);
 
     const bgDepth = EPISODE_BADGE_BG_DEPTH * safeTileScale;
-    const bgRadius = EPISODE_BADGE_BG_RADIUS * safeTileScale;
-
     return (
         <group position={[x, y, EPISODE_BADGE_Z]} rotation={TILE_OVERLAY_ROTATION}>
 

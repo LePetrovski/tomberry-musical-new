@@ -1,16 +1,17 @@
 import type { SoundCloudPlayerState } from "@/components/audio/SoundCloudPlayerContext";
 import { usePageCurtains } from "@/components/navigation/PageCurtainsProvider";
+import { useSceneLoad } from "@/components/initial-loader/SceneLoadProvider";
 import { textureProxyUrlFor } from "@/lib/sanity/image";
-import { getSoundCloudEmbedUrl } from "@/lib/soundcloud";
 import { useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Object3D, Texture } from "three";
+import { Object3D, PlaneGeometry, Texture } from "three";
 import {
     PLACEHOLDER_TEXTURE,
     TUBE_REPEAT_COUNT,
 } from "./constants";
 import { PodcastTile } from "./PodcastTile";
+import { TileFrameProvider, type TileFrameUpdate } from "./TileFrameScheduler";
 import type { ImageTubeProps } from "./types";
 import { disposeTileMaterialCache } from "./utils/tile-image-material";
 import { buildPodcastTileTexture } from "./utils/tile-texture";
@@ -35,7 +36,14 @@ export function ImageTube({
     onPlayPodcast,
 }: ImageTubeProps) {
     const { navigate } = usePageCurtains();
+    const { reportReady } = useSceneLoad();
     const groupRef = useRef<Object3D>(null);
+    const readyFrameRef = useRef<number | null>(null);
+    const activeTileUpdates = useRef(new Set<TileFrameUpdate>());
+    const tileFrameScheduler = useMemo(() => ({
+        request: (update: TileFrameUpdate) => { activeTileUpdates.current.add(update); },
+        cancel: (update: TileFrameUpdate) => { activeTileUpdates.current.delete(update); },
+    }), []);
     const rowGroupRefs = useRef<Array<Object3D | null>>([]);
     const scrollCurrent = useRef(0);
     const [tileTextures, setTileTextures] = useState<Texture[]>([]);
@@ -58,12 +66,11 @@ export function ImageTube({
     const loadedTextures = useTexture(
         imageUrls.length > 0 ? imageUrls : [PLACEHOLDER_TEXTURE],
     );
+    const planeGeometry = useMemo(() => new PlaneGeometry(1, 1), []);
 
     const playAvailability = useMemo(
         () =>
-            podcasts.map((podcast) =>
-                Boolean(getSoundCloudEmbedUrl(podcast.soundcloud, podcast.embedSoundcloud)),
-            ),
+            podcasts.map((podcast) => Boolean(podcast.embedUrl)),
         [podcasts],
     );
 
@@ -72,10 +79,7 @@ export function ImageTube({
             podcasts.map((podcast, index) => ({
                 canPlay: playAvailability[index],
                 onPlay: () => {
-                    const embedUrl = getSoundCloudEmbedUrl(
-                        podcast.soundcloud,
-                        podcast.embedSoundcloud,
-                    );
+                    const embedUrl = podcast.embedUrl;
                     if (!embedUrl) return;
 
                     const player: SoundCloudPlayerState = {
@@ -94,6 +98,8 @@ export function ImageTube({
 
     useEffect(() => {
         if (podcasts.length === 0) {
+            // The decoded texture set is synchronized with the asynchronous Three.js loader.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTileTextures([]);
             return;
         }
@@ -102,8 +108,8 @@ export function ImageTube({
             ? loadedTextures
             : [loadedTextures];
 
-        const built = podcasts.map((podcast, index) =>
-            buildPodcastTileTexture(coverTextures[index], playAvailability[index]),
+        const built = podcasts.map((_, index) =>
+            buildPodcastTileTexture(coverTextures[index]),
         );
 
         setTileTextures(built);
@@ -112,7 +118,12 @@ export function ImageTube({
             built.forEach((texture) => texture.dispose());
             disposeTileMaterialCache();
         };
-    }, [loadedTextures, playAvailability, podcasts]);
+    }, [loadedTextures, podcasts]);
+
+    useEffect(() => () => {
+        if (readyFrameRef.current !== null) cancelAnimationFrame(readyFrameRef.current);
+        planeGeometry.dispose();
+    }, [planeGeometry]);
 
     const loopHeight = rows * ySpacing;
     const repeatCount = TUBE_REPEAT_COUNT;
@@ -140,6 +151,15 @@ export function ImageTube({
     }, [rows, totalRows, ySpacing]);
 
     useFrame((_state, dt) => {
+        if (readyFrameRef.current === null && tileTextures.length === podcasts.length) {
+            // useFrame runs just before drawing; the next browser frame sees a complete scene.
+            readyFrameRef.current = requestAnimationFrame(reportReady);
+        }
+
+        for (const update of activeTileUpdates.current) {
+            if (!update(dt)) activeTileUpdates.current.delete(update);
+        }
+
         scrollCurrent.current += (scrollTargetRef.current - scrollCurrent.current) * 0.12;
 
         if (scrollCurrent.current > loopHeight / 2) {
@@ -178,6 +198,7 @@ export function ImageTube({
     if (podcasts.length === 0 || tileTextures.length !== podcasts.length) return null;
 
     return (
+        <TileFrameProvider scheduler={tileFrameScheduler}>
         <group ref={groupRef}>
             {rowPositions.map(({ rowIndex, y, baseRow, rowOffset }) => (
                 <group
@@ -199,6 +220,7 @@ export function ImageTube({
                         return (
                             <group key={col} position={[x, 0, z]} rotation={[0, ry, 0]}>
                                 <PodcastTile
+                                    planeGeometry={planeGeometry}
                                     tileTexture={tileTextures[podcastIndex]}
                                     tileScale={tileScale}
                                     title={podcast.title}
@@ -216,5 +238,6 @@ export function ImageTube({
                 </group>
             ))}
         </group>
+        </TileFrameProvider>
     );
 }

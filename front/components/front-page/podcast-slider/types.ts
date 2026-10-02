@@ -1,9 +1,9 @@
 import type { ThreeEvent } from "@react-three/fiber";
 import type { SoundCloudPlayerState } from "@/components/audio/SoundCloudPlayerContext";
-import type { PodcastPreview } from "@/lib/sanity/types";
+import type { HomePodcast } from "@/lib/sanity/types";
 
 export type PodcastSliderProps = {
-  podcasts: PodcastPreview[];
+  podcasts: HomePodcast[];
 };
 
 export type TileButtonHover = "play" | "detail" | null;
@@ -22,7 +22,7 @@ export type ImageTubeProps = TileHoverHandlers & {
   rotationSpeedScaleTargetRef: React.MutableRefObject<number>;
   rotationSpeedScaleLerpRef: React.MutableRefObject<number>;
   baseSpeedRef: React.MutableRefObject<number>;
-  podcasts: PodcastPreview[];
+  podcasts: HomePodcast[];
   rows: number;
   cols: number;
   tileScale: number;
