@@ -11,6 +11,28 @@
     cursor: default;
 }
 
+:root {
+    --cursor-hand: url("/cursor.svg") 49 7, pointer;
+}
+
+:where(
+    a[href],
+    button,
+    summary,
+    select,
+    label[for],
+    input[type="button"],
+    input[type="submit"],
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="range"],
+    [role="button"],
+    [role="link"],
+    .cursor-pointer
+):not(:disabled):not([aria-disabled="true"]) {
+    cursor: var(--cursor-hand);
+}
+
 .crt-glass {
     border: 1px solid var(--surface-border);
     background: var(--surface-glass);
@@ -84,9 +106,8 @@
     left: 0;
     top: 50%;
     width: 2rem;
-    height: 2rem;
-    /* CC0 menu cursor by andreyin: https://opengameart.org/content/hand-cursor */
-    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAB3RJTUUH4goVCxoEATp+BgAAABd0RVh0U29mdHdhcmUAR0xEUE5HIHZlciAzLjRxhaThAAAACHRwTkdHTEQzAAAAAEqAKR8AAAAEZ0FNQQAAsY8L/GEFAAAABmJLR0QAwADAAMAanQdUAAAABnRSTlMAwADAAMCNeLu6AAAAuklEQVR4nO3UTQ6FIAwEYA7kXb0Si57IE2hC0kwobSngQsOsXl50PvlN+eWkDWzgb8DhZQTA908vklEBLCWiqy/MNAAcpvzYHuN5RgWwkX+XUoL0tKsAP6dNC1aE14CBMo/axxZjZBdVgDEPOFfNxi8A+I9rOEBVtxiQdSQyBcjttGwEpaUJVKsSBuRp4tLmYQ4A1WlEQEtgm+aOy25gAbJ9XUsg2m4BPCa5Htq1EwaQsW+0KWAyG3BzA6SGqfd+0z7EAAAAAElFTkSuQmCC") center / 2rem 2rem no-repeat;
+    height: 1.3125rem;
+    background: url("/cursor.svg") center / contain no-repeat;
     opacity: 0;
     transform: translate(-0.3rem, -50%);
     filter: drop-shadow(0 0 5px rgb(195 216 217 / 0.9));

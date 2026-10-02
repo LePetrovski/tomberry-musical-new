@@ -100,7 +100,7 @@ export function useSliderInteractions({
   const setTileButtonHover = useCallback(
     (buttonHover: TileButtonHover) => {
       hoveredButtonRef.current = buttonHover;
-      setSceneCursor(buttonHover ? "pointer" : "default");
+      setSceneCursor(buttonHover ? 'url("/cursor.svg") 49 7, pointer' : "default");
     },
     [setSceneCursor],
   );
