@@ -15,13 +15,13 @@ export function Breadcrumbs({ items, className }: Props) {
   return (
     <>
         <JsonLd data={breadcrumbListSchema(items)} />
-        <nav aria-label="Fil d'Ariane" className={className + " crt-glass w-fit rounded-xl px-3 py-1.5"}>
+        <nav aria-label="Fil d'Ariane" className={className + " crt-glass w-fit max-w-full rounded-xl px-3 py-1.5"}>
             <ol className="flex flex-wrap items-center gap-1.5 text-sm text-secondary-600">
             {items.map((item, index) => {
                 const isLast = index === items.length - 1;
 
                 return (
-                <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
+                <li key={`${item.label}-${index}`} className="flex min-w-0 max-w-full items-center gap-1.5 [overflow-wrap:anywhere]">
                     {index > 0 && (
                     <span aria-hidden="true" className="text-secondary-300">
                         /

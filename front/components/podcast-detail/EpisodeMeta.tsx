@@ -39,9 +39,9 @@ export function EpisodeMeta({ podcast }: Props) {
         </div>
       )}
 
-      <h1 className="ff-archive-title mt-6 text-4xl! font-semibold leading-[1.05] tracking-[-0.035em] sm:text-5xl!">{podcast.title}</h1>
+      <h1 className="ff-archive-title mt-6 text-4xl! font-semibold leading-[1.05] tracking-[-0.035em] [overflow-wrap:anywhere] sm:text-5xl!">{podcast.title}</h1>
       <p
-        className="ff-archive-copy mt-6 text-lg! leading-8"
+        className="ff-archive-copy mt-6 text-lg! leading-8 [overflow-wrap:anywhere]"
         dangerouslySetInnerHTML={{ __html: podcast.description }}
       />
     </header>

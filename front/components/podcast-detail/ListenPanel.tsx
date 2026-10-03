@@ -150,10 +150,10 @@ export function ListenPanel({ podcast }: Props) {
   }
 
   return (
-    <Card className="ff-menu-window ff-archive-window min-w-0 gap-0 overflow-hidden rounded-2xl p-5">
-      <aside className="space-y-6">
+    <Card className="ff-menu-window ff-archive-window min-w-0 max-w-full gap-0 overflow-hidden rounded-2xl p-5">
+      <aside className="min-w-0 space-y-6">
       {inlinePlayers.length > 0 && activePlayer && (
-        <section>
+        <section className="min-w-0">
           <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.16em]">Votre écoute</p>
           <h2 className="ff-archive-title mb-4 mt-1 text-2xl! font-semibold">Écouter ici</h2>
           <PlayerTabs
@@ -171,7 +171,7 @@ export function ListenPanel({ podcast }: Props) {
       )}
 
       {externalLinks.length > 0 && (
-        <section>
+        <section className="min-w-0">
           <Separator className="mb-6 bg-primary-200/20" />
           <h2 className="mb-3 text-sm font-semibold text-primary-200">Écouter ailleurs</h2>
           <div className="flex flex-wrap gap-2">
@@ -181,7 +181,7 @@ export function ListenPanel({ podcast }: Props) {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ff-command-button inline-flex rounded-md px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
+                className="ff-command-button inline-flex max-w-full rounded-md px-4 py-2 text-sm font-medium [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200"
               >
                 {link.label}
               </a>

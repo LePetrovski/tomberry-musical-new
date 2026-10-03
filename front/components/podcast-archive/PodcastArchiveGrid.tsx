@@ -29,8 +29,8 @@ export function PodcastArchiveGrid({ podcasts, hasActiveFilters, displayMode }: 
         layout
         className={
           displayMode === "grid"
-            ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3"
-            : "grid gap-4"
+            ? "grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3"
+            : "grid min-w-0 gap-4"
         }
       >
         <AnimatePresence initial={false} mode="popLayout">
@@ -38,6 +38,7 @@ export function PodcastArchiveGrid({ podcasts, hasActiveFilters, displayMode }: 
             <motion.div
               layout
               key={podcast._id}
+              className="min-w-0 max-w-full"
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
