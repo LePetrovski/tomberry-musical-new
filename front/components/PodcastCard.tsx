@@ -8,7 +8,7 @@ import { urlFor } from "@/lib/sanity/image";
 
 type Props = {
   podcast: PodcastPreview;
-  variant?: "grid" | "list" | "compact";
+  variant?: "grid" | "list";
 };
 
 function formatDate(date: string) {
@@ -21,19 +21,18 @@ function formatDate(date: string) {
 
 export function PodcastCard({ podcast, variant = "grid" }: Props) {
   const isList = variant === "list";
-  const isCompact = variant === "compact";
 
   return (
-    <Card className={`ff-content-card group h-full gap-0 overflow-hidden rounded-2xl py-0 ${isCompact ? "ff-compact-card" : ""}`} data-view={variant}>
-      <article className="h-full">
+    <Card className="ff-content-card group h-full min-w-0 w-full max-w-full gap-0 overflow-hidden rounded-2xl py-0" data-view={variant}>
+      <article className="h-full min-w-0 w-full">
         <CurtainLink
           href={`/podcasts/${podcast.slug}`}
-          className={`flex h-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 ${
+          className={`flex h-full min-w-0 w-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 ${
             isList ? "flex-col sm:flex-row" : "flex-col"
           }`}
         >
           <div
-            className={`ff-card-image relative shrink-0 overflow-hidden bg-secondary-100 ${
+            className={`ff-card-image relative w-full shrink-0 overflow-hidden bg-secondary-100 ${
               isList ? "aspect-16/10 sm:aspect-auto sm:min-h-56 sm:w-72 lg:w-80" : "aspect-16/10"
             }`}
           >
@@ -56,33 +55,33 @@ export function PodcastCard({ podcast, variant = "grid" }: Props) {
               </div>
             )}
             {podcast.episodeNumber ? (
-              <Badge className="absolute left-4 top-4 border-0 bg-secondary-900 px-3 py-1 text-primary-500 shadow-sm">
+              <Badge className="absolute top-4 left-4 h-auto max-w-[calc(100%-2rem)] shrink min-h-5 whitespace-normal border-0 bg-secondary-900 px-3 py-1 text-left text-primary-500 shadow-sm [overflow-wrap:anywhere]">
                 Épisode {podcast.episodeNumber}
               </Badge>
             ) : null}
           </div>
 
-          <div className={`flex min-w-0 flex-1 flex-col ${isCompact ? "p-4" : "p-4.5 sm:p-5"}`}>
+          <div className="flex min-w-0 flex-1 flex-col p-4.5 sm:p-5">
             <div className="ff-card-meta flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-secondary-600">
-              <span className="inline-flex items-center gap-1.5">
-                <CalendarDays aria-hidden="true" className="size-3.5" />
+              <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 [overflow-wrap:anywhere]">
+                <CalendarDays aria-hidden="true" className="size-3.5 shrink-0" />
                 {formatDate(podcast.publishedAt)}
               </span>
               {podcast.duration ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <Clock3 aria-hidden="true" className="size-3.5" />
+                <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 [overflow-wrap:anywhere]">
+                  <Clock3 aria-hidden="true" className="size-3.5 shrink-0" />
                   {podcast.duration}
                 </span>
               ) : null}
             </div>
 
-            {!isCompact && podcast.categories && podcast.categories.length > 0 ? (
+            {podcast.categories && podcast.categories.length > 0 ? (
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {podcast.categories.map((category) => (
                   <Badge
                     key={category._id}
                     variant="secondary"
-                    className="border-0 bg-secondary-500/10 text-secondary-900"
+                    className="h-auto min-h-5 max-w-full shrink whitespace-normal border-0 bg-secondary-500/10 text-left text-secondary-900 [overflow-wrap:anywhere]"
                   >
                     {category.title}
                   </Badge>
@@ -90,29 +89,18 @@ export function PodcastCard({ podcast, variant = "grid" }: Props) {
               </div>
             ) : null}
 
-            {isCompact && podcast.categories?.[0] ? (
-              <div className="mt-3">
-                <span className="ff-compact-theme inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.12em]">
-                  <span aria-hidden="true" className="ff-compact-theme-mark" />
-                  <span className="truncate">Thème · {podcast.categories[0].title}</span>
-                </span>
-              </div>
-            ) : null}
-
-            <h2 className={`${isCompact ? "mt-2.5 text-lg! line-clamp-2" : "mt-3.5 text-xl!"} mb-0! font-semibold leading-tight text-secondary-900 transition-colors group-hover:text-secondary-700`}>
+            <h2 className="mt-3.5 mb-0! text-xl! font-semibold leading-tight text-secondary-900 transition-colors [overflow-wrap:anywhere] group-hover:text-secondary-700">
               {podcast.title}
             </h2>
 
-            {!isCompact ? (
-              <p
-                className={`mt-2.5 text-sm! leading-6 text-secondary-600 ${isList ? "" : "line-clamp-3"}`}
-                dangerouslySetInnerHTML={{ __html: podcast.description }}
-              />
-            ) : null}
+            <p
+              className={`mt-2.5 min-w-0 text-sm! leading-6 text-secondary-600 [overflow-wrap:anywhere] ${isList ? "" : "line-clamp-3"}`}
+              dangerouslySetInnerHTML={{ __html: podcast.description }}
+            />
 
-            <span className={`ff-card-action inline-flex items-center gap-1.5 text-sm font-semibold ${isCompact ? "mt-auto pt-4" : "mt-4"}`}>
-              {isCompact ? "Voir l’épisode" : "Découvrir l’épisode"}
-              <ArrowUpRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
+            <span className="ff-card-action mt-4 inline-flex max-w-full flex-wrap items-center gap-1.5 text-sm font-semibold">
+              Découvrir l’épisode
+              <ArrowUpRight aria-hidden="true" className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
             </span>
           </div>
         </CurtainLink>

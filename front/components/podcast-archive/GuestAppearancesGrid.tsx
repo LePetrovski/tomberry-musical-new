@@ -39,26 +39,27 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
     <LayoutGroup id="guest-appearances">
       <motion.div
         layout
-        className={displayMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "grid gap-4"}
+        className={displayMode === "grid" ? "grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3" : "grid min-w-0 gap-4"}
       >
         <AnimatePresence initial={false} mode="popLayout">
           {appearances.map((appearance, index) => (
             <motion.div
               layout
               key={appearance._id}
+              className="min-w-0 max-w-full"
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.2, delay: shouldReduceMotion ? 0 : Math.min(index, 8) * 0.025 }}
             >
-              <Card className="ff-content-card group h-full gap-0 overflow-hidden rounded-2xl py-0" data-view={displayMode}>
+              <Card className="ff-content-card group h-full min-w-0 w-full max-w-full gap-0 overflow-hidden rounded-2xl py-0" data-view={displayMode}>
                 <a
                   href={appearance.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex h-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 ${displayMode === "list" ? "flex-col sm:flex-row" : "flex-col"}`}
+                  className={`flex h-full min-w-0 w-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 ${displayMode === "list" ? "flex-col sm:flex-row" : "flex-col"}`}
                 >
-                  <div className={`ff-card-image relative shrink-0 overflow-hidden bg-secondary-100 ${displayMode === "list" ? "aspect-16/10 sm:aspect-auto sm:min-h-52 sm:w-72" : "aspect-16/10"}`}>
+                  <div className={`ff-card-image relative w-full shrink-0 overflow-hidden bg-secondary-100 ${displayMode === "list" ? "aspect-16/10 sm:aspect-auto sm:min-h-52 sm:w-72" : "aspect-16/10"}`}>
                     {appearance.coverImage ? (
                       <Image
                         src={urlFor(appearance.coverImage).width(960).height(600).url()}
@@ -73,8 +74,8 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col p-4.5 sm:p-5">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge className="border-0 bg-secondary-900 text-primary-500">{appearance.showName}</Badge>
-                      {appearance.platform ? <Badge variant="secondary" className="border-0 bg-secondary-500/10 text-secondary-900">{appearance.platform}</Badge> : null}
+                      <Badge className="h-auto min-h-5 max-w-full shrink whitespace-normal border-0 bg-secondary-900 text-left text-primary-500 [overflow-wrap:anywhere]">{appearance.showName}</Badge>
+                      {appearance.platform ? <Badge variant="secondary" className="h-auto min-h-5 max-w-full shrink whitespace-normal border-0 bg-secondary-500/10 text-left text-secondary-900 [overflow-wrap:anywhere]">{appearance.platform}</Badge> : null}
                     </div>
                     {appearance.publishedAt ? (
                       <span className="ff-card-meta mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-secondary-600">
@@ -82,8 +83,8 @@ export function GuestAppearancesGrid({ appearances, hasActiveFilters, displayMod
                         {formatDate(appearance.publishedAt)}
                       </span>
                     ) : null}
-                    <h3 className="mt-3 text-xl! font-semibold leading-tight text-secondary-900 group-hover:text-secondary-700">{appearance.episodeTitle}</h3>
-                    <span className="ff-card-action mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold">
+                    <h3 className="mt-3 text-xl! font-semibold leading-tight text-secondary-900 [overflow-wrap:anywhere] group-hover:text-secondary-700">{appearance.episodeTitle}</h3>
+                    <span className="ff-card-action mt-auto inline-flex max-w-full flex-wrap items-center gap-1.5 pt-5 text-sm font-semibold">
                       Écouter l&apos;apparition
                       <ArrowUpRight aria-hidden="true" className="size-4" />
                     </span>

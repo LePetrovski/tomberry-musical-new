@@ -73,7 +73,7 @@ export default async function PodcastDetailPage({ params }: Props) {
 
     return (
         <PageWrapper background="cross" width="wide">
-            <article>
+            <article className="min-w-0">
                 <JsonLd data={podcastEpisodeSchema(podcast, ogImage)} />
                 <Breadcrumbs
                     className="ff-menu-window ff-archive-window ff-archive-breadcrumb mb-6"
@@ -91,18 +91,18 @@ export default async function PodcastDetailPage({ params }: Props) {
                     <EpisodeMeta podcast={podcast} />
                 </PodcastHero>
 
-                <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,.65fr)] lg:items-start">
-                    <div className="space-y-4 lg:sticky lg:top-28 lg:col-start-2 lg:row-start-2">
+                <div className="mt-8 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,.65fr)] lg:items-start">
+                    <div className="min-w-0 space-y-4 lg:sticky lg:top-28 lg:col-start-2 lg:row-start-2">
                         <ListenPanel podcast={podcast} />
                         <PurchaseCTA purchaseLinks={podcast.purchaseLinks} />
                         <ReviewCTA reviewLinks={siteSettings?.reviewLinks} />
                     </div>
 
                     {podcast.body && podcast.body.length > 0 && (
-                        <section className="ff-menu-window ff-archive-window rounded-2xl p-4 sm:p-6 lg:col-start-1 lg:row-start-2">
+                        <section className="ff-menu-window ff-archive-window min-w-0 rounded-2xl p-4 sm:p-6 lg:col-start-1 lg:row-start-2">
                             <p className="ff-archive-kicker text-sm font-semibold uppercase tracking-[0.18em]">Pour aller plus loin</p>
                             <h2 className="ff-archive-title mt-2 text-3xl! font-semibold tracking-tight">Notes de l&apos;épisode</h2>
-                            <div className="ff-reading-panel prose prose-zinc mt-6 max-w-none rounded-xl p-5 text-secondary-800 sm:p-7">
+                            <div className="ff-reading-panel prose prose-zinc mt-6 min-w-0 max-w-none rounded-xl p-5 text-secondary-800 [overflow-wrap:anywhere] sm:p-7">
                                 <RichText value={podcast.body} />
                             </div>
                         </section>

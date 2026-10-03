@@ -103,9 +103,9 @@ export default async function PodcastsPage() {
           </header>
         </div>
 
-        <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-4 grid min-w-0 gap-4 lg:grid-cols-2 xl:grid-cols-4">
           {latestEpisode ? (
-            <div className="xl:col-span-2">
+            <div className="min-w-0 xl:col-span-2">
               <LatestEpisodeCard podcast={latestEpisode} />
             </div>
           ) : null}

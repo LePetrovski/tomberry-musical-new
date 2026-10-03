@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Music2 } from "lucide-react";
+import { AudioLines, CircleAlert, ExternalLink, LoaderCircle, Music2 } from "lucide-react";
 import { useId } from "react";
 import { useAudioPlayer } from "@/components/audio/useAudioPlayer";
 import type { CompilationTrack } from "@/lib/sanity/types";
@@ -79,26 +79,36 @@ export function PodcastMp3Player({
 	const activeTrackIndex = preparedTracks.findLastIndex(
 		(track) => currentTime >= track.startSeconds,
 	);
+	const playbackStatus = status === "loading" ? "Chargement…" : status === "error" ? "Erreur de lecture" : isPlaying ? "En lecture" : "MP3 prêt";
 
 	return (
-		<div className="ff-player-console rounded-xl p-4 sm:p-5">
-			<div className="mb-5 flex min-w-0 items-start justify-between gap-4">
-				<div className="min-w-0">
+		<div className="ff-player-console min-w-0 max-w-full rounded-xl p-4 sm:p-5">
+			<div className="mb-5 flex min-w-0 items-start gap-3">
+				<div className="min-w-0 flex-1">
 					<p className="text-xs font-semibold tracking-[0.14em] text-secondary-500 uppercase">
 						{contentLabel}
 					</p>
-					<p className="mt-1 truncate text-sm font-medium text-secondary-900" title={title}>
+					<p className="mt-1 line-clamp-2 text-sm font-medium text-secondary-900 [overflow-wrap:anywhere]" title={title}>
 						{title}
 					</p>
 				</div>
-				<span className="shrink-0 text-xs text-secondary-600" role="status" aria-live="polite">
-					{status === "loading" ? "Chargement…" : isPlaying ? "En lecture" : "MP3"}
+				<span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-secondary-500/25 bg-white/40 text-secondary-700" aria-hidden="true" title={playbackStatus}>
+					{status === "loading" ? (
+						<LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" />
+					) : status === "error" ? (
+						<CircleAlert className="size-4" />
+					) : isPlaying ? (
+						<AudioLines className="size-4" />
+					) : (
+						<Music2 className="size-4" />
+					)}
 				</span>
+				<span className="sr-only" role="status" aria-live="polite">{playbackStatus}</span>
 			</div>
 
 			{status === "error" ? (
 				<div className="ff-player-error rounded-lg p-4" role="alert">
-					<p className="text-sm leading-6 text-secondary-800">
+					<p className="text-sm leading-6 text-secondary-800 [overflow-wrap:anywhere]">
 						{errorMessage ?? "Impossible de charger ce fichier audio."}
 					</p>
 					<button
@@ -160,7 +170,7 @@ export function PodcastMp3Player({
 								duration > 0 ? (currentTime / duration) * 100 : 0
 							}%, var(--color-secondary-100) 0%)`,
 						}}
-						className="audio-progress ff-player-progress block h-3 w-full cursor-pointer appearance-none rounded-full disabled:cursor-not-allowed disabled:opacity-40"
+						className="audio-progress ff-player-progress block h-3 min-w-0 w-full cursor-pointer appearance-none rounded-full disabled:cursor-not-allowed disabled:opacity-40"
 					/>
 					<div className="mt-1 flex justify-between text-xs tabular-nums text-secondary-600">
 						<span>{formatTime(currentTime)}</span>
@@ -249,10 +259,10 @@ export function PodcastMp3Player({
 											href={track.externalLink.url}
 											target="_blank"
 											rel="noopener noreferrer"
-											className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold text-secondary-700 underline-offset-4 hover:text-secondary-900 hover:underline"
+											className="inline-flex min-w-0 w-fit max-w-full items-center gap-1.5 text-xs font-semibold text-secondary-700 underline-offset-4 [overflow-wrap:anywhere] hover:text-secondary-900 hover:underline"
 										>
 											{track.externalLink.label}
-											<ExternalLink aria-hidden="true" className="size-3.5" />
+											<ExternalLink aria-hidden="true" className="size-3.5 shrink-0" />
 										</a>
 									) : null}
 								</li>

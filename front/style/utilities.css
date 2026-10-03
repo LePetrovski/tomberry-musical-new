@@ -517,30 +517,12 @@
     transform: translateY(-2px);
 }
 
-.ff-compact-card .ff-card-meta {
-    gap: 0.6rem 0.9rem;
-    padding-bottom: 0.55rem;
-}
-
-.ff-compact-card .ff-card-image {
-    aspect-ratio: 16 / 9;
-}
-
 .ff-compact-theme {
     border: 1px solid rgb(20 55 73 / 0.2);
     background:
         linear-gradient(90deg, rgb(100 159 168 / 0.18), rgb(229 239 239 / 0.48));
     color: rgb(20 55 73 / 0.86);
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.68);
-}
-
-.ff-compact-theme-mark {
-    width: 0.38rem;
-    height: 0.38rem;
-    flex: 0 0 auto;
-    transform: rotate(45deg);
-    background: rgb(49 112 126);
-    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.8);
 }
 
 .ff-card-image {
