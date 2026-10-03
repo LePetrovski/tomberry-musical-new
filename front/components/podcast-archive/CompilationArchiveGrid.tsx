@@ -27,13 +27,14 @@ export function CompilationArchiveGrid({ compilations, hasActiveFilters, display
     <LayoutGroup id="compilation-archive">
       <motion.div
         layout
-        className={displayMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "grid gap-4"}
+        className={displayMode === "grid" ? "grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3" : "grid min-w-0 gap-4"}
       >
         <AnimatePresence initial={false} mode="popLayout">
           {compilations.map((compilation, index) => (
             <motion.div
               layout
               key={compilation._id}
+              className="min-w-0 max-w-full"
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}

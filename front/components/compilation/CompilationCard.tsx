@@ -23,16 +23,16 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
   const isList = variant === "list";
 
   return (
-    <Card className="ff-content-card group h-full gap-0 overflow-hidden rounded-2xl py-0" data-view={variant}>
-      <article className="h-full">
+    <Card className="ff-content-card group h-full min-w-0 w-full max-w-full gap-0 overflow-hidden rounded-2xl py-0" data-view={variant}>
+      <article className="h-full min-w-0 w-full">
         <CurtainLink
           href={`/compilations/${compilation.slug}`}
-          className={`flex h-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 ${
+          className={`flex h-full min-w-0 w-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-secondary-500 ${
             isList ? "flex-col sm:flex-row" : "flex-col"
           }`}
         >
           <div
-            className={`ff-card-image relative shrink-0 overflow-hidden bg-secondary-100 ${
+            className={`ff-card-image relative w-full shrink-0 overflow-hidden bg-secondary-100 ${
               isList ? "aspect-square sm:w-64" : "aspect-square"
             }`}
           >
@@ -63,24 +63,24 @@ export function CompilationCard({ compilation, variant = "grid" }: Props) {
                 {compilation.tracks.length} piste{compilation.tracks.length === 1 ? "" : "s"}
               </span>
               {compilation.curatorName ? (
-                <span className="inline-flex items-center gap-1.5">
-                  <UserRound aria-hidden="true" className="size-3.5" />
+                <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 [overflow-wrap:anywhere]">
+                  <UserRound aria-hidden="true" className="size-3.5 shrink-0" />
                   {compilation.curatorName}
                 </span>
               ) : null}
             </div>
 
-            <h3 className="mt-3.5 mb-0! text-xl! font-semibold leading-tight text-secondary-900 transition-colors group-hover:text-secondary-700">
+            <h3 className="mt-3.5 mb-0! text-xl! font-semibold leading-tight text-secondary-900 transition-colors [overflow-wrap:anywhere] group-hover:text-secondary-700">
               {compilation.title}
             </h3>
 
             {compilation.introText ? (
-              <p className={`mt-2.5 text-sm! leading-6 text-secondary-600 ${isList ? "" : "line-clamp-3"}`}>
+              <p className={`mt-2.5 text-sm! leading-6 text-secondary-600 [overflow-wrap:anywhere] ${isList ? "" : "line-clamp-3"}`}>
                 {compilation.introText}
               </p>
             ) : null}
 
-            <span className="ff-card-action mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold">
+            <span className="ff-card-action mt-auto inline-flex max-w-full flex-wrap items-center gap-1.5 pt-4 text-sm font-semibold">
               Écouter la compilation
               <ArrowUpRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
             </span>

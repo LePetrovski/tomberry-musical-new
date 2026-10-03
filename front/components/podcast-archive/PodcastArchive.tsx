@@ -100,7 +100,7 @@ function ArchiveResults({
   const remaining = Math.max(0, total - visibleCount);
 
   return (
-    <div>
+    <div className="min-w-0">
       {selectedView === "apparitions" ? (
         <GuestAppearancesGrid
           appearances={visibleAppearances}
@@ -189,7 +189,7 @@ export function PodcastArchive({ podcasts, categories, appearances, compilations
   const resultsKey = `${selectedView}-${selectedCategory}-${selectedSort}-${searchInput}-${displayMode}`;
 
   return (
-    <section aria-label="Archives des podcasts" className="mt-12">
+    <section aria-label="Archives des podcasts" className="mt-12 min-w-0">
       <div className="ff-menu-window ff-archive-window mb-5 flex flex-col gap-4 rounded-2xl p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
         <p className="ff-archive-kicker text-xs font-semibold uppercase tracking-[0.18em]">
           Tous les contenus
