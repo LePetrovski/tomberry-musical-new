@@ -60,7 +60,7 @@ function drawBottomOverlay(
 }
 
 export function buildPodcastTileTexture(
-    coverTexture: Texture,
+    coverTexture?: Texture,
 ): Texture {
     const canvas = document.createElement("canvas");
     canvas.width = TILE_TEXTURE_WIDTH;
@@ -79,7 +79,7 @@ export function buildPodcastTileTexture(
     ctx.save();
     clipRoundedRect(ctx, TILE_TEXTURE_WIDTH, TILE_TEXTURE_HEIGHT, TILE_BORDER_RADIUS);
 
-    const image = coverTexture.image as HTMLImageElement | undefined;
+    const image = coverTexture?.image as HTMLImageElement | undefined;
     const imageWidth = image?.naturalWidth || image?.width || 0;
     const imageHeight = image?.naturalHeight || image?.height || 0;
 

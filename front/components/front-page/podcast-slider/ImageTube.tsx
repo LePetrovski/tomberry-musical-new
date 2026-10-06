@@ -2,18 +2,19 @@ import type { SoundCloudPlayerState } from "@/components/audio/SoundCloudPlayerC
 import { usePageCurtains } from "@/components/navigation/PageCurtainsProvider";
 import { useSceneLoad } from "@/components/initial-loader/SceneLoadProvider";
 import { textureProxyUrlFor } from "@/lib/sanity/image";
-import { useTexture } from "@react-three/drei";
+import { Bvh } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Object3D, PlaneGeometry, Texture } from "three";
 import {
-    PLACEHOLDER_TEXTURE,
     TUBE_REPEAT_COUNT,
 } from "./constants";
 import { PodcastTile } from "./PodcastTile";
+import { ProgressiveCover } from "./ProgressiveCover";
+import { SceneAsset } from "./SceneAsset";
 import { TileFrameProvider, type TileFrameUpdate } from "./TileFrameScheduler";
 import type { ImageTubeProps } from "./types";
-import { disposeTileMaterialCache } from "./utils/tile-image-material";
+import { disposeTileImageMaterial } from "./utils/tile-image-material";
 import { buildPodcastTileTexture } from "./utils/tile-texture";
 
 export function ImageTube({
@@ -46,7 +47,20 @@ export function ImageTube({
     }), []);
     const rowGroupRefs = useRef<Array<Object3D | null>>([]);
     const scrollCurrent = useRef(0);
-    const [tileTextures, setTileTextures] = useState<Texture[]>([]);
+    const [placeholder, setPlaceholder] = useState<Texture | null>(null);
+    const [coverTextures, setCoverTextures] = useState<Map<string, Texture>>(() => new Map());
+
+    const registerCover = useCallback((url: string, texture: Texture) => {
+        setCoverTextures((current) => new Map(current).set(url, texture));
+        return () => {
+            setCoverTextures((current) => {
+                if (current.get(url) !== texture) return current;
+                const next = new Map(current);
+                next.delete(url);
+                return next;
+            });
+        };
+    }, []);
 
     useLayoutEffect(() => {
         scrollCurrent.current = scrollTargetRef.current;
@@ -58,13 +72,14 @@ export function ImageTube({
     const imageUrls = useMemo(
         () =>
             (podcasts ?? []).map((podcast) =>
-                podcast.coverImage ? textureProxyUrlFor(podcast.coverImage) : PLACEHOLDER_TEXTURE,
+                podcast.coverImage ? textureProxyUrlFor(podcast.coverImage) : null,
             ),
         [podcasts],
     );
 
-    const loadedTextures = useTexture(
-        imageUrls.length > 0 ? imageUrls : [PLACEHOLDER_TEXTURE],
+    const uniqueImageUrls = useMemo(
+        () => [...new Set(imageUrls.filter((url): url is string => url !== null))],
+        [imageUrls],
     );
     const planeGeometry = useMemo(() => new PlaneGeometry(1, 1), []);
 
@@ -97,31 +112,19 @@ export function ImageTube({
     );
 
     useEffect(() => {
-        if (podcasts.length === 0) {
-            // The decoded texture set is synchronized with the asynchronous Three.js loader.
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setTileTextures([]);
-            return;
-        }
-
-        const coverTextures = Array.isArray(loadedTextures)
-            ? loadedTextures
-            : [loadedTextures];
-
-        const built = podcasts.map((_, index) =>
-            buildPodcastTileTexture(coverTextures[index]),
-        );
-
-        setTileTextures(built);
-
+        const texture = buildPodcastTileTexture();
+        // Canvas textures are created only after the WebGL scene mounts.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setPlaceholder(texture);
         return () => {
-            built.forEach((texture) => texture.dispose());
-            disposeTileMaterialCache();
+            disposeTileImageMaterial(texture);
+            texture.dispose();
         };
-    }, [loadedTextures, podcasts]);
+    }, []);
 
     useEffect(() => () => {
         if (readyFrameRef.current !== null) cancelAnimationFrame(readyFrameRef.current);
+        readyFrameRef.current = null;
         planeGeometry.dispose();
     }, [planeGeometry]);
 
@@ -151,8 +154,8 @@ export function ImageTube({
     }, [rows, totalRows, ySpacing]);
 
     useFrame((_state, dt) => {
-        if (readyFrameRef.current === null && tileTextures.length === podcasts.length) {
-            // useFrame runs just before drawing; the next browser frame sees a complete scene.
+        if (readyFrameRef.current === null && (podcasts.length === 0 || (placeholder && groupRef.current))) {
+            // The next browser frame sees usable tiles, even while covers are pending.
             readyFrameRef.current = requestAnimationFrame(reportReady);
         }
 
@@ -195,10 +198,15 @@ export function ImageTube({
         }
     });
 
-    if (podcasts.length === 0 || tileTextures.length !== podcasts.length) return null;
-
     return (
         <TileFrameProvider scheduler={tileFrameScheduler}>
+        {uniqueImageUrls.map((url) => (
+            <SceneAsset key={url} label={`Cover ${url}`}>
+                <ProgressiveCover url={url} register={registerCover} />
+            </SceneAsset>
+        ))}
+        {podcasts.length > 0 && placeholder && (
+        <Bvh firstHitOnly>
         <group ref={groupRef}>
             {rowPositions.map(({ rowIndex, y, baseRow, rowOffset }) => (
                 <group
@@ -221,7 +229,7 @@ export function ImageTube({
                             <group key={col} position={[x, 0, z]} rotation={[0, ry, 0]}>
                                 <PodcastTile
                                     planeGeometry={planeGeometry}
-                                    tileTexture={tileTextures[podcastIndex]}
+                                    tileTexture={(imageUrls[podcastIndex] && coverTextures.get(imageUrls[podcastIndex])) || placeholder}
                                     tileScale={tileScale}
                                     title={podcast.title}
                                     episodeNumber={podcast.episodeNumber}
@@ -238,6 +246,8 @@ export function ImageTube({
                 </group>
             ))}
         </group>
+        </Bvh>
+        )}
         </TileFrameProvider>
     );
 }

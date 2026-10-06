@@ -57,9 +57,7 @@ export function getTileImageMaterial(map: Texture) {
     return material;
 }
 
-export function disposeTileMaterialCache() {
-    for (const material of tileMaterialCache.values()) {
-        material.dispose();
-    }
-    tileMaterialCache.clear();
+export function disposeTileImageMaterial(texture: Texture) {
+    tileMaterialCache.get(texture.uuid)?.dispose();
+    tileMaterialCache.delete(texture.uuid);
 }
