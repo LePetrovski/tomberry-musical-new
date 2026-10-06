@@ -12,6 +12,7 @@ import {
 import type { TileButtonHover, TileHoverHandlers } from "./types";
 import { getTileImageMaterial } from "./utils/tile-image-material";
 import { EpisodeBadge } from "./EpisodeBadge";
+import { SceneAsset } from "./SceneAsset";
 import { TileButton, getTileButtonLayout } from "./TileButton";
 import { useTileFrameScheduler } from "./TileFrameScheduler";
 
@@ -177,7 +178,9 @@ function PodcastTileComponent({
                 }}
             />
             {episodeNumber != null && (
-                <EpisodeBadge episodeNumber={episodeNumber} tileScale={safeTileScale} />
+                <SceneAsset label="Episode badge">
+                    <EpisodeBadge episodeNumber={episodeNumber} tileScale={safeTileScale} />
+                </SceneAsset>
             )}
         </group>
     );

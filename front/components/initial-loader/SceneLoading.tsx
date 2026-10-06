@@ -13,7 +13,7 @@ export function SceneLoadReporter() {
     const { isReady } = useSceneLoad();
 
     useEffect(() => {
-        if (!initialLoader?.isInitialLoading || !isReady) {
+        if (!initialLoader || !isReady) {
             return;
         }
 

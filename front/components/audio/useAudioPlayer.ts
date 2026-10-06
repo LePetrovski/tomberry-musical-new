@@ -54,7 +54,8 @@ export function useAudioPlayer(audioUrl: string) {
     const howl = howlRef.current;
     const soundId = soundIdRef.current;
 
-    if (!howl || soundId === null || !howl.playing(soundId)) {
+    // Howler silently pauses during seeks; playback events control this loop.
+    if (!howl || soundId === null) {
       animationFrameRef.current = null;
       return;
     }

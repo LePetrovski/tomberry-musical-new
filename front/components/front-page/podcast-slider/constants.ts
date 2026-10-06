@@ -55,6 +55,7 @@ export const TILE_IRIDESCENCE_IOR = 1.35;
 export const TILE_IRIDESCENCE_THICKNESS_MIN = 180;
 export const TILE_IRIDESCENCE_THICKNESS_MAX = 360;
 export const SLIDER_ENV_INTENSITY = 0.4;
+export const SLIDER_ENVIRONMENT_URL = "/environments/studio_small_03_1k.hdr";
 
 export const TUBE_RADIUS = 4;
 export const TUBE_Y_SPACING = 2.7;
