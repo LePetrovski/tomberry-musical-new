@@ -1,6 +1,6 @@
 "use client";
 
-import { Bvh, Environment } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import {
   SceneFailureFallback,
   SceneLoadReporter,
@@ -9,11 +9,12 @@ import {
 import { SceneLoadProvider } from "@/components/initial-loader/SceneLoadProvider";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useSoundCloudPlayer } from "@/components/audio/SoundCloudPlayerContext";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { PerspectiveCamera } from "three";
 import { CrystalScene } from "./CrystalScene";
 import {
   SLIDER_ENV_INTENSITY,
+  SLIDER_ENVIRONMENT_URL,
   TUBE_COLS,
   TUBE_REPEAT_COUNT,
   TUBE_ROWS,
@@ -23,6 +24,7 @@ import {
 import { useSliderInteractions } from "./hooks/useSliderInteractions";
 import { useSliderResponsive } from "./hooks/useSliderResponsive";
 import { ImageTube } from "./ImageTube";
+import { SceneAsset } from "./SceneAsset";
 import { TileSoundProvider } from "./TileSoundProvider";
 import type { PodcastSliderProps } from "./types";
 import { getLatestRowScrollOffset } from "./utils/tube-scroll";
@@ -107,34 +109,34 @@ export function PodcastSlider({ podcasts }: PodcastSliderProps) {
         }}
       >
         <ResponsiveCamera config={config} />
-        <Suspense fallback={null}>
-          <ambientLight intensity={0.42} />
-          <directionalLight position={[5, 6, 5]} intensity={0.55} />
-          <Environment preset="studio" blur={2.4} />
+        <ambientLight intensity={0.42} />
+        <directionalLight position={[5, 6, 5]} intensity={0.55} />
+        <SceneAsset label="Environment">
+          <Environment files={SLIDER_ENVIRONMENT_URL} blur={2.4} />
+        </SceneAsset>
 
-          <Bvh firstHitOnly>
-            <ImageTube
-              scrollTargetRef={tubeScrollTarget}
-              spinVelocityRef={tubeSpinVelocity}
-              naturalDirRef={tubeNaturalDir}
-              tubeAngleRef={tubeAngle}
-              rotationSpeedScaleTargetRef={rotationSpeedScaleTargetRef}
-              rotationSpeedScaleLerpRef={rotationSpeedScaleLerpRef}
-              baseSpeedRef={baseSpeedRef}
-              podcasts={podcasts}
-              rows={TUBE_ROWS}
-              cols={TUBE_COLS}
-              tileScale={config.tileScale}
-              ySpacing={config.tubeYSpacing}
-              tubeRadius={config.tubeRadius}
-              onHoverStart={onImageHoverStart}
-              onHoverMove={onImageHoverMove}
-              onHoverEnd={onImageHoverEnd}
-              onPlayPodcast={play}
-            />
-            <CrystalScene tubeAngleRef={tubeAngle} />
-          </Bvh>
-        </Suspense>
+        <ImageTube
+          scrollTargetRef={tubeScrollTarget}
+          spinVelocityRef={tubeSpinVelocity}
+          naturalDirRef={tubeNaturalDir}
+          tubeAngleRef={tubeAngle}
+          rotationSpeedScaleTargetRef={rotationSpeedScaleTargetRef}
+          rotationSpeedScaleLerpRef={rotationSpeedScaleLerpRef}
+          baseSpeedRef={baseSpeedRef}
+          podcasts={podcasts}
+          rows={TUBE_ROWS}
+          cols={TUBE_COLS}
+          tileScale={config.tileScale}
+          ySpacing={config.tubeYSpacing}
+          tubeRadius={config.tubeRadius}
+          onHoverStart={onImageHoverStart}
+          onHoverMove={onImageHoverMove}
+          onHoverEnd={onImageHoverEnd}
+          onPlayPodcast={play}
+        />
+        <SceneAsset label="Crystals">
+          <CrystalScene tubeAngleRef={tubeAngle} />
+        </SceneAsset>
       </Canvas>
 
       <div

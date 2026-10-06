@@ -9,6 +9,7 @@ import {
   MAIN_CRYSTAL_ROUGHNESS,
   MINI_CRYSTAL_METALNESS,
   MINI_CRYSTAL_ROUGHNESS,
+  SLIDER_ENVIRONMENT_URL,
 } from "./constants";
 
 function configureCrystalMesh(
@@ -47,7 +48,7 @@ type Props = {
 export function CrystalScene({ tubeAngleRef }: Props) {
   const { scene: mainScene } = useGLTF("/models/firstCrystal.glb");
   const { scene: miniScene } = useGLTF("/models/secondCrystal.glb");
-  const envMap = useEnvironment({ preset: "studio" });
+  const envMap = useEnvironment({ files: SLIDER_ENVIRONMENT_URL });
 
   const mainCrystal = useMemo(() => mainScene.clone(true), [mainScene]);
   const miniCrystal = useMemo(() => miniScene.clone(true), [miniScene]);
