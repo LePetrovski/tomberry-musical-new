@@ -32,7 +32,7 @@ export function BlogArchive({ posts, categories }: Props) {
 
   return (
     <div>
-      <div className="ff-menu-window ff-archive-window ff-command-bar z-20 mb-8 p-6 lg:sticky! lg:top-24">
+      <div className="ff-menu-window ff-archive-window ff-command-bar z-20 mb-8 p-6">
         <div className="flex flex-col gap-5 md:flex-row md:items-end">
           <div className="min-w-0 flex-1">
             <BlogSearchInput value={searchInput} onChange={setSearchInput} />
