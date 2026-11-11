@@ -24,6 +24,7 @@
     "build": "npm run build --workspace=front",
     "build:front": "npm run build --workspace=front",
     "build:back": "npm run build --workspace=back",
-    "lint": "npm run lint --workspace=front"
+    "lint": "npm run lint --workspace=front",
+    "test:transfer": "npm run test:transfer --workspace=front"
   }
 }

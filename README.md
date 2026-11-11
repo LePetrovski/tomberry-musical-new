@@ -115,3 +115,20 @@ Option B — second projet Vercel avec **Root Directory** : `back`, build `npm r
 | `npm run dev:back` | Dev Sanity Studio |
 | `npm run build:front` | Build production Next.js |
 | `npm run build:back` | Build Sanity Studio |
+| `npm run test:transfer` | Tests des téléchargements MP3 et du proxy de textures |
+
+## Transferts des médias
+
+Les téléchargements MP3 pointent directement vers Sanity avec `dl=<nom du fichier>`.
+Les anciens liens `/api/podcasts/[slug]/download` renvoient une redirection `307` ;
+le fichier audio ne transite plus par une fonction Vercel. Le trafic relève des quotas Sanity.
+
+Le proxy `/api/texture` conserve le chargement WebGL sur le même domaine et accepte
+uniquement les images du projet et du dataset Sanity configurés. Les réponses réussies
+sont mises en cache un an dans le navigateur et sur le CDN Vercel. Les erreurs ne sont pas mises en cache.
+Les URL d'assets Sanity changent lorsque le fichier change.
+
+Après déploiement, demander deux fois la même URL `/api/texture?url=…` dans la même région
+et vérifier l'en-tête `x-vercel-cache: HIT` sur la seconde réponse (le cache CDN n'existe pas en local).
+Dans Vercel Usage, comparer les transferts et les invocations de ces routes sur 24 à 48 heures.
+Ces changements réduisent la consommation future, sans remettre à zéro le quota déjà consommé.

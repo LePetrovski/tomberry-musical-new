@@ -37,7 +37,7 @@ export type ExternalPlatformLink = {
 export type ListeningOptions = {
   inlinePlayers: InlinePlayer[];
   externalLinks: ExternalPlatformLink[];
-  canDownload: boolean;
+  downloadUrl: string | null;
 };
 
 function addExternalLink(
@@ -101,9 +101,9 @@ export function getListeningOptions(podcast: Podcast): ListeningOptions {
     addExternalLink(externalLinks, seenExternal, entry.platform, entry.url);
   }
 
-  const canDownload = Boolean(podcast.audioFile?.asset?.url);
+  const downloadUrl = getEpisodeDownloadUrl(podcast);
 
-  return { inlinePlayers, externalLinks, canDownload };
+  return { inlinePlayers, externalLinks, downloadUrl };
 }
 
 export function buildEpisodeDownloadFilename(podcast: Podcast) {
@@ -114,8 +114,14 @@ export function buildEpisodeDownloadFilename(podcast: Podcast) {
   return `tomberry-${episodePart}.mp3`;
 }
 
-export function getEpisodeDownloadUrl(slug: string) {
-  return `/api/podcasts/${slug}/download`;
+export function getEpisodeDownloadUrl(podcast: Podcast): string | null {
+  const assetUrl = podcast.audioFile?.asset?.url;
+  if (!assetUrl) return null;
+
+  const url = new URL(assetUrl);
+  // Sanity sets Content-Disposition, including for cross-origin downloads.
+  url.searchParams.set("dl", buildEpisodeDownloadFilename(podcast));
+  return url.toString();
 }
 
 export function extractYoutubeEmbedSrc(embedHtml: string) {
