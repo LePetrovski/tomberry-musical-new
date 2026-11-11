@@ -127,7 +127,7 @@ function InlinePlayerView({
 
 export function ListenPanel({ podcast }: Props) {
   const playerPanelId = `${useId()}-player-panel`;
-  const { inlinePlayers, externalLinks, canDownload } = useMemo(
+  const { inlinePlayers, externalLinks, downloadUrl } = useMemo(
     () => getListeningOptions(podcast),
     [podcast],
   );
@@ -139,7 +139,7 @@ export function ListenPanel({ podcast }: Props) {
   const activePlayerId = selection?.podcastSlug === podcast.slug ? selection.playerId : null;
   const activePlayer =
     inlinePlayers.find((player) => player.id === activePlayerId) ?? inlinePlayers[0] ?? null;
-  const hasContent = inlinePlayers.length > 0 || externalLinks.length > 0 || canDownload;
+  const hasContent = inlinePlayers.length > 0 || externalLinks.length > 0 || Boolean(downloadUrl);
 
   if (!hasContent) {
     return (
@@ -190,11 +190,11 @@ export function ListenPanel({ podcast }: Props) {
         </section>
       )}
 
-      {canDownload && (
+      {downloadUrl && (
         <section>
           <Separator className="mb-6 bg-primary-200/20" />
           <h2 className="mb-3 text-sm font-semibold text-primary-200">Télécharger</h2>
-          <DownloadEpisodeButton slug={podcast.slug} title={podcast.title} />
+          <DownloadEpisodeButton downloadUrl={downloadUrl} title={podcast.title} />
         </section>
       )}
       </aside>

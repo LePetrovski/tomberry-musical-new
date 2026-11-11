@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:transfer": "node --import tsx --test lib/podcast/listening-options.test.ts app/api/texture/route.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
